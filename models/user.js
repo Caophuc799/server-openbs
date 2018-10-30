@@ -25,6 +25,10 @@ var User = new Schema({
   },
   address: {
     type: String
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 })
 
