@@ -34,7 +34,7 @@ app.use(function (_req, res, next) {
 
 require('./routes')(app)
 app.get('*', (_req, res) => res.status(200).send({
-  message: 'Welcome to the beginning of nothingness.'
+  message: 'Welcome to the OpenBS'
 }))
 
 module.exports = app
