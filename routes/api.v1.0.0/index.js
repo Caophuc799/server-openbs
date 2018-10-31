@@ -5,6 +5,6 @@ import mangotree from './mangotree'
 /* GET home page. */
 
 export default (app, passport) => {
-  app.use('/api/user', user)
-  app.use('/api/mangotree', mangotree)
+  app.use('/api/users', user)
+  app.use('/api/mangotrees', mangotree)
 }

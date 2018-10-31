@@ -5,23 +5,28 @@ var Schema = mongoose.Schema
 // var SchemaTypes = mongoose.Schema.Types
 
 var User = new Schema({
-  id: String,
   firstName: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  lastName: String,
+  password: {
     type: String,
     required: true
   },
-  lastName: String,
   dateOfBirth: {
     type: Date,
     required: true
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   phoneNumber: {
     type: String,
-    required: true
+    unique: true
   },
   address: {
     type: String

@@ -2,17 +2,18 @@ import express from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
 import passport from 'passport'
-
-// import book from './routes/api.v1.0.0/book';
-// import mongoose from 'mongoose'
+import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
 
 const app = express()
 
-// mongoose.Promise = require('bluebird')
-// mongoose.connect('mongodb://localhost:27017/mern', { promiseLibrary: require('bluebird') })
-//   .then(() => console.log('connection succesful'))
-//   .catch((err) => console.error(err))
+mongoose.Promise = require('bluebird')
+mongoose.set('useCreateIndex', true)
+mongoose.set('useNewUrlParser', true)
+var verifyEmail = require('email-verification')(mongoose)
+mongoose.connect('mongodb://localhost:27017/openbs', { promiseLibrary: require('bluebird') })
+  .then(() => console.log('connection mongodb succesful'))
+  .catch((err) => console.error(err))
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -21,6 +22,28 @@ app.use(bodyParser.urlencoded())
 app.use(passport.initialize())
 app.use(passport.session())
 apiRoutes(app, passport)
+// Config verify Email
+
+// verifyEmail.configure({
+//   verificationURL: 'http://myawesomewebsite.com/email-verification/${URL}',
+//   persistentUserModel: User,
+//   tempUserCollection: 'myawesomewebsite_tempusers',
+
+//   transportOptions: {
+//     service: 'Gmail',
+//     auth: {
+//       user: 'myawesomeemail@gmail.com',
+//       pass: 'mysupersecretpassword'
+//     }
+//   },
+//   verifyMailOptions: {
+//     from: 'Do Not Reply <myawesomeemail_do_not_reply@gmail.com>',
+//     subject: 'Please confirm account',
+//     html: 'Click the following link to confirm your account:</p><p>${URL}</p>',
+//     text: 'Please confirm your account by clicking the following link: ${URL}'
+//   }
+// }, function (error, options) {
+// })
 
 // app.use(function (req, res, next) {
 //   // Website you wish to allow to connect
