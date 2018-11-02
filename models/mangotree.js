@@ -67,4 +67,6 @@ var MangoTree = new Schema({
 
 var MangoTreeModel = mongoose.model('MangoTreeModel', MangoTree)
 
+MangoTreeModel.createIndexes()
+
 module.exports = MangoTreeModel

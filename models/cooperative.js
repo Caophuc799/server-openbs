@@ -40,5 +40,5 @@ var Cooperative = new Schema({
 // MangoTree.index({ name: 2, category: 3 })
 
 var CooperativeModel = mongoose.model('CooperativeModel', Cooperative)
-
+CooperativeModel.createIndexes()
 module.exports = CooperativeModel

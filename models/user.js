@@ -22,8 +22,7 @@ var User = new Schema({
     type: SchemaTypes.String,
     required: true,
     unique: true,
-    index: true,
-    dropDups: true
+    index: true
   },
   phoneNumber: {
     type: String,
@@ -46,8 +45,8 @@ var User = new Schema({
   }
 })
 
-// MangoTree.index({ name: 2, category: 3 })
-
 var UserModel = mongoose.model('UserModel', User)
+
+UserModel.createIndexes()
 
 module.exports = UserModel
