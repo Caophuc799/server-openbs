@@ -7,8 +7,7 @@ var SchemaTypes = mongoose.Schema.Types
 var User = new Schema({
   firstName: {
     type: SchemaTypes.String,
-    required: true,
-    unique: true
+    required: true
   },
   lastName: String,
   password: {
@@ -22,7 +21,8 @@ var User = new Schema({
   email: {
     type: SchemaTypes.String,
     required: true,
-    unique: true
+    unique: true,
+    index: true
   },
   phoneNumber: {
     type: String,
