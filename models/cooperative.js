@@ -10,6 +10,11 @@ var Cooperative = new Schema({
     type: String,
     required: true
   },
+  taxCode: {
+    type: String,
+    required: true,
+    unique: true
+  },
   idRepresentation: {
     type: String,
     required: true
@@ -25,6 +30,10 @@ var Cooperative = new Schema({
   address: {
     type: String,
     required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 })
 

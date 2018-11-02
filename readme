@@ -1,0 +1,29 @@
+https://www.npmjs.com/package/email-verification
+
+2. Start mongo db
+2.1 Start mongo
+sudo service mongod start
+// 2.2 Stop mongo
+// sudo service mongod stop
+// 2.3 Restart mongo
+// sudo service mongod restart
+Mở màn hình console
+2.2 Run:
+mongo
+2.3
+use openbs
+2.4
+db.productmodels.drop()
+
+Vào thư mục server
+5. Start nodejs
+node_modules/.bin/nodemon server.js hoặc npm start
+
+Vào thư mục client
+6. npm start
+
+Docker
+
+build: sudo docker-compose build
+
+run: sudo docker-compose up

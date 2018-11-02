@@ -56,7 +56,11 @@ var MangoTree = new Schema({
         required: true
       }
     }
-  ]
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 })
 
 // MangoTree.index({ name: 2, category: 3 })

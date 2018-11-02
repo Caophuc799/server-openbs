@@ -2,17 +2,35 @@ import express from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
 import passport from 'passport'
-
-// import book from './routes/api.v1.0.0/book';
-// import mongoose from 'mongoose'
+import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
-
+import { urlMongo, localhosturlMongo } from './constants/constant'
 const app = express()
 
-// mongoose.Promise = require('bluebird')
-// mongoose.connect('mongodb://localhost:27017/mern', { promiseLibrary: require('bluebird') })
-//   .then(() => console.log('connection succesful'))
-//   .catch((err) => console.error(err))
+mongoose.Promise = require('bluebird')
+mongoose.set('useCreateIndex', true)
+mongoose.set('useNewUrlParser', true)
+const options = {
+  autoIndex: false, // Don't build indexes
+  reconnectTries: 30, // Retry up to 30 times
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0,
+  promiseLibrary: require('bluebird')
+}
+
+const connectWithRetry = () => {
+  console.log('MongoDB connection with retry')
+  mongoose.connect(urlMongo, options).then(() => {
+    console.log('MongoDB is connected')
+  }).catch(_err => {
+    console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
+    setTimeout(connectWithRetry, 5000)
+  })
+}
+
+connectWithRetry()
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
