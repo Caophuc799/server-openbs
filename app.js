@@ -9,31 +9,32 @@ const app = express()
 mongoose.Promise = require('bluebird')
 mongoose.set('useCreateIndex', true)
 mongoose.set('useNewUrlParser', true)
-mongoose.connect(urlMongo, { promiseLibrary: require('bluebird') })
-  .then(() => console.log('connection mongodb succesful'))
-  .catch((err) => console.error(err))
-// mongoose.Promise = require('bluebird')
-// mongoose.set('useCreateIndex', true)
-// mongoose.set('useNewUrlParser', true)
-// const options = {
-//   autoIndex: false, // Don't build indexes
-//   reconnectTries: 30, // Retry up to 30 times
-//   reconnectInterval: 500, // Reconnect every 500ms
-//   poolSize: 10, // Maintain up to 10 socket connections
-//   // If not connected, return errors immediately rather than waiting for reconnect
-//   bufferMaxEntries: 0,
-//   promiseLibrary: require('bluebird')
-// }
-// const connectWithRetry = () => {
-//   console.log('MongoDB connection with retry')
-//   mongoose.connect(urlMongo, options).then(() => {
-//     console.log('MongoDB is connected')
-//   }).catch(_err => {
-//     console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
-//     setTimeout(connectWithRetry, 5000)
-//   })
-// }
-// connectWithRetry()
+
+/* Kieu connect mongo khac */
+// mongoose.connect(localhosturlMongo, { promiseLibrary: require('bluebird') })
+//   .then(() => console.log('connection mongodb succesful'))
+//   .catch((err) => console.error(err))
+
+/* Kieu connect mongo khac */
+const options = {
+  autoIndex: false, // Don't build indexes
+  reconnectTries: 30, // Retry up to 30 times
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0,
+  promiseLibrary: require('bluebird')
+}
+const connectWithRetry = () => {
+  console.log('MongoDB connection with retry')
+  mongoose.connect(urlMongo, options).then(() => {
+    console.log('MongoDB is connected')
+  }).catch(_err => {
+    console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
+    setTimeout(connectWithRetry, 5000)
+  })
+}
+connectWithRetry()
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
