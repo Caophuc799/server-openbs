@@ -83,7 +83,7 @@ router.get('/resend/:id', (req, res, next) => {
   UsersController.resendEmail(req.params.id)
     .then(user => {
       link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
-      var errorSendEmail = sendEmail(req.body.email, link)
+      var errorSendEmail = sendEmail(user.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
       }
@@ -111,6 +111,7 @@ function sendEmail (toEmail, link) {
       console.log(error)
       errorSend = error
     } else {
+      // console.log(info)
       errorSend = null
     }
   })
