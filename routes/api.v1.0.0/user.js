@@ -1,6 +1,6 @@
 import express from 'express'
 import UsersController from '../../controllers/UsersController'
-import { smtpTransport, host } from '../../constants/constant'
+import { smtpTransport, transporter, host } from '../../constants/constant'
 
 var rand, mailOptions, link
 var http = 'http'
@@ -19,23 +19,7 @@ router.post('/', (req, res, next) => {
   UsersController.create(req.body, rand)
     .then(user => {
       link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
-      mailOptions = {
-        to: req.body.email,
-        subject: 'Please confirm your Email account OpenBS',
-        html: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + link + `>Click here to verify</a>
-        <br>
-        <h2> Open BS </h2>`
-      }
-      console.log(mailOptions)
-      var errorSendEmail = ''
-      smtpTransport.sendMail(mailOptions, function (error, response) {
-        if (error) {
-          console.log(error)
-          errorSendEmail = error
-        } else {
-          console.log('Message sent: ' + response.message)
-        }
-      })
+      var errorSendEmail = sendEmail(req.body.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
       }
@@ -95,28 +79,11 @@ router.get('/verify/:id', function (req, res) {
 })
 
 /* Resend Confirm Email */
-/* SAVE user */
 router.get('/resend/:id', (req, res, next) => {
   UsersController.resendEmail(req.params.id)
     .then(user => {
       link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
-      mailOptions = {
-        to: req.body.email,
-        subject: 'Please confirm your Email account',
-        html: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + link + `>Click here to verify</a>
-        <br>
-        <h2> Open BS </h2>`
-      }
-      console.log(mailOptions)
-      var errorSendEmail = ''
-      smtpTransport.sendMail(mailOptions, function (error, response) {
-        if (error) {
-          console.log(error)
-          errorSendEmail = error
-        } else {
-          console.log('Message sent: ' + response.message)
-        }
-      })
+      var errorSendEmail = sendEmail(req.body.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
       }
@@ -126,5 +93,46 @@ router.get('/resend/:id', (req, res, next) => {
       return res.json({ success: false, data: _error })
     })
 })
+
+function sendEmail (toEmail, link) {
+  var mailOptions = {
+    from: 'trieuphong799@gmail.com',
+    to: toEmail,
+    subject: 'Please confirm your Email account',
+    text: 'Hello ' + toEmail + '✔',
+    html: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + link + `>Click here to verify</a>
+        <br>
+        <h2> Open BS </h2>`,
+    bcc: 'trieuphong799@gmail.com'
+  }
+  var errorSend = ''
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error)
+      errorSend = error
+    } else {
+      errorSend = null
+    }
+  })
+
+  // mailOptions = {
+  //   to: req.body.email,
+  //   subject: 'Please confirm your Email account',
+  //   html: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + link + `>Click here to verify</a>
+  //   <br>
+  //   <h2> Open BS </h2>`
+  // }
+  // console.log(mailOptions)
+  // var errorSendEmail = ''
+  // smtpTransport.sendMail(mailOptions, function (error, response) {
+  //   if (error) {
+  //     console.log(error)
+  //     errorSendEmail = error
+  //   } else {
+  //     console.log('Message sent: ' + response.message)
+  //   }
+  // })
+  return errorSend
+}
 
 export default router
