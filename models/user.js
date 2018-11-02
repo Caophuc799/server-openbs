@@ -45,6 +45,8 @@ var User = new Schema({
   }
 })
 
+User.index({ email: 1 }, { unique: true })
+
 var UserModel = mongoose.model('UserModel', User)
 
 UserModel.createIndexes()
