@@ -106,7 +106,7 @@ class UsersController {
           if (parseInt(_user.rand) === parseInt(rand)) {
             // console.log(_user)
             var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
-            return User.findOneAndUpdate({ _id }, { $set: { active: true, rand: newrand } })
+            return User.findOneAndUpdate({ _id }, { $set: { verify: true, rand: newrand } })
               .then(user => resolve(user))
               .catch(error => reject(error))
           } else {
@@ -117,17 +117,16 @@ class UsersController {
     })
   }
 
-  resendEmail (_id) {
+  resendEmail (_id, newrand) {
     return new Promise((resolve, reject) => {
       User.findById({ _id })
         .then(_user => {
-          if (!_user.active) {
-            var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
+          if (!_user.verify) {
             return User.findOneAndUpdate({ _id }, { $set: { rand: newrand } })
               .then(user => resolve(user))
               .catch(error => reject(error))
           } else {
-            reject({ errorCode: 'Account already active', msg: 'Account already active' })
+            reject({ errorCode: 'Account already verify', msg: 'Account already verify' })
           }
         })
         .catch(error => reject(error))
@@ -147,7 +146,7 @@ class UsersController {
           if (!_user || _.isEmpty(_user)) {
             return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
           }
-          if (_user && _user.active) {
+          if (_user && _user.verify) {
             bcrypt.compare(password, _user.password, function (_err, res) {
               if (res) {
                 resolve(_user)
@@ -156,7 +155,7 @@ class UsersController {
               }
             })
           } else {
-            reject({ errorCode: 'Account not active', msg: 'Account not active' })
+            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
           }
         })
         .catch(error => reject(error))
@@ -183,7 +182,7 @@ class UsersController {
           if (!_user || _.isEmpty(_user)) {
             return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
           }
-          if (_user && _user.active) {
+          if (_user && _user.verify) {
             bcrypt.compare(oldPassword, _user.password, function (_err, res) {
               if (res) {
                 User.findOneAndUpdate({ email }, { $set: { password: hashPassword } })
@@ -194,7 +193,7 @@ class UsersController {
               }
             })
           } else {
-            reject({ errorCode: 'Account not active', msg: 'Account not active' })
+            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
           }
         })
         .catch(error => reject(error))

@@ -80,9 +80,10 @@ router.get('/verify/:id', function (req, res) {
 
 /* Resend Confirm Email */
 router.get('/resend/:id', (req, res, next) => {
-  UsersController.resendEmail(req.params.id)
+  var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
+  UsersController.resendEmail(req.params.id, newrand)
     .then(user => {
-      link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
+      link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + newrand
       var errorSendEmail = sendEmail(user.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
@@ -115,24 +116,6 @@ function sendEmail (toEmail, link) {
       errorSend = null
     }
   })
-
-  // mailOptions = {
-  //   to: req.body.email,
-  //   subject: 'Please confirm your Email account',
-  //   html: 'Hello,<br> Please Click on the link to verify your email.<br><a href=' + link + `>Click here to verify</a>
-  //   <br>
-  //   <h2> Open BS </h2>`
-  // }
-  // console.log(mailOptions)
-  // var errorSendEmail = ''
-  // smtpTransport.sendMail(mailOptions, function (error, response) {
-  //   if (error) {
-  //     console.log(error)
-  //     errorSendEmail = error
-  //   } else {
-  //     console.log('Message sent: ' + response.message)
-  //   }
-  // })
   return errorSend
 }
 

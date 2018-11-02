@@ -37,6 +37,10 @@ var User = new Schema({
   },
   active: {
     type: Boolean,
+    default: true
+  },
+  verify: {
+    type: Boolean,
     default: false
   },
   rand: {
