@@ -22,7 +22,8 @@ var User = new Schema({
     type: SchemaTypes.String,
     required: true,
     unique: true,
-    index: true
+    index: true,
+    dropDups: true
   },
   phoneNumber: {
     type: String,
