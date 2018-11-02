@@ -26,7 +26,7 @@ var User = new Schema({
   },
   phoneNumber: {
     type: String,
-    unique: true
+    default: null
   },
   address: {
     type: String
@@ -34,6 +34,14 @@ var User = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  active: {
+    type: Boolean,
+    default: false
+  },
+  rand: {
+    type: Number,
+    default: 0
   }
 })
 

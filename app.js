@@ -4,16 +4,33 @@ import bodyParser from 'body-parser'
 import passport from 'passport'
 import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
-
+import { urlMongo, localhosturlMongo } from './constants/constant'
 const app = express()
 
 mongoose.Promise = require('bluebird')
 mongoose.set('useCreateIndex', true)
 mongoose.set('useNewUrlParser', true)
-var verifyEmail = require('email-verification')(mongoose)
-mongoose.connect('mongodb://localhost:27017/openbs', { promiseLibrary: require('bluebird') })
-  .then(() => console.log('connection mongodb succesful'))
-  .catch((err) => console.error(err))
+const options = {
+  autoIndex: false, // Don't build indexes
+  reconnectTries: 30, // Retry up to 30 times
+  reconnectInterval: 500, // Reconnect every 500ms
+  poolSize: 10, // Maintain up to 10 socket connections
+  // If not connected, return errors immediately rather than waiting for reconnect
+  bufferMaxEntries: 0,
+  promiseLibrary: require('bluebird')
+}
+
+const connectWithRetry = () => {
+  console.log('MongoDB connection with retry')
+  mongoose.connect(urlMongo, options).then(() => {
+    console.log('MongoDB is connected')
+  }).catch(_err => {
+    console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
+    setTimeout(connectWithRetry, 5000)
+  })
+}
+
+connectWithRetry()
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -22,28 +39,6 @@ app.use(bodyParser.urlencoded())
 app.use(passport.initialize())
 app.use(passport.session())
 apiRoutes(app, passport)
-// Config verify Email
-
-// verifyEmail.configure({
-//   verificationURL: 'http://myawesomewebsite.com/email-verification/${URL}',
-//   persistentUserModel: User,
-//   tempUserCollection: 'myawesomewebsite_tempusers',
-
-//   transportOptions: {
-//     service: 'Gmail',
-//     auth: {
-//       user: 'myawesomeemail@gmail.com',
-//       pass: 'mysupersecretpassword'
-//     }
-//   },
-//   verifyMailOptions: {
-//     from: 'Do Not Reply <myawesomeemail_do_not_reply@gmail.com>',
-//     subject: 'Please confirm account',
-//     html: 'Click the following link to confirm your account:</p><p>${URL}</p>',
-//     text: 'Please confirm your account by clicking the following link: ${URL}'
-//   }
-// }, function (error, options) {
-// })
 
 // app.use(function (req, res, next) {
 //   // Website you wish to allow to connect
