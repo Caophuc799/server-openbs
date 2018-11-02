@@ -3,7 +3,7 @@ import UsersController from '../../controllers/UsersController'
 import { smtpTransport, host } from '../../constants/constant'
 
 var rand, mailOptions, link
-var http = 'https'
+var http = 'http'
 const router = express.Router()
 
 /* GET ALL users */
