@@ -1,76 +1,76 @@
 import express from 'express'
-import UsersController from '../../controllers/UsersController'
+import CooperativesController from '../../controllers/CooperativesController'
 import { transporter } from '../../constants/constant'
 
 var rand, link
 var http = 'http'
 const router = express.Router()
 
-/* GET ALL users */
+/* GET ALL cooperatives */
 router.get('/', (req, res, next) => {
-  UsersController.getAll()
-    .then(users => res.json({ success: true, data: users }))
+  CooperativesController.getAll()
+    .then(cooperatives => res.json({ success: true, data: cooperatives }))
     .catch(_error => res.json({ success: false, data: [] }))
 })
 
-/* SAVE user */
+/* SAVE cooperative */
 router.post('/', (req, res, next) => {
   rand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
-  UsersController.create(req.body, rand)
-    .then(user => {
-      link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
+  CooperativesController.create(req.body, rand)
+    .then(cooperative => {
+      link = `${http}://${req.get('host')}/api/cooperatives/verify/${cooperative._id}?rand=` + rand
       var errorSendEmail = sendEmail(req.body.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
       }
-      return res.json({ success: true, data: user })
+      return res.json({ success: true, data: cooperative })
     })
     .catch(_error => {
       return res.json({ success: false, data: _error })
     })
 })
 
-/* GET SINGLE user BY ID */
+/* GET SINGLE cooperative BY ID */
 router.get('/:id', (req, res, next) => {
-  UsersController.getOne(req.params.id)
-    .then(user => res.json({ success: true, data: user }))
+  CooperativesController.getOne(req.params.id)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => res.json({ success: false, data: [] }))
 })
 
-/* UPDATE user */
+/* UPDATE cooperative */
 router.put('/:id', (req, res, next) => {
-  UsersController.update(req.params.id, req.body)
-    .then(user => res.json({ success: true, data: user }))
+  CooperativesController.update(req.params.id, req.body)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => res.json({ success: false, data: _error }))
 })
 
-/* DELETE user */
+/* DELETE cooperative */
 router.delete('/:id', (req, res, next) => {
-  UsersController.delete(req.params.id, req.body)
-    .then(user => res.json({ success: true, data: user }))
+  CooperativesController.delete(req.params.id, req.body)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => res.json({ success: false, data: _error }))
 })
 
 /* Login by Email */
 router.post('/login', function (req, res) {
-  UsersController.login(req.body)
-    .then(user => res.json({ success: true, data: user }))
+  CooperativesController.login(req.body)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => res.json({ success: false, data: _error }))
 })
 
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {
-  UsersController.changePassword(req.body)
-    .then(user => res.json({ success: true, data: user }))
+  CooperativesController.changePassword(req.body)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => res.json({ success: false, data: _error }))
 })
 
 /* Verify Email */
 router.get('/verify/:id', function (req, res) {
-  UsersController.verifyAccount(req.params.id, req.query.rand)
-    .then(user => {
+  CooperativesController.verifyAccount(req.params.id, req.query.rand)
+    .then(cooperative => {
       res.end('<h1>Email is been Successfully verified')
-      // res.json({ success: true, data: user })
+      // res.json({ success: true, data: cooperative })
     })
     .catch(_error => {
       res.end('<h1>Bad Request</h1>' + _error)
@@ -81,14 +81,14 @@ router.get('/verify/:id', function (req, res) {
 /* Resend Confirm Email */
 router.get('/resend/:id', (req, res, next) => {
   var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
-  UsersController.resendEmail(req.params.id, newrand)
-    .then(user => {
-      link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + newrand
-      var errorSendEmail = sendEmail(user.email, link)
+  CooperativesController.resendEmail(req.params.id, newrand)
+    .then(cooperative => {
+      link = `${http}://${req.get('host')}/api/cooperatives/verify/${cooperative._id}?rand=` + newrand
+      var errorSendEmail = sendEmail(cooperative.email, link)
       if (errorSendEmail) {
         return res.json({ errorCode: 'error when send verify email', msg: errorSendEmail })
       }
-      return res.json({ success: true, data: user })
+      return res.json({ success: true, data: cooperative })
     })
     .catch(_error => {
       return res.json({ success: false, data: _error })

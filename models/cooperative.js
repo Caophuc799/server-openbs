@@ -20,6 +20,11 @@ var Cooperative = new Schema({
     required: true
   },
   email: {
+    type: SchemaTypes.String,
+    required: true,
+    unique: true
+  },
+  password: {
     type: String,
     required: true
   },
@@ -31,6 +36,10 @@ var Cooperative = new Schema({
     type: String,
     required: true
   },
+  active: {
+    type: Boolean,
+    default: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -38,6 +47,7 @@ var Cooperative = new Schema({
 })
 
 // MangoTree.index({ name: 2, category: 3 })
+Cooperative.index({ email: 1, taxCode: 1 }, { unique: true })
 
 var CooperativeModel = mongoose.model('CooperativeModel', Cooperative)
 CooperativeModel.createIndexes()
