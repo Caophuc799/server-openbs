@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
 var Schema = mongoose.Schema
-// var SchemaTypes = mongoose.Schema.Types
+var SchemaTypes = mongoose.Schema.Types
 
 var Cooperative = new Schema({
   id: String,
@@ -11,7 +11,7 @@ var Cooperative = new Schema({
     required: true
   },
   taxCode: {
-    type: String,
+    type: SchemaTypes.String,
     required: true,
     unique: true
   },

@@ -2,11 +2,11 @@ var mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
 var Schema = mongoose.Schema
-// var SchemaTypes = mongoose.Schema.Types
+var SchemaTypes = mongoose.Schema.Types
 
 var User = new Schema({
   firstName: {
-    type: String,
+    type: SchemaTypes.String,
     required: true,
     unique: true
   },
@@ -20,7 +20,7 @@ var User = new Schema({
     required: true
   },
   email: {
-    type: String,
+    type: SchemaTypes.String,
     required: true,
     unique: true
   },
