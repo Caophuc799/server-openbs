@@ -5,7 +5,12 @@ var Schema = mongoose.Schema
 var SchemaTypes = mongoose.Schema.Types
 
 var MangoTree = new Schema({
-  id: Number,
+  idTree: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true
+  },
   name: {
     type: String,
     required: true
@@ -25,7 +30,9 @@ var MangoTree = new Schema({
   },
   idCooperative: {
     type: String,
-    required: true
+    required: true,
+    unique: true,
+    index: true
   },
   idBuyer: {
     type: String,
@@ -33,12 +40,10 @@ var MangoTree = new Schema({
   },
   location: {
     longitude: {
-      type: SchemaTypes.Double,
-      required: true
+      type: SchemaTypes.Number
     },
     latitude: {
-      type: SchemaTypes.Double,
-      required: true
+      type: SchemaTypes.Number
     },
     descriptionLocation: {
       type: String
@@ -52,8 +57,7 @@ var MangoTree = new Schema({
         default: Date.now
       },
       quantity: {
-        type: Number,
-        required: true
+        type: Number
       }
     }
   ],
@@ -63,7 +67,7 @@ var MangoTree = new Schema({
   }
 })
 
-// MangoTree.index({ name: 2, category: 3 })
+MangoTree.index({ idCooperative: 1, id: 1 }, { unique: true })
 
 var MangoTreeModel = mongoose.model('MangoTreeModel', MangoTree)
 

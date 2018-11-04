@@ -52,7 +52,8 @@ class CooperativesController {
         email: _cooperative.email,
         phoneNumber: _cooperative.phoneNumber,
         address: _cooperative.address,
-        password: hashPassword
+        password: hashPassword,
+        rand: rand
       }
       Cooperative.create(currentCooperative)
         .then(user => resolve(user))

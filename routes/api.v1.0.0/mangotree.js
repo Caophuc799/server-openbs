@@ -1,41 +1,52 @@
 import express from 'express'
+import MangoTreesController from '../../controllers/MangoTreesController'
 
 const router = express.Router()
 
-/* GET ALL BOOKS */
+/* GET ALL mangos */
 router.get('/', (req, res, next) => {
-  res.json({ message: 'Welcome to the MangoTree API Of OpenBS!' })
-//   BooksController.getAll()
-//     .then(books => res.json({ success: true, data: books }))
-//     .catch(error => res.json({ success: false, data: [] }))
+  MangoTreesController.getAll()
+    .then(mangos => res.json({ success: true, data: mangos }))
+    .catch(_error => res.json({ success: false, data: [] }))
 })
 
-// /* GET SINGLE BOOK BY ID */
-// router.get('/:id', (req, res, next) => {
-//   BooksController.getOne(req.params.id)
-//     .then(book => res.json({ success: true, data: book }))
-//     .catch(error => res.json({ success: false, data: [] }))
-// });
+/* SAVE mango */
+router.post('/', (req, res, next) => {
+  MangoTreesController.create(req.body)
+    .then(mango => {
+      return res.json({ success: true, data: mango })
+    })
+    .catch(_error => {
+      return res.json({ success: false, data: _error })
+    })
+})
 
-// /* SAVE BOOK */
-// router.post('', (req, res, next) => {
-//   BooksController.create(req.body)
-//     .then(book => res.json({ success: true, data: book }))
-//     .catch(error => res.json({ success: false, data: [] }))
-// });
+/* GET SINGLE mango BY ID */
+router.get('/:id', (req, res, next) => {
+  MangoTreesController.getOne(req.params.id)
+    .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => res.json({ success: false, data: [] }))
+})
 
-// /* UPDATE BOOK */
-// router.put('/:id', (req, res, next) => {
-//   BooksController.update(req.params.id, req.body)
-//   .then(book => res.json({ success: true, data: book }))
-//   .catch(error => res.json({ success: false, data: [] }))
-// });
+/* UPDATE mango */
+router.put('/:id', (req, res, next) => {
+  MangoTreesController.update(req.params.id, req.body)
+    .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => res.json({ success: false, data: _error }))
+})
 
-// /* DELETE BOOK */
-// router.delete('/:id', (req, res, next) => {
-//   BooksController.delete(req.params.id, req.body)
-//   .then(book => res.json({ success: true, data: book }))
-//   .catch(error => res.json({ success: false, data: [] }))
-// });
+/* DELETE mango */
+router.delete('/:id', (req, res, next) => {
+  MangoTreesController.delete(req.params.id, req.body)
+    .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => res.json({ success: false, data: _error }))
+})
+
+/* BUY mango */
+router.put('/buy/:id', (req, res, next) => {
+  MangoTreesController.buyMangoTree(req.params.id, req.body)
+    .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => res.json({ success: false, data: _error }))
+})
 
 export default router

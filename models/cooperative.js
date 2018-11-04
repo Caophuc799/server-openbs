@@ -43,6 +43,14 @@ var Cooperative = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  verify: {
+    type: Boolean,
+    default: false
+  },
+  rand: {
+    type: Number,
+    default: 0
   }
 })
 
