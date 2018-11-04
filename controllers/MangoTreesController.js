@@ -123,11 +123,11 @@ class MangoTreesController {
               .then(mangotree => resolve(mangotree))
               .catch(error => reject(error))
           } else {
-            reject({ errorCode: 'Can not find idCooperative', msg: 'Can not find idCooperative' })
+            reject({ errorCode: 'Can not find idBuyer', msg: 'Can not find idBuyer' })
           }
         }).catch(error => {
           console.log(error)
-          reject({ errorCode: 'Can not find idCooperative', msg: 'Can not find idCooperative' })
+          reject({ errorCode: 'Can not find idBuyer', msg: 'Can not find idBuyer' })
         })
     })
   }
