@@ -1,4 +1,6 @@
 import Cooperative from '../models/cooperative'
+import User from '../models/user'
+import axios from 'axios'
 import _ from 'lodash'
 import { validateEmail } from '../services/Utils'
 import moment from 'moment'
@@ -43,22 +45,51 @@ class CooperativesController {
       if (!_cooperative.password) {
         return reject({ errorCode: 'password not_null', msg: 'password not null' })
       }
+      if (!_cooperative.idRepresentation) {
+        return reject({ errorCode: 'idRepresentation not_null', msg: 'idRepresentation not null' })
+      }
+      if (!_cooperative.taxCode) {
+        return reject({ errorCode: 'taxCode not_null', msg: 'taxCode not null' })
+      }
       var hashPassword = bcrypt.hashSync(_cooperative.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_cooperative.dateOfBirth))
-      const currentCooperative = {
-        idRepresentation: _cooperative.idRepresentation,
-        taxCode: _cooperative.taxCode,
-        name: _cooperative.name,
-        email: _cooperative.email,
-        phoneNumber: _cooperative.phoneNumber,
-        address: _cooperative.address,
-        password: hashPassword,
-        rand: rand
-      }
-      Cooperative.create(currentCooperative)
-        .then(user => resolve(user))
-        .catch(error => {
-          return reject(error)
+      axios.get('https://thongtindoanhnghiep.co/api/company/' + _cooperative.taxCode)
+        .then(res => {
+          if (_.get(res, 'data.ID') && _.get(res, 'data.ID') !== 0) {
+            User.findById({ _id: _cooperative.idRepresentation })
+              .then(_user => {
+                if (_user) {
+                  const currentCooperative = {
+                    idRepresentation: _cooperative.idRepresentation,
+                    taxCode: _cooperative.taxCode,
+                    name: _cooperative.name,
+                    email: _cooperative.email,
+                    phoneNumber: _cooperative.phoneNumber,
+                    address: _cooperative.address,
+                    password: hashPassword,
+                    rand: rand
+                  }
+                  console.log(currentCooperative)
+                  return Cooperative.create(currentCooperative)
+                    .then(user => resolve(user))
+                    .catch(error => {
+                      return reject(error)
+                    })
+                } else {
+                  reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+                }
+              })
+              .catch(error => {
+                console.log(error)
+                reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+              })
+          } else {
+            reject({ errorCode: 'taxcode fail', msg: 'taxcode fail' })
+          }
+        })
+        .catch(_error => {
+          console.log(_error)
+          reject({ errorCode: 'taxcode fail', msg: 'taxcode fail' })
         })
     })
   }
@@ -67,6 +98,9 @@ class CooperativesController {
     return new Promise((resolve, reject) => {
       if (_cooperative.email) {
         return reject({ errorCode: 'can not update email', msg: 'can not update email' })
+      }
+      if (!validateEmail(_cooperative.email)) {
+        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
       }
       const newCooperative = {
         idRepresentation: _cooperative.idRepresentation,
@@ -129,6 +163,9 @@ class CooperativesController {
       if (!email) {
         return reject({ errorCode: 'email not_null', msg: 'email not null' })
       }
+      if (!validateEmail(email)) {
+        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+      }
       if (!password) {
         return reject({ errorCode: 'password not_null', msg: 'password not null' })
       }
@@ -157,6 +194,9 @@ class CooperativesController {
     return new Promise((resolve, reject) => {
       if (!email) {
         return reject({ errorCode: 'email not_null', msg: 'email not null' })
+      }
+      if (!validateEmail(email)) {
+        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
       }
       if (!oldPassword) {
         return reject({ errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })

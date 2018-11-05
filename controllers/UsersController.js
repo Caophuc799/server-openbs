@@ -138,6 +138,9 @@ class UsersController {
       if (!email) {
         return reject({ errorCode: 'email not_null', msg: 'email not null' })
       }
+      if (!validateEmail(email)) {
+        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+      }
       if (!password) {
         return reject({ errorCode: 'password not_null', msg: 'password not null' })
       }
@@ -166,6 +169,9 @@ class UsersController {
     return new Promise((resolve, reject) => {
       if (!email) {
         return reject({ errorCode: 'email not_null', msg: 'email not null' })
+      }
+      if (!validateEmail(email)) {
+        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
       }
       if (!oldPassword) {
         return reject({ errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })
