@@ -7,7 +7,7 @@ const router = express.Router()
 router.get('/', (req, res, next) => {
   MangoTreesController.getAll()
     .then(mangos => res.json({ success: true, data: mangos }))
-    .catch(_error => res.json({ success: false, data: [] }))
+    .catch(_error => res.json({ success: false, data: _error }))
 })
 
 /* SAVE mango */
@@ -25,7 +25,7 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   MangoTreesController.getOne(req.params.id)
     .then(mango => res.json({ success: true, data: mango }))
-    .catch(_error => res.json({ success: false, data: [] }))
+    .catch(_error => res.json({ success: false, data: _error }))
 })
 
 /* UPDATE mango */

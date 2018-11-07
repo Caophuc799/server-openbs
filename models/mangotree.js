@@ -30,9 +30,7 @@ var MangoTree = new Schema({
   },
   idCooperative: {
     type: String,
-    required: true,
-    unique: true,
-    index: true
+    required: true
   },
   idBuyer: {
     type: String,
@@ -64,10 +62,18 @@ var MangoTree = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  price: {
+    type: Number,
+    default: 0
+  },
+  savedInEther: {
+    type: Boolean,
+    default: false
   }
 })
 
-MangoTree.index({ idCooperative: 1, id: 1 }, { unique: true })
+MangoTree.index({ idTree: 1 }, { unique: true })
 
 var MangoTreeModel = mongoose.model('MangoTreeModel', MangoTree)
 

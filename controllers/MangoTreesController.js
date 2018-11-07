@@ -2,9 +2,12 @@ import Mangotree from '../models/mangotree'
 import Cooperative from '../models/cooperative'
 import User from '../models/user'
 import _ from 'lodash'
-import { validateEmail } from '../services/Utils'
 import moment from 'moment'
-import bcrypt from 'bcrypt'
+import OpenBSSmart from '../smartContract/OpenBSSmart'
+
+var TokenOpenBS = require('../services/TokenOpenBS')
+// Mongo
+var blockStart = require('../constants/constant').blockStart
 
 class MangoTreesController {
   getAll (projection, options) {
@@ -15,7 +18,7 @@ class MangoTreesController {
     // const projection = "";
     return new Promise((resolve, reject) => {
       Mangotree.find({}, projection, options)
-        .then(users => resolve(users))
+        .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
   }
@@ -23,7 +26,7 @@ class MangoTreesController {
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Mangotree.find({ _id }, projection, options)
-        .then(users => resolve(users))
+        .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
   }
@@ -66,7 +69,24 @@ class MangoTreesController {
               idCooperative: _mangotree.idCooperative
             }
             return Mangotree.create(currentMangotree)
-              .then(user => resolve(user))
+              .then(mangotree => {
+                // if (_mangotree) {
+                //   return TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
+                //     .send({
+                //       from: '0x541a359c4651E4C64C463059E5f9a30769827f82', gas: 5000000
+                //     }, (error, result) => {
+                //       console.log(result)
+                //       console.log(error)
+                //       return result
+                //     })
+                //     .catch(error => {
+                //       console.log(error)
+                //       return error
+                //     })
+                // }
+                // console.log(_mangotree)
+                resolve(mangotree)
+              })
               .catch(error => {
                 return reject(error)
               })
