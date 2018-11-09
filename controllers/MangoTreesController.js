@@ -25,7 +25,7 @@ class MangoTreesController {
 
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
-      Mangotree.find({ _id }, projection, options)
+      Mangotree.findOne({ _id }, projection, options)
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
@@ -57,6 +57,9 @@ class MangoTreesController {
       if (!_mangotree.idCooperative) {
         return reject({ errorCode: 'idCooperative not_null', msg: 'idCooperative not null' })
       }
+      if (!_mangotree.price || (parseFloat(_mangotree.price) <= 0)) {
+        return reject({ errorCode: 'price not_null and greater than 0', msg: 'price not null and greater than 0' })
+      }
       return Cooperative.findById({ _id: _mangotree.idCooperative })
         .then(_cooperative => {
           if (_cooperative && !_.isEmpty(_cooperative)) {
@@ -66,7 +69,8 @@ class MangoTreesController {
               category: _mangotree.category,
               description: _mangotree.description,
               timeStartPlant: _mangotree.timeStartPlant,
-              idCooperative: _mangotree.idCooperative
+              idCooperative: _mangotree.idCooperative,
+              price: _mangotree.price
             }
             return Mangotree.create(currentMangotree)
               .then(mangotree => {
@@ -105,12 +109,16 @@ class MangoTreesController {
       if (_mangotree.idCooperative) {
         return reject({ errorCode: 'can not update idCooperative', msg: 'can not update idCooperative' })
       }
+      if (!_.isEmpty(_mangotree.price) && parseFloat(_mangotree.price) <= 0) {
+        return reject({ errorCode: 'price greater than 0', msg: 'price greater than 0' })
+      }
       const currentMangotree = {
         idTree: _mangotree.idTree,
         name: _mangotree.name,
         category: _mangotree.category,
         description: _mangotree.description,
-        timeStartPlant: _mangotree.timeStartPlant
+        timeStartPlant: _mangotree.timeStartPlant,
+        price: _mangotree.price
       }
       return Mangotree.findOneAndUpdate({ _id }, { $set: currentMangotree })
         .then(mangotree => {

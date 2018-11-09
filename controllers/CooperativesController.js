@@ -22,7 +22,7 @@ class CooperativesController {
 
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
-      Cooperative.find({ _id }, projection, options)
+      Cooperative.findOne({ _id }, projection, options)
         .then(cooperatives => resolve(cooperatives))
         .catch(error => reject(error))
     })
