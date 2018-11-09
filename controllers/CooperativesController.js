@@ -59,6 +59,9 @@ class CooperativesController {
             User.findById({ _id: _cooperative.idRepresentation })
               .then(_user => {
                 if (_user) {
+                  if (!_user.verify) {
+                    return reject({ errorCode: 'idrepresentation had not verify', msg: 'idrepresentation had not verify' })
+                  }
                   const currentCooperative = {
                     idRepresentation: _cooperative.idRepresentation,
                     taxCode: _cooperative.taxCode,
@@ -99,8 +102,31 @@ class CooperativesController {
       if (_cooperative.email) {
         return reject({ errorCode: 'can not update email', msg: 'can not update email' })
       }
-      if (!validateEmail(_cooperative.email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+      if (_cooperative.idRepresentation) {
+        return User.findById({ _id: _cooperative.idRepresentation })
+          .then(_user => {
+            if (_user) {
+              if (!_user.verify) {
+                return reject({ errorCode: 'idrepresentation had not verify', msg: 'idrepresentation had not verify' })
+              }
+              const newCooperative = {
+                idRepresentation: _cooperative.idRepresentation,
+                taxCode: _cooperative.taxCode,
+                name: _cooperative.name,
+                phoneNumber: _cooperative.phoneNumber,
+                address: _cooperative.address
+              }
+              return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
+                .then(cooperative => resolve(cooperative))
+                .catch(error => reject(error))
+            } else {
+              reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+            }
+          })
+          .catch(error => {
+            console.log(error)
+            reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+          })
       }
       const newCooperative = {
         idRepresentation: _cooperative.idRepresentation,
@@ -109,7 +135,7 @@ class CooperativesController {
         phoneNumber: _cooperative.phoneNumber,
         address: _cooperative.address
       }
-      Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
+      return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
         .then(cooperative => resolve(cooperative))
         .catch(error => reject(error))
     })
@@ -117,7 +143,7 @@ class CooperativesController {
 
   delete (_id) {
     return new Promise((resolve, reject) => {
-      Cooperative.remove({ _id })
+      return Cooperative.remove({ _id })
         .then(cooperative => resolve(cooperative))
         .catch(error => reject(error))
     })
@@ -125,7 +151,7 @@ class CooperativesController {
 
   verifyAccount (_id, rand) {
     return new Promise((resolve, reject) => {
-      Cooperative.findById({ _id })
+      return Cooperative.findById({ _id })
         .then(_cooperative => {
           // console.log(_cooperative.rand)
           if (parseInt(_cooperative.rand) === parseInt(rand)) {
