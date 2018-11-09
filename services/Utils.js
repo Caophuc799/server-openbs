@@ -57,3 +57,7 @@ export const momentToFormat24 = (momentTime) => {
 export const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+export const getRandomInt = (max = 1000000000) => {
+  return Math.floor(Math.random() * Math.floor(max))
+}

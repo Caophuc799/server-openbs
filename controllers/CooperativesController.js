@@ -15,7 +15,7 @@ class CooperativesController {
     // const projection = "";
     return new Promise((resolve, reject) => {
       Cooperative.find({}, projection, options)
-        .then(users => resolve(users))
+        .then(cooperatives => resolve(cooperatives))
         .catch(error => reject(error))
     })
   }
@@ -23,7 +23,7 @@ class CooperativesController {
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Cooperative.find({ _id }, projection, options)
-        .then(users => resolve(users))
+        .then(cooperatives => resolve(cooperatives))
         .catch(error => reject(error))
     })
   }
@@ -31,7 +31,7 @@ class CooperativesController {
   create (_cooperative, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
-        return reject({ errorCode: 'user not null', msg: 'Cooperative not null' })
+        return reject({ errorCode: 'cooperative not null', msg: 'Cooperative not null' })
       }
       if (!_cooperative.name) {
         return reject({ errorCode: 'name not_null', msg: 'name not null' })
@@ -71,7 +71,7 @@ class CooperativesController {
                   }
                   console.log(currentCooperative)
                   return Cooperative.create(currentCooperative)
-                    .then(user => resolve(user))
+                    .then(cooperative => resolve(cooperative))
                     .catch(error => {
                       return reject(error)
                     })
@@ -110,7 +110,7 @@ class CooperativesController {
         address: _cooperative.address
       }
       Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
-        .then(user => resolve(user))
+        .then(cooperative => resolve(cooperative))
         .catch(error => reject(error))
     })
   }
@@ -118,7 +118,7 @@ class CooperativesController {
   delete (_id) {
     return new Promise((resolve, reject) => {
       Cooperative.remove({ _id })
-        .then(user => resolve(user))
+        .then(cooperative => resolve(cooperative))
         .catch(error => reject(error))
     })
   }
@@ -132,7 +132,7 @@ class CooperativesController {
             // console.log(_cooperative)
             var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
             return Cooperative.findOneAndUpdate({ _id }, { $set: { verify: true, rand: newrand } })
-              .then(user => resolve(user))
+              .then(cooperative => resolve(cooperative))
               .catch(error => reject(error))
           } else {
             reject('Incorrect token')
@@ -148,7 +148,7 @@ class CooperativesController {
         .then(_cooperative => {
           if (!_cooperative.verify) {
             return Cooperative.findOneAndUpdate({ _id }, { $set: { rand: newrand } })
-              .then(user => resolve(user))
+              .then(cooperative => resolve(cooperative))
               .catch(error => reject(error))
           } else {
             reject({ errorCode: 'Account already verify', msg: 'Account already verify' })
@@ -217,7 +217,7 @@ class CooperativesController {
             bcrypt.compare(oldPassword, _cooperative.password, function (_err, res) {
               if (res) {
                 Cooperative.findOneAndUpdate({ email }, { $set: { password: hashPassword } })
-                  .then(user => resolve(user))
+                  .then(cooperative => resolve(cooperative))
                   .catch(error => reject(error))
               } else {
                 return reject({ errorCode: 'Incorrect password', msg: 'Incorrect password' })

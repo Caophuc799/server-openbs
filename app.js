@@ -36,6 +36,14 @@ const connectWithRetry = () => {
 }
 connectWithRetry()
 
+// Etherium
+
+var web3 = require('./services/web3')
+
+var TokenOpenBS = require('./services/TokenOpenBS')
+// Mongo
+var blockStart = require('./constants/constant').blockStart
+
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded())
@@ -91,5 +99,41 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
+
+// setupListenEventSmartContract()
+
+// setInterval(pingInfura, 3000)
+// var na = 0
+
+function pingInfura () {
+  web3.eth.getBlockNumber().then(console.log)
+  if (na === 1) {
+    tempat()
+    na += 1;
+  } else {
+    na += 1;
+  }
+}
+
+function tempat () {
+  TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
+    .then((result) => {
+      console.log(result)
+      // console.log(error)
+      return result
+    })
+    .catch(error => {
+      console.log(error)
+      return error
+    })
+}
+
+function setupListenEventSmartContract () {
+  console.log('setupListenEventSmartContract')
+  TokenOpenBS.events.allEvents({ fromBlock: blockStart, toBlock: 'latest' }, (err, result) => {
+    console.log('error 72: ', err)
+    console.log('reuslt 73: ', result)
+  })
+}
 
 module.exports = app
