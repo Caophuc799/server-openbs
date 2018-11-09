@@ -20,7 +20,7 @@ class UsersController {
 
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
-      User.find({ _id }, projection, options)
+      User.findOne({ _id }, projection, options)
         .then(users => resolve(users))
         .catch(error => reject(error))
     })
