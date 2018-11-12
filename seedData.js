@@ -14,8 +14,9 @@ export const removeData = async () => {
   })
 }
 
-export const seedUser = () => {
-  return new Promise((resolve, reject) => {
+export const seedUser = async () => {
+  await new Promise((resolve, reject) => {
+    console.log('seedUser')
     const currentUser = {
       avatar: 'QmQ66njK6KTGY2fMGNk7WAy2wLGxQN9DRvkqzaCQG9oUvF',
       phoneNumber: '2',
@@ -38,8 +39,9 @@ export const seedUser = () => {
   })
 }
 
-export const seedCooperative = () => {
-  return new Promise((resolve, reject) => {
+export const seedCooperative = async () => {
+  await new Promise((resolve, reject) => {
+    console.log('seedCooperative')
     const currentCooperative = [{
       logo: 'QmXZiBbFk2Xhyuzdoqvr869HkKg9JhCSpnkwqHcJj9gAfy',
       active: true,
@@ -121,14 +123,16 @@ export const seedCooperative = () => {
           })
       })).then(result => {
       // console.log(result)
+      console.log('result Cooperative')
     }).catch(error => {
       console.log(error)
     })
   })
 }
 
-export const seedMangoTree = () => {
-  return new Promise((resolve, reject) => {
+export const seedMangoTree = async () => {
+  await new Promise((resolve, reject) => {
+    console.log('seedMangoTree')
     const currentMangotree = [{
       image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
       idBuyer: null,
@@ -245,6 +249,7 @@ export const seedMangoTree = () => {
           })
       })).then(result => {
       // console.log(result)
+      console.log('Result seedMangoTree')
     }).catch(error => {
       console.log(error)
     })
