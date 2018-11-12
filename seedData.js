@@ -40,7 +40,7 @@ export const seedUser = () => {
 
 export const seedCooperative = () => {
   return new Promise((resolve, reject) => {
-    const currentCooperative = {
+    const currentCooperative = [{
       logo: 'QmXZiBbFk2Xhyuzdoqvr869HkKg9JhCSpnkwqHcJj9gAfy',
       active: true,
       verify: true,
@@ -53,12 +53,77 @@ export const seedCooperative = () => {
       phoneNumber: '012366885',
       address: 'thanh hoa',
       password: '$2b$08$ZJzUhErPoV9pHHSwJvls.O5zXRZxRNnXeg4jytARtVAbBdT/fRpHa'
-    }
-    return Cooperative.create(currentCooperative)
-      .then(cooperative => resolve(cooperative))
-      .catch(error => {
-        return reject(error)
-      })
+    },
+    {
+      logo: 'QmUNFidVTqak4VXBP6HWSUx8RMsVsdPCwKobuQo45Mff7C',
+      active: true,
+      verify: true,
+      rand: 0,
+      _id: '5bdc2750b003813780a29b8a',
+      idRepresentation: '5bdc1c0c190ff22b68a98ece',
+      taxCode: '1234124',
+      name: 'Sáu Xoài',
+      email: 'caophuc799@gmail.com',
+      phoneNumber: '012366885',
+      address: 'thanh hoa',
+      password: '$2b$08$ZJzUhErPoV9pHHSwJvls.O5zXRZxRNnXeg4jytARtVAbBdT/fRpHa'
+    },
+    {
+      logo: 'QmRW8o6fKarhurk3BDFGoqn5PR1Mi9z7Yb9H8t8Ur9zxYC',
+      active: true,
+      verify: true,
+      rand: 0,
+      _id: '5bdc2750b003813780a29b6b',
+      idRepresentation: '5bdc1c0c190ff22b68a98ece',
+      taxCode: '1234125',
+      name: 'Xoài cam lâm',
+      email: 'caophuc799@gmail.com',
+      phoneNumber: '012366885',
+      address: 'thanh hoa',
+      password: '$2b$08$ZJzUhErPoV9pHHSwJvls.O5zXRZxRNnXeg4jytARtVAbBdT/fRpHa'
+    },
+    {
+      logo: 'QmUkadaYGmSnr6QxfJgF6tbPzx6aMpEXhbuzHBpbr253D8',
+      active: true,
+      verify: true,
+      rand: 0,
+      _id: '5bdc2750b003813780a29b4b',
+      idRepresentation: '5bdc1c0c190ff22b68a98ece',
+      taxCode: '1204123',
+      name: 'Xoài cát tiền giang',
+      email: 'caophuc799@gmail.com',
+      phoneNumber: '012366885',
+      address: 'thanh hoa',
+      password: '$2b$08$ZJzUhErPoV9pHHSwJvls.O5zXRZxRNnXeg4jytARtVAbBdT/fRpHa'
+    },
+    {
+      logo: 'QmXZiBbFk2Xhyuzdoqvr869HkKg9JhCSpnkwqHcJj9gAfy',
+      active: true,
+      verify: true,
+      rand: 0,
+      _id: '5bdc2750b003813780a39b8b',
+      idRepresentation: '5bdc1c0c190ff22b68a98ece',
+      taxCode: '1534123',
+      name: 'Xoài lắc ba thơ',
+      email: 'caophuc799@gmail.com',
+      phoneNumber: '012366885',
+      address: 'thanh hoa',
+      password: '$2b$08$ZJzUhErPoV9pHHSwJvls.O5zXRZxRNnXeg4jytARtVAbBdT/fRpHa'
+    }]
+    Promise.all(
+      currentCooperative.map(item => {
+        return Cooperative.create(item)
+          .then(mangotree => {
+            return mangotree
+          })
+          .catch(error => {
+            return error
+          })
+      })).then(result => {
+      // console.log(result)
+    }).catch(error => {
+      console.log(error)
+    })
   })
 }
 
@@ -70,62 +135,62 @@ export const seedMangoTree = () => {
       savedInEther: false,
       _id: '5be52be9dcd546284863588f',
       idTree: '1',
-      name: 'Xoài cát 1',
+      name: 'Xoài cát Tiền Giang 1',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a29b4b',
       price: 21,
       oldBuyer: [],
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmXy5R5SqCb47ut6MZuJHBo9yqNMY2nUR9XkU6d5wbRm6b',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863588e',
       idTree: '2',
-      name: 'Xoài cát 2',
+      name: 'Xoài Sáu Xoài 1',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a29b8a',
       price: 24,
       oldBuyer: [],
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmenFoCpUZF5FHijDwxFCn5vSpg9N5uJxU49PnVs3kMLCg',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863588c',
       idTree: '3',
-      name: 'Xoài cát 3',
+      name: 'Xoài Cam Lâm 1',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a29b6b',
       price: 25,
       oldBuyer: [],
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmfXUFs1QBkaDHMrwBqkDSDzovtVXafvLRXgLk3BxxEKfJ',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863588b',
       idTree: '4',
-      name: 'Xoài cát 4',
+      name: 'Xoài cam lâm 2',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a29b6b',
       price: 26,
       oldBuyer: [],
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmZxjUKjk8uG6buvCDHfDzD6fmKdPMESBwVFodPbiZba4E',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863588d',
@@ -140,47 +205,32 @@ export const seedMangoTree = () => {
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmfXqnPGdpsRi7sdgYbsFb6B4yfLiP6yWi7uTWPbJPpNjw',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863588a',
       idTree: '6',
-      name: 'Xoài cát 6',
+      name: 'Xoài Ba Thơ Vàng',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a39b8b',
       price: 29,
       oldBuyer: [],
       productivity: []
     },
     {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
+      image: 'QmPWJRsHgUWYYuEMURbWpt23t4cz6eix3oiCHUQhdzmSrU',
       idBuyer: null,
       savedInEther: false,
       _id: '5be52be9dcd546284863568a',
       idTree: '9',
-      name: 'Xoài cát 9',
+      name: 'Xoài Ba Thơ Tím',
       category: 'Xoài',
       description: 'good',
       timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
+      idCooperative: '5bdc2750b003813780a39b8b',
       price: 29,
-      oldBuyer: [],
-      productivity: []
-    },
-    {
-      image: 'QmVwBJ3zDDrWqeg67iDV4gYUFfjaSmwCdNbKLN4oavQYLP',
-      idBuyer: null,
-      savedInEther: false,
-      _id: '5be52be9dcd546284863589a',
-      idTree: '10',
-      name: 'Xoài cát 10',
-      category: 'Xoài',
-      description: 'good',
-      timeStartPlant: '2000-12-11T17:00:00.000Z',
-      idCooperative: '5bdc2750b003813780a29b8b',
-      price: 21,
       oldBuyer: [],
       productivity: []
     }]
@@ -194,7 +244,7 @@ export const seedMangoTree = () => {
             return error
           })
       })).then(result => {
-      console.log(result)
+      // console.log(result)
     }).catch(error => {
       console.log(error)
     })

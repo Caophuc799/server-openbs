@@ -100,10 +100,10 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-// seedData()
+seedData()
 async function seedData () {
   // remove data
-  await removeData()
+  // await removeData()
   await seedUser()
   await seedCooperative()
   await seedMangoTree()
