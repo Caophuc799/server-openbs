@@ -5,6 +5,7 @@ import passport from 'passport'
 import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
 import { urlMongo, localhosturlMongo } from './constants/constant'
+import { seedUser, seedCooperative, seedMangoTree, removeData } from './seedData'
 const app = express()
 mongoose.Promise = require('bluebird')
 mongoose.set('useCreateIndex', true)
@@ -27,7 +28,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(urlMongo, options).then(() => {
+  mongoose.connect(localhosturlMongo, options).then(() => {
     console.log('MongoDB is connected')
   }).catch(_err => {
     console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
@@ -99,6 +100,15 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
+// seedData()
+async function seedData () {
+  // remove data
+  await removeData()
+  await seedUser()
+  await seedCooperative()
+  await seedMangoTree()
+}
+
 // setupListenEventSmartContract()
 // setInterval(pingInfura, 3000)
 
@@ -106,7 +116,7 @@ var na = 0
 
 function pingInfura () {
   web3.eth.getBlockNumber().then(console.log)
-  if (na > 1) {
+  if (na === 1) {
     tempat()
     na += 1
   } else {
@@ -114,30 +124,15 @@ function pingInfura () {
   }
 }
 
-function tempat () {
-  // console.log(TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne'))
-  // TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
-  // const address = web3.eth.accounts.create().address
-  // console.log()
-  // console.log(web3.eth.accounts)
+async function tempat () {
   web3.eth.accounts.privateKeyToAccount('0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034')
-  console.log(web3.eth.accounts.sign('caophuc'))
-
-  // TokenOpenBS.methods.mintUniqueTokenTo('0x740235215c70A6C68a132f4502441c48a5D88A51', 14, 'TOT')
-  //   .call({ from: web3.eth.accounts[0], gas: 5000000 }, function (error, transactionHash) {
-  //     console.log('transaction: ', transactionHash)
-  //     console.log('error: ', error)
-  //   })
-  // TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
-  //   .then((result) => {
-  //     console.log(result)
-  //     // console.log(error)
-  //     return result
-  //   })
-  //   .catch(error => {
-  //     console.log(error)
-  //     return error
-  //   })
+  const net = await web3.eth.net.getId()
+  console.log(net)
+  TokenOpenBS.methods.mintUniqueTokenTo('0xc23e221736376daf733F19bA17009F53D71e059a', 1, 'TOT')
+    .call({ from: web3.eth.accounts[0] || '0xc23e221736376daf733F19bA17009F53D71e059a', gas: 5000000000 }, function (error, transactionHash) {
+      console.log('transaction: ', transactionHash)
+      console.log('error: ', error)
+    })
 }
 
 function setupListenEventSmartContract () {
@@ -146,9 +141,8 @@ function setupListenEventSmartContract () {
     fromBlock: blockStart,
     toBlock: 'latest'
   }, function (error, events) {
-    if (error) return console.log('146 Error: ', error)
+    if (error) return console.log(error)
     console.log(events)
-    // handleEvents(events)
   })
 }
 

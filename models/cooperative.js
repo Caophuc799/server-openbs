@@ -15,6 +15,10 @@ var Cooperative = new Schema({
     required: true,
     unique: true
   },
+  logo: {
+    type: String,
+    default: ''
+  },
   idRepresentation: {
     type: String,
     required: true

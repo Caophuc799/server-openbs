@@ -1,0 +1,6 @@
+Vào node_modules/web3-eth-abi/src/index.js
+Sửa dòng code sau:
+
+- var notIndexedParams = (nonIndexedData) ? this.decodeParameters(notIndexedInputs, nonIndexedData) : [];
++ var notIndexedParams = (nonIndexedData && nonIndexedData !== '0x') ? this.decodeParameters(notIndexedInputs, nonIndexedData) : [];
+ 

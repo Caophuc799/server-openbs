@@ -70,7 +70,8 @@ class CooperativesController {
                     phoneNumber: _cooperative.phoneNumber,
                     address: _cooperative.address,
                     password: hashPassword,
-                    rand: rand
+                    rand: rand,
+                    logo: _cooperative.logo
                   }
                   console.log(currentCooperative)
                   return Cooperative.create(currentCooperative)
@@ -114,7 +115,8 @@ class CooperativesController {
                 taxCode: _cooperative.taxCode,
                 name: _cooperative.name,
                 phoneNumber: _cooperative.phoneNumber,
-                address: _cooperative.address
+                address: _cooperative.address,
+                logo: _cooperative.logo
               }
               return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
                 .then(cooperative => resolve(cooperative))
@@ -133,7 +135,8 @@ class CooperativesController {
         taxCode: _cooperative.taxCode,
         name: _cooperative.name,
         phoneNumber: _cooperative.phoneNumber,
-        address: _cooperative.address
+        address: _cooperative.address,
+        logo: _cooperative.logo
       }
       return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
         .then(cooperative => resolve(cooperative))

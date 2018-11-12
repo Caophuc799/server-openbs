@@ -1,29 +1,59 @@
 var web3 = require('./web3')
 // Your contract address
-const address = '0x7060c0a7b79fc52135bca471cc7e9c4c0de1618d'
+const address = '0x63f3ae3f3158e03409827b2c754078a68eedc5bf'
 // Your contract ABI
 const abi = [
   {
-    'anonymous': false,
+    'constant': true,
     'inputs': [
       {
-        'indexed': true,
-        'name': '_owner',
-        'type': 'address'
-      },
+        'name': '_interfaceId',
+        'type': 'bytes4'
+      }
+    ],
+    'name': 'supportsInterface',
+    'outputs': [
       {
-        'indexed': true,
-        'name': '_operator',
-        'type': 'address'
-      },
-      {
-        'indexed': false,
-        'name': '_approved',
+        'name': '',
         'type': 'bool'
       }
     ],
-    'name': 'ApprovalForAll',
-    'type': 'event'
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [],
+    'name': 'name',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'string'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'getApproved',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'address'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
   },
   {
     'constant': false,
@@ -38,6 +68,123 @@ const abi = [
       }
     ],
     'name': 'approve',
+    'outputs': [],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [],
+    'name': 'totalSupply',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'uint256'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [],
+    'name': 'InterfaceId_ERC165',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'bytes4'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': false,
+    'inputs': [
+      {
+        'name': '_from',
+        'type': 'address'
+      },
+      {
+        'name': '_to',
+        'type': 'address'
+      },
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'transferFrom',
+    'outputs': [],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+  },
+  {
+    'constant': false,
+    'inputs': [
+      {
+        'name': '_to',
+        'type': 'address'
+      },
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      },
+      {
+        'name': '_tokenURI',
+        'type': 'string'
+      }
+    ],
+    'name': 'mintUniqueTokenTo',
+    'outputs': [],
+    'payable': false,
+    'stateMutability': 'nonpayable',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_owner',
+        'type': 'address'
+      },
+      {
+        'name': '_index',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'tokenOfOwnerByIndex',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'uint256'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': false,
+    'inputs': [
+      {
+        'name': '_from',
+        'type': 'address'
+      },
+      {
+        'name': '_to',
+        'type': 'address'
+      },
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'safeTransferFrom',
     'outputs': [],
     'payable': false,
     'stateMutability': 'nonpayable',
@@ -62,6 +209,96 @@ const abi = [
     'type': 'function'
   },
   {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'exists',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'bool'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_index',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'tokenByIndex',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'uint256'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_tokenId',
+        'type': 'uint256'
+      }
+    ],
+    'name': 'ownerOf',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'address'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [
+      {
+        'name': '_owner',
+        'type': 'address'
+      }
+    ],
+    'name': 'balanceOf',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'uint256'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'constant': true,
+    'inputs': [],
+    'name': 'symbol',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'string'
+      }
+    ],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
     'constant': false,
     'inputs': [
       {
@@ -69,15 +306,11 @@ const abi = [
         'type': 'address'
       },
       {
-        'name': '_tokenId',
-        'type': 'uint256'
-      },
-      {
-        'name': '_tokenURI',
-        'type': 'string'
+        'name': '_approved',
+        'type': 'bool'
       }
     ],
-    'name': 'mintUniqueTokenTo',
+    'name': 'setApprovalForAll',
     'outputs': [],
     'payable': false,
     'stateMutability': 'nonpayable',
@@ -110,44 +343,61 @@ const abi = [
     'type': 'function'
   },
   {
-    'constant': false,
+    'constant': true,
     'inputs': [
-      {
-        'name': '_from',
-        'type': 'address'
-      },
-      {
-        'name': '_to',
-        'type': 'address'
-      },
       {
         'name': '_tokenId',
         'type': 'uint256'
       }
     ],
-    'name': 'safeTransferFrom',
-    'outputs': [],
+    'name': 'tokenURI',
+    'outputs': [
+      {
+        'name': '',
+        'type': 'string'
+      }
+    ],
     'payable': false,
-    'stateMutability': 'nonpayable',
+    'stateMutability': 'view',
     'type': 'function'
   },
   {
-    'constant': false,
+    'constant': true,
     'inputs': [
       {
-        'name': '_to',
+        'name': '_owner',
         'type': 'address'
       },
       {
-        'name': '_approved',
+        'name': '_operator',
+        'type': 'address'
+      }
+    ],
+    'name': 'isApprovedForAll',
+    'outputs': [
+      {
+        'name': '',
         'type': 'bool'
       }
     ],
-    'name': 'setApprovalForAll',
-    'outputs': [],
+    'payable': false,
+    'stateMutability': 'view',
+    'type': 'function'
+  },
+  {
+    'inputs': [
+      {
+        'name': '_name',
+        'type': 'string'
+      },
+      {
+        'name': '_symbol',
+        'type': 'string'
+      }
+    ],
     'payable': false,
     'stateMutability': 'nonpayable',
-    'type': 'function'
+    'type': 'constructor'
   },
   {
     'anonymous': false,
@@ -197,353 +447,23 @@ const abi = [
     'anonymous': false,
     'inputs': [
       {
-        'indexed': false,
-        'name': '_from',
-        'type': 'address'
-      },
-      {
-        'indexed': false,
-        'name': '_to',
-        'type': 'address'
-      },
-      {
-        'indexed': false,
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'TranferToken',
-    'type': 'event'
-  },
-  {
-    'anonymous': false,
-    'inputs': [
-      {
-        'indexed': false,
-        'name': '_to',
-        'type': 'address'
-      },
-      {
-        'indexed': false,
-        'name': '_tokenId',
-        'type': 'uint256'
-      },
-      {
-        'indexed': false,
-        'name': '_tokenURI',
-        'type': 'string'
-      }
-    ],
-    'name': 'MintToken',
-    'type': 'event'
-  },
-  {
-    'anonymous': false,
-    'inputs': [
-      {
-        'indexed': false,
+        'indexed': true,
         'name': '_owner',
         'type': 'address'
       },
       {
-        'indexed': false,
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'BurnToken',
-    'type': 'event'
-  },
-  {
-    'constant': false,
-    'inputs': [
-      {
-        'name': '_from',
-        'type': 'address'
-      },
-      {
-        'name': '_to',
-        'type': 'address'
-      },
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'transferFrom',
-    'outputs': [],
-    'payable': false,
-    'stateMutability': 'nonpayable',
-    'type': 'function'
-  },
-  {
-    'inputs': [
-      {
-        'name': '_name',
-        'type': 'string'
-      },
-      {
-        'name': '_symbol',
-        'type': 'string'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'nonpayable',
-    'type': 'constructor'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_owner',
-        'type': 'address'
-      }
-    ],
-    'name': 'balanceOf',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'uint256'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'exists',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'bool'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'getApproved',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'address'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [],
-    'name': 'InterfaceId_ERC165',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'bytes4'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_owner',
-        'type': 'address'
-      },
-      {
+        'indexed': true,
         'name': '_operator',
         'type': 'address'
-      }
-    ],
-    'name': 'isApprovedForAll',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'bool'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [],
-    'name': 'name',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'string'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'ownerOf',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'address'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_interfaceId',
-        'type': 'bytes4'
-      }
-    ],
-    'name': 'supportsInterface',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'bool'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [],
-    'name': 'symbol',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'string'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_index',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'tokenByIndex',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'uint256'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_owner',
-        'type': 'address'
       },
       {
-        'name': '_index',
-        'type': 'uint256'
+        'indexed': false,
+        'name': '_approved',
+        'type': 'bool'
       }
     ],
-    'name': 'tokenOfOwnerByIndex',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'uint256'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'tokenURI',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'string'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [],
-    'name': 'totalSupply',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'uint256'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
-  },
-  {
-    'constant': true,
-    'inputs': [
-      {
-        'name': '_tokenId',
-        'type': 'uint256'
-      }
-    ],
-    'name': 'viewTokenURI',
-    'outputs': [
-      {
-        'name': '',
-        'type': 'string'
-      }
-    ],
-    'payable': false,
-    'stateMutability': 'view',
-    'type': 'function'
+    'name': 'ApprovalForAll',
+    'type': 'event'
   }
 ]
 

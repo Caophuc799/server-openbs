@@ -77,7 +77,8 @@ class MangoTreesController {
               description: _mangotree.description,
               timeStartPlant: _mangotree.timeStartPlant,
               idCooperative: _mangotree.idCooperative,
-              price: _mangotree.price
+              price: _mangotree.price,
+              image: _mangotree.image
             }
             return Mangotree.create(currentMangotree)
               .then(mangotree => {
@@ -125,7 +126,8 @@ class MangoTreesController {
         category: _mangotree.category,
         description: _mangotree.description,
         timeStartPlant: _mangotree.timeStartPlant,
-        price: _mangotree.price
+        price: _mangotree.price,
+        image: _mangotree.image
       }
       return Mangotree.findOneAndUpdate({ _id }, { $set: currentMangotree })
         .then(mangotree => {

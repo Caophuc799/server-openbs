@@ -59,7 +59,8 @@ class UsersController {
         phoneNumber: _user.phoneNumber,
         address: _user.address,
         password: hashPassword,
-        rand: rand
+        rand: rand,
+        avatar: _user.avatar
       }
       User.create(currentUser)
         .then(user => resolve(user))
@@ -82,7 +83,8 @@ class UsersController {
         lastName: _user.lastName,
         dateOfBirth: moment(_user.dateOfBirth).format('MM/DD/YYYY'),
         phoneNumber: _user.phoneNumber,
-        address: _user.address
+        address: _user.address,
+        avatar: _user.avatar
       }
       User.findOneAndUpdate({ _id }, { $set: newUser })
         .then(user => resolve(user))
