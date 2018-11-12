@@ -99,40 +99,56 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-
 // setupListenEventSmartContract()
-
 // setInterval(pingInfura, 3000)
-// var na = 0
+
+var na = 0
 
 function pingInfura () {
   web3.eth.getBlockNumber().then(console.log)
-  if (na === 1) {
+  if (na > 1) {
     tempat()
-    na += 1;
+    na += 1
   } else {
-    na += 1;
+    na += 1
   }
 }
 
 function tempat () {
-  TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
-    .then((result) => {
-      console.log(result)
-      // console.log(error)
-      return result
-    })
-    .catch(error => {
-      console.log(error)
-      return error
-    })
+  // console.log(TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne'))
+  // TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
+  // const address = web3.eth.accounts.create().address
+  // console.log()
+  // console.log(web3.eth.accounts)
+  web3.eth.accounts.privateKeyToAccount('0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034')
+  console.log(web3.eth.accounts.sign('caophuc'))
+
+  // TokenOpenBS.methods.mintUniqueTokenTo('0x740235215c70A6C68a132f4502441c48a5D88A51', 14, 'TOT')
+  //   .call({ from: web3.eth.accounts[0], gas: 5000000 }, function (error, transactionHash) {
+  //     console.log('transaction: ', transactionHash)
+  //     console.log('error: ', error)
+  //   })
+  // TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
+  //   .then((result) => {
+  //     console.log(result)
+  //     // console.log(error)
+  //     return result
+  //   })
+  //   .catch(error => {
+  //     console.log(error)
+  //     return error
+  //   })
 }
 
 function setupListenEventSmartContract () {
   console.log('setupListenEventSmartContract')
-  TokenOpenBS.events.allEvents({ fromBlock: blockStart, toBlock: 'latest' }, (err, result) => {
-    console.log('error 72: ', err)
-    console.log('reuslt 73: ', result)
+  TokenOpenBS.getPastEvents('allEvents', { // Using an array means OR: e.g. 20 or 23
+    fromBlock: blockStart,
+    toBlock: 'latest'
+  }, function (error, events) {
+    if (error) return console.log('146 Error: ', error)
+    console.log(events)
+    // handleEvents(events)
   })
 }
 

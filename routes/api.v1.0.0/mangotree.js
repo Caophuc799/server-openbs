@@ -5,7 +5,7 @@ const router = express.Router()
 
 /* GET ALL mangos */
 router.get('/', (req, res, next) => {
-  MangoTreesController.getAll()
+  MangoTreesController.getAll(req.query || {})
     .then(mangos => res.json({ success: true, data: mangos }))
     .catch(_error => res.json({ success: false, data: _error }))
 })
