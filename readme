@@ -27,3 +27,6 @@ Docker
 build: sudo docker-compose build
 
 run: sudo docker-compose up
+
+address: '0xc23e221736376daf733F19bA17009F53D71e059a',
+  privateKey: '0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034',

@@ -10,14 +10,21 @@ var TokenOpenBS = require('../services/TokenOpenBS')
 var blockStart = require('../constants/constant').blockStart
 
 class MangoTreesController {
-  getAll (projection, options) {
+  getAll (query, projection, options) {
     // const options = {
     //   skip: 0,
     //   limit: 20,
     // }
     // const projection = "";
+    let curQuery = {}
+    if (query && query.idCooperative) {
+      curQuery.idCooperative = query.idCooperative
+    }
+    if (query && query.idBuyer) {
+      curQuery.idBuyer = query.idBuyer === 'null' ? null : query.idBuyer
+    }
     return new Promise((resolve, reject) => {
-      Mangotree.find({}, projection, options)
+      Mangotree.find(curQuery, projection, options)
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
