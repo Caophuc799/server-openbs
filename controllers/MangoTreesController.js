@@ -3,11 +3,6 @@ import Cooperative from '../models/cooperative'
 import User from '../models/user'
 import _ from 'lodash'
 import moment from 'moment'
-import OpenBSSmart from '../smartContract/OpenBSSmart'
-
-var TokenOpenBS = require('../services/TokenOpenBS')
-// Mongo
-var blockStart = require('../constants/constant').blockStart
 
 class MangoTreesController {
   getAll (query, projection, options) {
@@ -82,21 +77,13 @@ class MangoTreesController {
             }
             return Mangotree.create(currentMangotree)
               .then(mangotree => {
-                // if (_mangotree) {
-                //   return TokenOpenBS.methods.mintUniqueTokenTo('0x541a359c4651E4C64C463059E5f9a30769827f82', 12, 'Duoc r ne')
-                //     .send({
-                //       from: '0x541a359c4651E4C64C463059E5f9a30769827f82', gas: 5000000
-                //     }, (error, result) => {
-                //       console.log(result)
-                //       console.log(error)
-                //       return result
-                //     })
-                //     .catch(error => {
-                //       console.log(error)
-                //       return error
-                //     })
-                // }
-                // console.log(_mangotree)
+                // OpenBS.mintUniqueTokenTo('0xc23e221736376daf733F19bA17009F53D71e059a', 2, 'TOT 2')
+                //   .then(result => {
+                //     console.log('result 131: ', result)
+                //   })
+                //   .catch(error => {
+                //     console.log('error 134: ', error)
+                //   })
                 resolve(mangotree)
               })
               .catch(error => {

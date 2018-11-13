@@ -4,8 +4,14 @@ import bodyParser from 'body-parser'
 import passport from 'passport'
 import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
-import { urlMongo, localhosturlMongo } from './constants/constant'
+import { blockStart, urlMongo, localhosturlMongo, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
 import { seedUser, seedCooperative, seedMangoTree, removeData } from './seedData'
+
+import OpenBS from './contracts/Contract'
+// Etherium
+var web3 = require('./services/web3')
+var TokenOpenBS = require('./services/TokenOpenBS')
+
 const app = express()
 mongoose.Promise = require('bluebird')
 mongoose.set('useCreateIndex', true)
@@ -36,14 +42,6 @@ const connectWithRetry = () => {
   })
 }
 connectWithRetry()
-
-// Etherium
-
-var web3 = require('./services/web3')
-
-var TokenOpenBS = require('./services/TokenOpenBS')
-// Mongo
-var blockStart = require('./constants/constant').blockStart
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -100,23 +98,23 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-seedData()
+// seedData()
 async function seedData () {
   // remove data
   // await removeData()
-  await seedUser()
-  await seedCooperative()
-  await seedMangoTree()
+  // await seedUser()
+  // await seedCooperative()
+  // await seedMangoTree()
 }
 
-// setupListenEventSmartContract()
-// setInterval(pingInfura, 3000)
+setupListenEventSmartContract()
+setInterval(pingInfura, 3000)
 
 var na = 0
 
 function pingInfura () {
   web3.eth.getBlockNumber().then(console.log)
-  if (na === 1) {
+  if (na === 0) {
     tempat()
     na += 1
   } else {
@@ -125,14 +123,47 @@ function pingInfura () {
 }
 
 async function tempat () {
-  web3.eth.accounts.privateKeyToAccount('0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034')
-  const net = await web3.eth.net.getId()
-  console.log(net)
-  TokenOpenBS.methods.mintUniqueTokenTo('0xc23e221736376daf733F19bA17009F53D71e059a', 1, 'TOT')
-    .call({ from: web3.eth.accounts[0] || '0xc23e221736376daf733F19bA17009F53D71e059a', gas: 5000000000 }, function (error, transactionHash) {
-      console.log('transaction: ', transactionHash)
-      console.log('error: ', error)
-    })
+  let accountEther = await web3.eth.accounts.privateKeyToAccount(walletPrivateKey)
+  await web3.eth.accounts.wallet.add(accountEther)
+  // let ta = await web3.eth.accounts.wallet.encrypt('123abc')
+  // console.log(ta)
+  // web3.eth.accounts.wallet.save('123abc')
+  // web3.eth.defaultAccount = accountEther.address
+  // console.log(web3.eth.privateKeyToAccount(walletPrivateKey))
+  // var transfer = TokenOpenBS.methods.mintUniqueTokenTo('0xc23e221736376daf733F19bA17009F53D71e059a', 2, 'TOT 2')
+  //   // .call({ from: '0xc23e221736376daf733F19bA17009F53D71e059a' || 0x541a359c4651E4C64C463059E5f9a30769827f82, gas: 50000000 })
+  //   // .then((result) => {
+  //   //   console.log(result)
+  //   // })
+  //   // .catch(error => console.log(error))
+  // var encodedABI = transfer.encodeABI()
+
+  // var tx = {
+  //   from: walletAddress,
+  //   to: contractAddress,
+  //   gas: 5000000,
+  //   data: encodedABI
+  // }
+
+  // web3.eth.accounts.signTransaction(tx, walletPrivateKey).then(signed => {
+  //   var tran = web3.eth.sendSignedTransaction(signed.rawTransaction)
+
+  //   tran.on('confirmation', (confirmationNumber, receipt) => {
+  //     console.log('confirmation: ' + confirmationNumber)
+  //   })
+
+  //   tran.on('transactionHash', hash => {
+  //     console.log('hash')
+  //     console.log(hash)
+  //   })
+
+  //   tran.on('receipt', receipt => {
+  //     console.log('reciept')
+  //     console.log(receipt)
+  //   })
+
+  //   tran.on('error', console.error)
+  // })
 }
 
 function setupListenEventSmartContract () {
@@ -141,8 +172,8 @@ function setupListenEventSmartContract () {
     fromBlock: blockStart,
     toBlock: 'latest'
   }, function (error, events) {
-    if (error) return console.log(error)
-    console.log(events)
+    if (error) return console.log('Error: 176: ', error)
+    console.log('events')
   })
 }
 
