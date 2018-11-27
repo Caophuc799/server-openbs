@@ -8,7 +8,7 @@ const router = express.Router()
 
 /* GET ALL users */
 router.get('/', (req, res, next) => {
-  UsersController.getAll()
+  UsersController.getAll({ query: req.query })
     .then(users => res.json({ success: true, data: users }))
     .catch(_error => res.json({ success: false, data: [] }))
 })
@@ -26,7 +26,12 @@ router.post('/', (req, res, next) => {
       return res.json({ success: true, data: user })
     })
     .catch(_error => {
-      return res.json({ success: false, data: _error })
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
     })
 })
 
@@ -34,35 +39,70 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   UsersController.getOne(req.params.id)
     .then(user => res.json({ success: true, data: user }))
-    .catch(_error => res.json({ success: false, data: [] }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* UPDATE user */
 router.put('/:id', (req, res, next) => {
   UsersController.update(req.params.id, req.body)
     .then(user => res.json({ success: true, data: user }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* DELETE user */
 router.delete('/:id', (req, res, next) => {
   UsersController.delete(req.params.id, req.body)
     .then(user => res.json({ success: true, data: user }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Login by Email */
 router.post('/login', function (req, res) {
   UsersController.login(req.body)
     .then(user => res.json({ success: true, data: user }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {
   UsersController.changePassword(req.body)
     .then(user => res.json({ success: true, data: user }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Verify Email */
@@ -91,7 +131,12 @@ router.get('/resend/:id', (req, res, next) => {
       return res.json({ success: true, data: user })
     })
     .catch(_error => {
-      return res.json({ success: false, data: _error })
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
     })
 })
 

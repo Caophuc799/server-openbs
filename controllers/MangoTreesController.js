@@ -73,7 +73,8 @@ class MangoTreesController {
               timeStartPlant: _mangotree.timeStartPlant,
               idCooperative: _mangotree.idCooperative,
               price: _mangotree.price,
-              image: _mangotree.image
+              image: _mangotree.image,
+              manyImages: _mangotree.manyImages || []
             }
             return Mangotree.create(currentMangotree)
               .then(mangotree => {
@@ -108,7 +109,6 @@ class MangoTreesController {
         return reject({ errorCode: 'price greater than 0', msg: 'price greater than 0' })
       }
       const currentMangotree = {
-        idTree: _mangotree.idTree,
         name: _mangotree.name,
         category: _mangotree.category,
         description: _mangotree.description,
@@ -116,7 +116,14 @@ class MangoTreesController {
         price: _mangotree.price,
         image: _mangotree.image
       }
-      return Mangotree.findOneAndUpdate({ _id }, { $set: currentMangotree })
+      if (_mangotree.idTree) {
+        currentMangotree.idTree = _mangotree.idTree
+      }
+      let expression = { $set: currentMangotree }
+      if (_mangotree.manyImages) {
+        expression['$push'] = { manyImages: _mangotree.manyImages }
+      }
+      return Mangotree.findOneAndUpdate({ _id }, expression)
         .then(mangotree => {
           resolve(mangotree)
         })

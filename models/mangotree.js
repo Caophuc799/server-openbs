@@ -19,6 +19,12 @@ var MangoTree = new Schema({
     type: String,
     default: ''
   },
+  manyImages: [
+    {
+      type: String,
+      default: ''
+    }
+  ],
   category: {
     type: String,
     required: true

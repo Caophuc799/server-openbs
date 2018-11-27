@@ -17,7 +17,12 @@ router.post('/', (req, res, next) => {
       return res.json({ success: true, data: mango })
     })
     .catch(_error => {
-      return res.json({ success: false, data: _error })
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
     })
 })
 
@@ -25,28 +30,56 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   MangoTreesController.getOne(req.params.id)
     .then(mango => res.json({ success: true, data: mango }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* UPDATE mango */
 router.put('/:id', (req, res, next) => {
   MangoTreesController.update(req.params.id, req.body)
     .then(mango => res.json({ success: true, data: mango }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* DELETE mango */
 router.delete('/:id', (req, res, next) => {
   MangoTreesController.delete(req.params.id, req.body)
     .then(mango => res.json({ success: true, data: mango }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* BUY mango */
 router.put('/buy/:id', (req, res, next) => {
   MangoTreesController.buyMangoTree(req.params.id, req.body)
     .then(mango => res.json({ success: true, data: mango }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 export default router

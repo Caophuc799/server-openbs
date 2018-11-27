@@ -5,11 +5,16 @@ import moment from 'moment'
 import bcrypt from 'bcrypt'
 
 class UsersController {
-  getAll (projection, options) {
-    // const options = {
-    //   skip: 0,
-    //   limit: 20,
-    // }
+  getAll (query = { offset: 0, limit: 0 }, projection) {
+    let options
+    if (query) {
+      console.log(query)
+      options = {
+        skip: parseInt(query.offset * query.limit) || 0,
+        limit: parseInt(query.limit) || 0
+      }
+    }
+    console.log(options)
     // const projection = "";
     return new Promise((resolve, reject) => {
       User.find({}, projection, options)
@@ -21,7 +26,13 @@ class UsersController {
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       User.findOne({ _id }, projection, options)
-        .then(users => resolve(users))
+        .then(users => {
+          if (users) {
+            return resolve(users)
+          } else {
+            reject({ status: 404, errorCode: `Doesn't exist user`, msg: `Doesn't exist user` })
+          }
+        })
         .catch(error => reject(error))
     })
   }
@@ -29,25 +40,25 @@ class UsersController {
   create (_user, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_user)) {
-        return reject({ errorCode: 'user not null', msg: 'User not null' })
+        return reject({ status: 422, errorCode: 'user not null', msg: 'User not null' })
       }
       if (!_user.firstName) {
-        return reject({ errorCode: 'firstName not_null', msg: 'firstName not null' })
+        return reject({ status: 422, errorCode: 'firstName not_null', msg: 'firstName not null' })
       }
       if (!_user.dateOfBirth) {
-        return reject({ errorCode: 'dateOfBirth not_null', msg: 'dateOfBirth not null' })
+        return reject({ status: 422, errorCode: 'dateOfBirth not_null', msg: 'dateOfBirth not null' })
       }
       if (!moment(_user.dateOfBirth, 'MM/DD/YYYY', true).isValid()) {
-        return reject({ errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
+        return reject({ status: 422, errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
       }
       if (!_user.email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
       }
       if (!validateEmail(_user.email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
       }
       if (!_user.password) {
-        return reject({ errorCode: 'password not_null', msg: 'password not null' })
+        return reject({ status: 422, errorCode: 'password not_null', msg: 'password not null' })
       }
       var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
@@ -73,10 +84,10 @@ class UsersController {
   update (_id, _user) {
     return new Promise((resolve, reject) => {
       if (_user.email) {
-        return reject({ errorCode: 'can not update email', msg: 'can not update email' })
+        return reject({ status: 403, errorCode: 'can not update email', msg: 'can not update email' })
       }
       if (_user.dateOfBirth && !moment(_user.dateOfBirth, 'MM/DD/YYYY', true).isValid()) {
-        return reject({ errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
+        return reject({ status: 422, errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
       }
       let newUser = {
         firstName: _user.firstName,
@@ -87,14 +98,20 @@ class UsersController {
         avatar: _user.avatar
       }
       User.findOneAndUpdate({ _id }, { $set: newUser })
-        .then(user => resolve(user))
+        .then(user => {
+          if (user) {
+            resolve(user)
+          } else {
+            reject({ status: 404, errorCode: `Doesn't exist user`, msg: `Doesn't exist user` })
+          }
+        })
         .catch(error => reject(error))
     })
   }
 
   delete (_id) {
     return new Promise((resolve, reject) => {
-      User.remove({ _id })
+      User.deleteOne({ _id })
         .then(user => resolve(user))
         .catch(error => reject(error))
     })
@@ -170,19 +187,19 @@ class UsersController {
   changePassword ({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
       }
       if (!validateEmail(email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
       }
       if (!oldPassword) {
-        return reject({ errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })
+        return reject({ status: 422, errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })
       }
       if (!newPassword) {
-        return reject({ errorCode: 'newPassword not_null', msg: 'newPassword not null' })
+        return reject({ status: 422, errorCode: 'newPassword not_null', msg: 'newPassword not null' })
       }
       if (newPassword === oldPassword) {
-        return reject({ errorCode: 'newPassword must same oldPassword', msg: 'newPassword must same oldPassword' })
+        return reject({ status: 422, errorCode: 'newPassword must same oldPassword', msg: 'newPassword must same oldPassword' })
       }
       var hashPassword = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(8), null)
       User.findOne({ email })

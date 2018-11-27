@@ -26,7 +26,12 @@ router.post('/', (req, res, next) => {
       return res.json({ success: true, data: cooperative })
     })
     .catch(_error => {
-      return res.json({ success: false, data: _error })
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
     })
 })
 
@@ -34,35 +39,70 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   CooperativesController.getOne(req.params.id)
     .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => res.json({ success: false, data: [] }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* UPDATE cooperative */
 router.put('/:id', (req, res, next) => {
   CooperativesController.update(req.params.id, req.body)
     .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* DELETE cooperative */
 router.delete('/:id', (req, res, next) => {
   CooperativesController.delete(req.params.id, req.body)
     .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Login by Email */
 router.post('/login', function (req, res) {
   CooperativesController.login(req.body)
     .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {
   CooperativesController.changePassword(req.body)
     .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
+    })
 })
 
 /* Verify Email */
@@ -91,7 +131,12 @@ router.get('/resend/:id', (req, res, next) => {
       return res.json({ success: true, data: cooperative })
     })
     .catch(_error => {
-      return res.json({ success: false, data: _error })
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      return res.json(status, { success: false, data: _error })
     })
 })
 

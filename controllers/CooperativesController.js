@@ -31,25 +31,25 @@ class CooperativesController {
   create (_cooperative, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
-        return reject({ errorCode: 'cooperative not null', msg: 'Cooperative not null' })
+        return reject({ status: 422, errorCode: 'cooperative not null', msg: 'Cooperative not null' })
       }
       if (!_cooperative.name) {
-        return reject({ errorCode: 'name not_null', msg: 'name not null' })
+        return reject({ status: 422, errorCode: 'name not_null', msg: 'name not null' })
       }
       if (!_cooperative.email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
       }
       if (!validateEmail(_cooperative.email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
       }
       if (!_cooperative.password) {
-        return reject({ errorCode: 'password not_null', msg: 'password not null' })
+        return reject({ status: 422, errorCode: 'password not_null', msg: 'password not null' })
       }
       if (!_cooperative.idRepresentation) {
-        return reject({ errorCode: 'idRepresentation not_null', msg: 'idRepresentation not null' })
+        return reject({ status: 422, errorCode: 'idRepresentation not_null', msg: 'idRepresentation not null' })
       }
       if (!_cooperative.taxCode) {
-        return reject({ errorCode: 'taxCode not_null', msg: 'taxCode not null' })
+        return reject({ status: 422, errorCode: 'taxCode not_null', msg: 'taxCode not null' })
       }
       var hashPassword = bcrypt.hashSync(_cooperative.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_cooperative.dateOfBirth))
@@ -80,15 +80,15 @@ class CooperativesController {
                       return reject(error)
                     })
                 } else {
-                  reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+                  reject({ status: 404, errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
                 }
               })
               .catch(error => {
                 console.log(error)
-                reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+                reject({ status: 404, errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
               })
           } else {
-            reject({ errorCode: 'taxcode fail', msg: 'taxcode fail' })
+            reject({ status: 404, errorCode: 'taxcode fail', msg: 'taxcode fail' })
           }
         })
         .catch(_error => {
