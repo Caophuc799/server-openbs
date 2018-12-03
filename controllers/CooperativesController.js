@@ -2,6 +2,7 @@ import Cooperative from '../models/cooperative'
 import User from '../models/user'
 import axios from 'axios'
 import _ from 'lodash'
+import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import moment from 'moment'
 import bcrypt from 'bcrypt'
@@ -23,7 +24,15 @@ class CooperativesController {
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Cooperative.findOne({ _id }, projection, options)
-        .then(cooperatives => resolve(cooperatives))
+        .then(cooperatives => {
+          if (cooperatives) {
+            return resolve(cooperatives)
+          } else {
+            let error = errorCode.USER_DOES_NOT_EXIST
+            error.status = 404
+            reject(error)
+          }
+        })
         .catch(error => reject(error))
     })
   }
@@ -31,25 +40,39 @@ class CooperativesController {
   create (_cooperative, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
-        return reject({ status: 422, errorCode: 'cooperative not null', msg: 'Cooperative not null' })
+        let response = errorCode.DATA_DOES_NOT_NULL
+        response.status = 200
+        return reject(response)
       }
       if (!_cooperative.name) {
-        return reject({ status: 422, errorCode: 'name not_null', msg: 'name not null' })
+        let response = errorCode.MISSING_NAME
+        response.status = 200
+        return reject(response)
       }
       if (!_cooperative.email) {
-        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(_cooperative.email)) {
-        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INVALID_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!_cooperative.password) {
-        return reject({ status: 422, errorCode: 'password not_null', msg: 'password not null' })
+        let response = errorCode.MISSING_PASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (!_cooperative.idRepresentation) {
-        return reject({ status: 422, errorCode: 'idRepresentation not_null', msg: 'idRepresentation not null' })
+        let response = errorCode.MISSING_IDREPRESENTATION
+        response.status = 200
+        return reject(response)
       }
       if (!_cooperative.taxCode) {
-        return reject({ status: 422, errorCode: 'taxCode not_null', msg: 'taxCode not null' })
+        let response = errorCode.MISSING_TAXCODE
+        response.status = 200
+        return reject(response)
       }
       var hashPassword = bcrypt.hashSync(_cooperative.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_cooperative.dateOfBirth))
@@ -60,7 +83,9 @@ class CooperativesController {
               .then(_user => {
                 if (_user) {
                   if (!_user.verify) {
-                    return reject({ errorCode: 'idrepresentation had not verify', msg: 'idrepresentation had not verify' })
+                    let response = errorCode.REPRESENTATION_DID_NOT_VERIFY
+                    response.status = 200
+                    return reject(response)
                   }
                   const currentCooperative = {
                     idRepresentation: _cooperative.idRepresentation,
@@ -80,20 +105,27 @@ class CooperativesController {
                       return reject(error)
                     })
                 } else {
-                  reject({ status: 404, errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+                  let response = errorCode.CANT_NOT_FIND_REPRESENTATION
+                  response.status = 200
+                  return reject(response)
                 }
               })
-              .catch(error => {
-                console.log(error)
-                reject({ status: 404, errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+              .catch(_error => {
+                let response = errorCode.CANT_NOT_FIND_REPRESENTATION
+                response.status = 200
+                return reject(response)
               })
           } else {
-            reject({ status: 404, errorCode: 'taxcode fail', msg: 'taxcode fail' })
+            let response = errorCode.INCORRECT_TAXCODE
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(_error => {
           console.log(_error)
-          reject({ errorCode: 'taxcode fail', msg: 'taxcode fail' })
+          let response = errorCode.INCORRECT_TAXCODE
+          response.status = 200
+          return reject(response)
         })
     })
   }
@@ -101,14 +133,18 @@ class CooperativesController {
   update (_id, _cooperative) {
     return new Promise((resolve, reject) => {
       if (_cooperative.email) {
-        return reject({ errorCode: 'can not update email', msg: 'can not update email' })
+        let response = errorCode.CAN_NOT_UPDATE_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (_cooperative.idRepresentation) {
         return User.findById({ _id: _cooperative.idRepresentation })
           .then(_user => {
             if (_user) {
               if (!_user.verify) {
-                return reject({ errorCode: 'idrepresentation had not verify', msg: 'idrepresentation had not verify' })
+                let response = errorCode.REPRESENTATION_DID_NOT_VERIFY
+                response.status = 200
+                return reject(response)
               }
               const newCooperative = {
                 idRepresentation: _cooperative.idRepresentation,
@@ -122,12 +158,15 @@ class CooperativesController {
                 .then(cooperative => resolve(cooperative))
                 .catch(error => reject(error))
             } else {
-              reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+              let response = errorCode.CANT_NOT_FIND_REPRESENTATION
+              response.status = 200
+              return reject(response)
             }
           })
-          .catch(error => {
-            console.log(error)
-            reject({ errorCode: 'Can not find idrepresentation', msg: 'Can not find idrepresentation' })
+          .catch(_error => {
+            let response = errorCode.CANT_NOT_FIND_REPRESENTATION
+            response.status = 200
+            return reject(response)
           })
       }
       const newCooperative = {
@@ -164,7 +203,9 @@ class CooperativesController {
               .then(cooperative => resolve(cooperative))
               .catch(error => reject(error))
           } else {
-            reject('Incorrect token')
+            let response = errorCode.INVALID_TOKEN
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -180,7 +221,9 @@ class CooperativesController {
               .then(cooperative => resolve(cooperative))
               .catch(error => reject(error))
           } else {
-            reject({ errorCode: 'Account already verify', msg: 'Account already verify' })
+            let response = errorCode.ALREADY_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -190,29 +233,41 @@ class CooperativesController {
   login ({ email, password }) {
     return new Promise((resolve, reject) => {
       if (!email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INVALID_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!password) {
-        return reject({ errorCode: 'password not_null', msg: 'password not null' })
+        let response = errorCode.MISSING_PASSWORD
+        response.status = 200
+        return reject(response)
       }
       Cooperative.findOne({ email })
         .then(_cooperative => {
           if (!_cooperative || _.isEmpty(_cooperative)) {
-            return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
+            let response = errorCode.USER_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
           }
           if (_cooperative && _cooperative.verify) {
             bcrypt.compare(password, _cooperative.password, function (_err, res) {
               if (res) {
                 resolve(_cooperative)
               } else {
-                return reject({ errorCode: 'Incorrect password', msg: 'Incorrect password' })
+                let response = errorCode.INCORRECT_PASSWORD
+                response.status = 200
+                return reject(response)
               }
             })
           } else {
-            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
+            let response = errorCode.DID_NOT_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -222,25 +277,37 @@ class CooperativesController {
   changePassword ({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INVALID_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!oldPassword) {
-        return reject({ errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })
+        let response = errorCode.MISSING_OLDPASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (!newPassword) {
-        return reject({ errorCode: 'newPassword not_null', msg: 'newPassword not null' })
+        let response = errorCode.MISSING_NEWPASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (newPassword === oldPassword) {
-        return reject({ errorCode: 'newPassword must same oldPassword', msg: 'newPassword must same oldPassword' })
+        let response = errorCode.OLDPASSWORD_DOES_NOT_SAME_NEWPASSWORD
+        response.status = 200
+        return reject(response)
       }
       var hashPassword = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(8), null)
       Cooperative.findOne({ email })
         .then(_cooperative => {
           if (!_cooperative || _.isEmpty(_cooperative)) {
-            return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
+            let response = errorCode.USER_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
           }
           if (_cooperative && _cooperative.verify) {
             bcrypt.compare(oldPassword, _cooperative.password, function (_err, res) {
@@ -249,11 +316,15 @@ class CooperativesController {
                   .then(cooperative => resolve(cooperative))
                   .catch(error => reject(error))
               } else {
-                return reject({ errorCode: 'Incorrect password', msg: 'Incorrect password' })
+                let response = errorCode.INCORRECT_PASSWORD
+                response.status = 200
+                return reject(response)
               }
             })
           } else {
-            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
+            let response = errorCode.DID_NOT_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))

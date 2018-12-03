@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { validateEmail } from '../services/Utils'
 import moment from 'moment'
 import bcrypt from 'bcrypt'
+import errorCode from '../constants/ErrorCode'
 
 class UsersController {
   getAll (query = { offset: 0, limit: 0 }, projection) {
@@ -30,7 +31,9 @@ class UsersController {
           if (users) {
             return resolve(users)
           } else {
-            reject({ status: 404, errorCode: `Doesn't exist user`, msg: `Doesn't exist user` })
+            let error = errorCode.USER_DOES_NOT_EXIST
+            error.status = 404
+            reject(error)
           }
         })
         .catch(error => reject(error))
@@ -40,25 +43,39 @@ class UsersController {
   create (_user, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_user)) {
-        return reject({ status: 422, errorCode: 'user not null', msg: 'User not null' })
+        let response = errorCode.DATA_DOES_NOT_NULL
+        response.status = 200
+        return reject(response)
       }
       if (!_user.firstName) {
-        return reject({ status: 422, errorCode: 'firstName not_null', msg: 'firstName not null' })
+        let response = errorCode.MISSING_FIRSTNAME
+        response.status = 200
+        return reject(response)
       }
       if (!_user.dateOfBirth) {
-        return reject({ status: 422, errorCode: 'dateOfBirth not_null', msg: 'dateOfBirth not null' })
+        let response = errorCode.MISSING_DATEOFBIRTH
+        response.status = 200
+        return reject(response)
       }
       if (!moment(_user.dateOfBirth, 'MM/DD/YYYY', true).isValid()) {
-        return reject({ status: 422, errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
+        let response = errorCode.INVALID_DATEOFBIRTH
+        response.status = 200
+        return reject(response)
       }
       if (!_user.email) {
-        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(_user.email)) {
-        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INVALID_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!_user.password) {
-        return reject({ status: 422, errorCode: 'password not_null', msg: 'password not null' })
+        let response = errorCode.MISSING_PASSWORD
+        response.status = 200
+        return reject(response)
       }
       var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
@@ -76,6 +93,11 @@ class UsersController {
       User.create(currentUser)
         .then(user => resolve(user))
         .catch(error => {
+          if (error && error.code === 11000 && error.errmsg.includes('email_1') && error.errmsg.includes('duplicate')) {
+            let response = errorCode.EMAIL_EXIST
+            response.status = 200
+            return reject(response)
+          }
           return reject(error)
         })
     })
@@ -84,10 +106,14 @@ class UsersController {
   update (_id, _user) {
     return new Promise((resolve, reject) => {
       if (_user.email) {
-        return reject({ status: 403, errorCode: 'can not update email', msg: 'can not update email' })
+        let response = errorCode.CAN_NOT_UPDATE_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (_user.dateOfBirth && !moment(_user.dateOfBirth, 'MM/DD/YYYY', true).isValid()) {
-        return reject({ status: 422, errorCode: 'type of dateOfBirth must be Date ', msg: 'type of dateOfBirth must be Date' })
+        let response = errorCode.INVALID_DATEOFBIRTH
+        response.status = 200
+        return reject(response)
       }
       let newUser = {
         firstName: _user.firstName,
@@ -102,17 +128,25 @@ class UsersController {
           if (user) {
             resolve(user)
           } else {
-            reject({ status: 404, errorCode: `Doesn't exist user`, msg: `Doesn't exist user` })
+            let response = errorCode.USER_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
           }
         })
-        .catch(error => reject(error))
+        .catch(error => {
+          console(error)
+          reject(error)
+        })
     })
   }
 
   delete (_id) {
     return new Promise((resolve, reject) => {
       User.deleteOne({ _id })
-        .then(user => resolve(user))
+        .then(user => {
+          console.log(user)
+          resolve(user)
+        })
         .catch(error => reject(error))
     })
   }
@@ -129,7 +163,9 @@ class UsersController {
               .then(user => resolve(user))
               .catch(error => reject(error))
           } else {
-            reject('Incorrect token')
+            let response = errorCode.INVALID_TOKEN
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -145,7 +181,9 @@ class UsersController {
               .then(user => resolve(user))
               .catch(error => reject(error))
           } else {
-            reject({ errorCode: 'Account already verify', msg: 'Account already verify' })
+            let response = errorCode.ALREADY_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -155,29 +193,41 @@ class UsersController {
   login ({ email, password }) {
     return new Promise((resolve, reject) => {
       if (!email) {
-        return reject({ errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(email)) {
-        return reject({ errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INVALID_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!password) {
-        return reject({ errorCode: 'password not_null', msg: 'password not null' })
+        let response = errorCode.MISSING_PASSWORD
+        response.status = 200
+        return reject(response)
       }
       User.findOne({ email })
         .then(_user => {
           if (!_user || _.isEmpty(_user)) {
-            return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
+            let response = errorCode.USER_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
           }
           if (_user && _user.verify) {
             bcrypt.compare(password, _user.password, function (_err, res) {
               if (res) {
                 resolve(_user)
               } else {
-                return reject({ errorCode: 'Incorrect password', msg: 'Incorrect password' })
+                let response = errorCode.INCORRECT_PASSWORD
+                response.status = 200
+                return reject(response)
               }
             })
           } else {
-            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
+            let response = errorCode.DID_NOT_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))
@@ -187,25 +237,37 @@ class UsersController {
   changePassword ({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
-        return reject({ status: 422, errorCode: 'email not_null', msg: 'email not null' })
+        let response = errorCode.MISSING_EMAIL
+        response.status = 200
+        return reject(response)
       }
       if (!validateEmail(email)) {
-        return reject({ status: 422, errorCode: 'email not valid', msg: 'email not valid' })
+        let response = errorCode.INCORRECT_PASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (!oldPassword) {
-        return reject({ status: 422, errorCode: 'oldPassword not_null', msg: 'oldPassword not null' })
+        let response = errorCode.MISSING_OLDPASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (!newPassword) {
-        return reject({ status: 422, errorCode: 'newPassword not_null', msg: 'newPassword not null' })
+        let response = errorCode.MISSING_NEWPASSWORD
+        response.status = 200
+        return reject(response)
       }
       if (newPassword === oldPassword) {
-        return reject({ status: 422, errorCode: 'newPassword must same oldPassword', msg: 'newPassword must same oldPassword' })
+        let response = errorCode.OLDPASSWORD_DOES_NOT_SAME_NEWPASSWORD
+        response.status = 200
+        return reject(response)
       }
       var hashPassword = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(8), null)
       User.findOne({ email })
         .then(_user => {
           if (!_user || _.isEmpty(_user)) {
-            return reject({ errorCode: 'Can not found account', msg: 'Can not found account' })
+            let response = errorCode.USER_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
           }
           if (_user && _user.verify) {
             bcrypt.compare(oldPassword, _user.password, function (_err, res) {
@@ -214,11 +276,15 @@ class UsersController {
                   .then(user => resolve(user))
                   .catch(error => reject(error))
               } else {
-                return reject({ errorCode: 'Incorrect password', msg: 'Incorrect password' })
+                let response = errorCode.INCORRECT_PASSWORD
+                response.status = 200
+                return reject(response)
               }
             })
           } else {
-            reject({ errorCode: 'Account not verify', msg: 'Account not verify' })
+            let response = errorCode.DID_NOT_VERIFY
+            response.status = 200
+            return reject(response)
           }
         })
         .catch(error => reject(error))

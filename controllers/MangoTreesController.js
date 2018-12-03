@@ -3,6 +3,7 @@ import Cooperative from '../models/cooperative'
 import User from '../models/user'
 import _ from 'lodash'
 import moment from 'moment'
+import ErrorCode from '../constants/ErrorCode'
 
 class MangoTreesController {
   getAll (query, projection, options) {
@@ -36,31 +37,49 @@ class MangoTreesController {
   create (_mangotree) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_mangotree)) {
-        return reject({ errorCode: 'Mangotree not null', msg: 'Mangotree not null' })
+        let response = ErrorCode.DATA_DOES_NOT_NULL
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.idTree) {
-        return reject({ errorCode: 'idTree not_null', msg: 'ud not null' })
+        let response = ErrorCode.MISSING_IDTREE
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.name) {
-        return reject({ errorCode: 'name not_null', msg: 'name not null' })
+        let response = ErrorCode.MISSING_NAME
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.category) {
-        return reject({ errorCode: 'category not_null', msg: 'category not null' })
+        let response = ErrorCode.MISSING_CATEGORY
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.description) {
-        return reject({ errorCode: 'description not_null', msg: 'description not null' })
+        let response = ErrorCode.MISSING_DESCRIPTION
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.timeStartPlant) {
-        return reject({ errorCode: 'timeStartPlant not_null', msg: 'timeStartPlant not null' })
+        let response = ErrorCode.MISSING_TIMESTAMP
+        response.status = 200
+        return reject(response)
       }
       if (!moment(_mangotree.timeStartPlant, 'MM/DD/YYYY', true).isValid()) {
-        return reject({ errorCode: 'type of timeStartPlant must be Date ', msg: 'type of timeStartPlant must be Date' })
+        let response = ErrorCode.INVALID_TIMESTAMP
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.idCooperative) {
-        return reject({ errorCode: 'idCooperative not_null', msg: 'idCooperative not null' })
+        let response = ErrorCode.MISSING_IDCOOPERATIVE
+        response.status = 200
+        return reject(response)
       }
       if (!_mangotree.price || (parseFloat(_mangotree.price) <= 0)) {
-        return reject({ errorCode: 'price not_null and greater than 0', msg: 'price not null and greater than 0' })
+        let response = ErrorCode.PRICE_MUST_BE_THAN_ZERO
+        response.status = 200
+        return reject(response)
       }
       return Cooperative.findById({ _id: _mangotree.idCooperative })
         .then(_cooperative => {
@@ -91,11 +110,15 @@ class MangoTreesController {
                 return reject(error)
               })
           } else {
-            reject({ errorCode: 'Can not find idCooperative', msg: 'Can not find idCooperative' })
+            let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
+            response.status = 200
+            return reject(response)
           }
         }).catch(error => {
           console.log(error)
-          reject({ errorCode: 'Can not find idCooperative', msg: 'Can not find idCooperative' })
+          let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
+          response.status = 200
+          return reject(response)
         })
     })
   }
@@ -103,10 +126,14 @@ class MangoTreesController {
   update (_id, _mangotree) {
     return new Promise((resolve, reject) => {
       if (_mangotree.idCooperative) {
-        return reject({ errorCode: 'can not update idCooperative', msg: 'can not update idCooperative' })
+        let response = ErrorCode.CAN_NOT_UPDATE_COOPERATIVE
+        response.status = 200
+        return reject(response)
       }
       if (!_.isEmpty(_mangotree.price) && parseFloat(_mangotree.price) <= 0) {
-        return reject({ errorCode: 'price greater than 0', msg: 'price greater than 0' })
+        let response = ErrorCode.PRICE_MUST_BE_THAN_ZERO
+        response.status = 200
+        return reject(response)
       }
       const currentMangotree = {
         name: _mangotree.name,
@@ -142,7 +169,9 @@ class MangoTreesController {
   buyMangoTree (_id, _mangotree) {
     return new Promise((resolve, reject) => {
       if (!_mangotree.idBuyer) {
-        return reject({ errorCode: 'idBuyer not null', msg: 'Buyer not null' })
+        let response = ErrorCode.MISSING_IDBUYER
+        response.status = 200
+        return reject(response)
       }
       return User.findById({ _id: _mangotree.idBuyer })
         .then(_user => {
@@ -154,11 +183,14 @@ class MangoTreesController {
               .then(mangotree => resolve(mangotree))
               .catch(error => reject(error))
           } else {
-            reject({ errorCode: 'Can not find idBuyer', msg: 'Can not find idBuyer' })
+            let response = ErrorCode.CANT_NOT_FIND_BUYER
+            response.status = 200
+            return reject(response)
           }
-        }).catch(error => {
-          console.log(error)
-          reject({ errorCode: 'Can not find idBuyer', msg: 'Can not find idBuyer' })
+        }).catch(_error => {
+          let response = ErrorCode.CANT_NOT_FIND_BUYER
+          response.status = 200
+          return reject(response)
         })
     })
   }

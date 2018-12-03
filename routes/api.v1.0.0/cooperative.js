@@ -1,4 +1,5 @@
 import express from 'express'
+import _ from 'lodash'
 import CooperativesController from '../../controllers/CooperativesController'
 import { transporter } from '../../constants/constant'
 
@@ -10,7 +11,15 @@ const router = express.Router()
 router.get('/', (req, res, next) => {
   CooperativesController.getAll()
     .then(cooperatives => res.json({ success: true, data: cooperatives }))
-    .catch(_error => res.json({ success: false, data: [] }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
 })
 
 /* SAVE cooperative */
@@ -31,7 +40,8 @@ router.post('/', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -45,7 +55,8 @@ router.get('/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -59,21 +70,23 @@ router.put('/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
 /* DELETE cooperative */
 router.delete('/:id', (req, res, next) => {
   CooperativesController.delete(req.params.id, req.body)
-    .then(cooperative => res.json({ success: true, data: cooperative }))
+    .then(cooperative => res.json({ success: true, data: {} }))
     .catch(_error => {
       let status = 500
       if (_error.status) {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -87,7 +100,8 @@ router.post('/login', function (req, res) {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -101,7 +115,8 @@ router.post('/changepassword', function (req, res) {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -136,7 +151,8 @@ router.get('/resend/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 

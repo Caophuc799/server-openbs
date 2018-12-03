@@ -4,7 +4,7 @@ import bodyParser from 'body-parser'
 import passport from 'passport'
 import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
-import { blockStart, urlMongo, localhosturlMongo, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
+import { blockStart, mongoLocal, mongoOnline, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
 import { seedUser, seedCooperative, seedMangoTree, removeData } from './seedData'
 
 import OpenBS from './contracts/Contract'
@@ -34,7 +34,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(urlMongo, options).then(() => {
+  mongoose.connect(mongoOnline, options).then(() => {
     console.log('MongoDB is connected')
   }).catch(_err => {
     console.log('MongoDB connection unsuccessful, retry after 5 seconds.')

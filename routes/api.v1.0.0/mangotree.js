@@ -1,4 +1,5 @@
 import express from 'express'
+import _ from 'lodash'
 import MangoTreesController from '../../controllers/MangoTreesController'
 
 const router = express.Router()
@@ -7,7 +8,15 @@ const router = express.Router()
 router.get('/', (req, res, next) => {
   MangoTreesController.getAll(req.query || {})
     .then(mangos => res.json({ success: true, data: mangos }))
-    .catch(_error => res.json({ success: false, data: _error }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
 })
 
 /* SAVE mango */
@@ -22,7 +31,8 @@ router.post('/', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -36,7 +46,8 @@ router.get('/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -50,21 +61,23 @@ router.put('/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
 /* DELETE mango */
 router.delete('/:id', (req, res, next) => {
   MangoTreesController.delete(req.params.id, req.body)
-    .then(mango => res.json({ success: true, data: mango }))
+    .then(mango => res.json({ success: true, data: {} }))
     .catch(_error => {
       let status = 500
       if (_error.status) {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
@@ -78,7 +91,8 @@ router.put('/buy/:id', (req, res, next) => {
         status = _error.status
         delete _error.status
       }
-      return res.json(status, { success: false, data: _error })
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
     })
 })
 
