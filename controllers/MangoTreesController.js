@@ -110,7 +110,7 @@ class MangoTreesController {
                 return reject(error)
               })
           } else {
-            let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
+            let response = ErrorCode.
             response.status = 200
             return reject(response)
           }

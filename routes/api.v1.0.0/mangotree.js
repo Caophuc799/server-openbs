@@ -2,8 +2,10 @@ import express from 'express'
 import _ from 'lodash'
 import MangoTreesController from '../../controllers/MangoTreesController'
 
+var {verifyToken} = require('../../services/VerifyToken')
 const router = express.Router()
 
+router.use(verifyToken)
 /* GET ALL mangos */
 router.get('/', (req, res, next) => {
   MangoTreesController.getAll(req.query || {})

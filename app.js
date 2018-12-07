@@ -34,7 +34,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(mongoOnline, options).then(() => {
+  mongoose.connect(mongoLocal, options).then(() => {
     console.log('MongoDB is connected')
   }).catch(_err => {
     console.log('MongoDB connection unsuccessful, retry after 5 seconds.')
@@ -98,17 +98,17 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-// seedData()
+seedData()
 async function seedData () {
   // remove data
-  // await removeData()
-  // await seedUser()
-  // await seedCooperative()
-  // await seedMangoTree()
+  await removeData()
+  await seedUser()
+  await seedCooperative()
+  await seedMangoTree()
 }
 
-setupListenEventSmartContract()
-setInterval(pingInfura, 3000)
+// setupListenEventSmartContract()
+// setInterval(pingInfura, 3000)
 
 var na = 0
 

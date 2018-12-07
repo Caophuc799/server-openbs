@@ -3,10 +3,12 @@ import _ from 'lodash'
 import CooperativesController from '../../controllers/CooperativesController'
 import { transporter } from '../../constants/constant'
 
+var {verifyToken} = require('../../services/VerifyToken')
 var rand, link
 var http = 'http'
 const router = express.Router()
 
+router.use(verifyToken)
 /* GET ALL cooperatives */
 router.get('/', (req, res, next) => {
   CooperativesController.getAll()

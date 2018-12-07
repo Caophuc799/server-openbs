@@ -2,11 +2,42 @@ import express from 'express'
 import _ from 'lodash'
 import UsersController from '../../controllers/UsersController'
 import { transporter } from '../../constants/constant'
+const jwt = require('jsonwebtoken');
+
+var {verifyToken} = require('../../services/VerifyToken')
+
 
 var rand, link
 var http = 'http'
 const router = express.Router()
 
+/* Login by Email */
+router.post('/login', function (req, res) {
+  UsersController.login(req.body)
+    .then(result => {
+      const user = {
+        email: result.email,
+        pass: result.password
+      }
+      //res.json({ success: true, data: user })
+      jwt.sign(user, 'secreckey', (err, token) => {
+        res.json({
+          token
+        })
+      })
+    })
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+router.use(verifyToken)
 /* GET ALL users */
 router.get('/', (req, res, next) => {
   UsersController.getAll({ query: req.query })
@@ -90,23 +121,10 @@ router.delete('/:id', (req, res, next) => {
     })
 })
 
-/* Login by Email */
-router.post('/login', function (req, res) {
-  UsersController.login(req.body)
-    .then(user => res.json({ success: true, data: user }))
-    .catch(_error => {
-      let status = 500
-      if (_error.status) {
-        status = _error.status
-        delete _error.status
-      }
-      let response = { success: false, data: {} }
-      return res.json(status, _.merge(response, _error))
-    })
-})
 
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {
+
   UsersController.changePassword(req.body)
     .then(user => res.json({ success: true, data: user }))
     .catch(_error => {
@@ -118,6 +136,7 @@ router.post('/changepassword', function (req, res) {
       let response = { success: false, data: {} }
       return res.json(status, _.merge(response, _error))
     })
+
 })
 
 /* Verify Email */
@@ -156,7 +175,7 @@ router.get('/resend/:id', (req, res, next) => {
     })
 })
 
-function sendEmail (toEmail, link) {
+function sendEmail(toEmail, link) {
   var mailOptions = {
     from: 'trieuphong799@gmail.com',
     to: toEmail,
