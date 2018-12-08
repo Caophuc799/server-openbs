@@ -132,6 +132,16 @@ const ErrorCode = {
     name: 'EMAIL_EXIST',
     message: 'Email đã tồn tại.'
   },
+  MANGOTREE_EXIST: {
+    errorCode: 59,
+    name: 'MANGOTREE_EXIST',
+    message: 'Mangotree đã tồn tại.'
+  },
+  COOPERATIVE_EXIST: {
+    errorCode: 62,
+    name: 'COOPERATIVE_EXIST',
+    message: 'Cooperative đã tồn tại.'
+  },
   CAN_NOT_UPDATE_EMAIL: {
     errorCode: 51,
     name: 'CAN_NOT_UPDATE_EMAIL',
@@ -163,14 +173,19 @@ const ErrorCode = {
     message: 'Không tìm thấy người đại diện.'
   },
   CANT_NOT_FIND_COOPERATIVE: {
-    errorCode: 55,
+    errorCode: 56,
     name: 'CANT_NOT_FIND_COOPERATIVE',
     message: 'Không tìm thấy hợp tác xã'
   },
   CANT_NOT_FIND_BUYER: {
-    errorCode: 55,
+    errorCode: 57,
     name: 'CANT_NOT_FIND_BUYER',
     message: 'Không tìm thấy thông tin người mua'
+  },
+  CAN_NOT_FIND_MANGOTREE: {
+    errorCode: 58,
+    name: 'CAN_NOT_FIND_MANGOTREE',
+    message: 'Không tìm thấy thông tin cây'
   },
   INCORRECT_PASSWORD: {
     errorCode: 60,
@@ -198,12 +213,31 @@ const ErrorCode = {
     name: 'INVALID_TIMESTAMP',
     message: 'Timestamp không hợp lệ'
   },
+  INVALID_ID: {
+    errorCode: 403,
+    name: 'INVALID_ID',
+    message: 'ID không hợp lệ'
+  },
+
   // API GET_ONE_USER
   USER_DOES_NOT_EXIST: {
     errorCode: 11,
     name: 'USER_DOES_NOT_EXIST',
     message: 'User không tồn tại'
-  }
+  },
+  MANGOTREE_DOES_NOT_EXIST: {
+    errorCode: 12,
+    name: 'MANGOTREE_DOES_NOT_EXIST',
+    message: 'Mangotree không tồn tại'
+  },
+
+  COOPERATIVE_DOES_NOT_EXIST: {
+    errorCode: 13,
+    name: 'COOPERATIVE_DOES_NOT_EXIST',
+    message: 'COOPERATIVE không tồn tại'
+  },
+  
 }
+
 
 export default ErrorCode

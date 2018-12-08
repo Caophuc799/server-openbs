@@ -8,7 +8,23 @@ var rand, link
 var http = 'http'
 const router = express.Router()
 
-router.use(verifyToken)
+/* Login by Email */
+router.post('/login', function (req, res) {
+  CooperativesController.login(req.body)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+
+//router.use(verifyToken)
 /* GET ALL cooperatives */
 router.get('/', (req, res, next) => {
   CooperativesController.getAll()
@@ -92,20 +108,6 @@ router.delete('/:id', (req, res, next) => {
     })
 })
 
-/* Login by Email */
-router.post('/login', function (req, res) {
-  CooperativesController.login(req.body)
-    .then(cooperative => res.json({ success: true, data: cooperative }))
-    .catch(_error => {
-      let status = 500
-      if (_error.status) {
-        status = _error.status
-        delete _error.status
-      }
-      let response = { success: false, data: {} }
-      return res.json(status, _.merge(response, _error))
-    })
-})
 
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {

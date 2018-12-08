@@ -37,7 +37,7 @@ router.post('/login', function (req, res) {
     })
 })
 
-router.use(verifyToken)
+//router.use(verifyToken)
 /* GET ALL users */
 router.get('/', (req, res, next) => {
   UsersController.getAll({ query: req.query })

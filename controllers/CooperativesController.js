@@ -8,7 +8,7 @@ import moment from 'moment'
 import bcrypt from 'bcrypt'
 
 class CooperativesController {
-  getAll (projection, options) {
+  getAll(projection, options) {
     // const options = {
     //   skip: 0,
     //   limit: 20,
@@ -21,7 +21,7 @@ class CooperativesController {
     })
   }
 
-  getOne (_id, projection, options) {
+  getOne(_id, projection, options) {
     return new Promise((resolve, reject) => {
       Cooperative.findOne({ _id }, projection, options)
         .then(cooperatives => {
@@ -33,11 +33,18 @@ class CooperativesController {
             reject(error)
           }
         })
-        .catch(error => reject(error))
+        .catch(error => {
+          if (error.kind == 'ObjectId') {
+            let response = errorCode.INVALID_ID
+            response.status = 200
+            return reject(response)
+          }
+          reject(error)
+        })
     })
   }
 
-  create (_cooperative, rand) {
+  create(_cooperative, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -102,6 +109,12 @@ class CooperativesController {
                   return Cooperative.create(currentCooperative)
                     .then(cooperative => resolve(cooperative))
                     .catch(error => {
+                      console.log(error)
+                      if (error && error.code === 11000 && error.errmsg.includes('duplicate')) {
+                        let response = errorCode.COOPERATIVE_EXIST
+                        response.status = 200
+                        return reject(response)
+                      }
                       return reject(error)
                     })
                 } else {
@@ -130,7 +143,7 @@ class CooperativesController {
     })
   }
 
-  update (_id, _cooperative) {
+  update(_id, _cooperative) {
     return new Promise((resolve, reject) => {
       if (_cooperative.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
@@ -155,8 +168,23 @@ class CooperativesController {
                 logo: _cooperative.logo
               }
               return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
-                .then(cooperative => resolve(cooperative))
-                .catch(error => reject(error))
+                .then(cooperative => {
+                  console.log(cooperative)
+                  if (cooperative) {
+                    resolve(cooperative)
+                  } else {
+                    let response = errorCode.COOPERATIVE_DOES_NOT_EXIST
+                    response.status = 200
+                    return reject(response)
+                  }
+                })
+                .catch(_error => {
+                  if (_error && _error.kind == 'ObjectId') {
+                    let response = errorCode.INVALID_ID
+                    response.status = 200
+                    return reject(response)
+                  }
+                })
             } else {
               let response = errorCode.CANT_NOT_FIND_REPRESENTATION
               response.status = 200
@@ -164,34 +192,42 @@ class CooperativesController {
             }
           })
           .catch(_error => {
-            let response = errorCode.CANT_NOT_FIND_REPRESENTATION
-            response.status = 200
-            return reject(response)
+            return reject(_error)
           })
       }
-      const newCooperative = {
-        idRepresentation: _cooperative.idRepresentation,
-        taxCode: _cooperative.taxCode,
-        name: _cooperative.name,
-        phoneNumber: _cooperative.phoneNumber,
-        address: _cooperative.address,
-        logo: _cooperative.logo
-      }
-      return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
-        .then(cooperative => resolve(cooperative))
-        .catch(error => reject(error))
+      // const newCooperative = {
+      //   idRepresentation: _cooperative.idRepresentation,
+      //   taxCode: _cooperative.taxCode,
+      //   name: _cooperative.name,
+      //   phoneNumber: _cooperative.phoneNumber,
+      //   address: _cooperative.address,
+      //   logo: _cooperative.logo
+      // }
+      // return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
+      //   .then(cooperative => resolve(cooperative))
+      //   .catch(error => reject(error))
     })
   }
 
-  delete (_id) {
+  delete(_id) {
     return new Promise((resolve, reject) => {
       return Cooperative.remove({ _id })
-        .then(cooperative => resolve(cooperative))
-        .catch(error => reject(error))
+        .then(cooperative => {
+          console.log(cooperative)
+          resolve(cooperative)
+        })
+        .catch(error => {
+          if (error.kind == 'ObjectId') {
+            let response = errorCode.INVALID_ID
+            response.status = 200
+            return reject(response)
+          }
+          reject(error)
+        })
     })
   }
 
-  verifyAccount (_id, rand) {
+  verifyAccount(_id, rand) {
     return new Promise((resolve, reject) => {
       return Cooperative.findById({ _id })
         .then(_cooperative => {
@@ -200,7 +236,16 @@ class CooperativesController {
             // console.log(_cooperative)
             var newrand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
             return Cooperative.findOneAndUpdate({ _id }, { $set: { verify: true, rand: newrand } })
-              .then(cooperative => resolve(cooperative))
+              .then(cooperative => {
+                if (cooperative){
+                  resolve(cooperative) 
+                }
+                else{
+                  let response = errorCode.COOPERATIVE_DOES_NOT_EXIST
+                    response.status = 200
+                    return reject(response)
+                }
+              })
               .catch(error => reject(error))
           } else {
             let response = errorCode.INVALID_TOKEN
@@ -212,7 +257,7 @@ class CooperativesController {
     })
   }
 
-  resendEmail (_id, newrand) {
+  resendEmail(_id, newrand) {
     return new Promise((resolve, reject) => {
       Cooperative.findById({ _id })
         .then(_cooperative => {
@@ -230,7 +275,7 @@ class CooperativesController {
     })
   }
 
-  login ({ email, password }) {
+  login({ email, password }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL
@@ -274,7 +319,7 @@ class CooperativesController {
     })
   }
 
-  changePassword ({ email, oldPassword, newPassword }) {
+  changePassword({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL
