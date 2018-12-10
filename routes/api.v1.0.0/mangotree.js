@@ -21,6 +21,22 @@ router.get('/', (req, res, next) => {
     })
 })
 
+/* GET ALL mangos */
+router.get('/buyed', (req, res, next) => {
+  MangoTreesController.getAllBuyed(req.query || {})
+    .then(mangos => res.json({ success: true, data: mangos }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+
 /* SAVE mango */
 router.post('/', (req, res, next) => {
   MangoTreesController.create(req.body)

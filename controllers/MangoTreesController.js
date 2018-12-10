@@ -19,8 +19,23 @@ class MangoTreesController {
     if (query && query.idBuyer) {
       curQuery.idBuyer = query.idBuyer === 'null' ? null : query.idBuyer
     }
+
     return new Promise((resolve, reject) => {
-      Mangotree.find({idBuyer: null},  curQuery, projection, options)
+      Mangotree.find(curQuery, projection, options)
+        .then(mangotrees => resolve(mangotrees))
+        .catch(error => reject(error))
+    })
+  }
+
+  getAllBuyed(query, projection, options) {
+    let curQuery = {}
+    if (query && query.idCooperative) {
+      curQuery.idCooperative = query.idCooperative
+    }
+
+    curQuery.idBuyer = { $ne: null }
+    return new Promise((resolve, reject) => {
+      Mangotree.find(curQuery, projection, options)
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
