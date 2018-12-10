@@ -20,7 +20,7 @@ class MangoTreesController {
       curQuery.idBuyer = query.idBuyer === 'null' ? null : query.idBuyer
     }
     return new Promise((resolve, reject) => {
-      Mangotree.find(curQuery, projection, options)
+      Mangotree.find({idBuyer: null},  curQuery, projection, options)
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
