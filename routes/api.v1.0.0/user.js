@@ -2,9 +2,11 @@ import express from 'express'
 import _ from 'lodash'
 import UsersController from '../../controllers/UsersController'
 import { transporter } from '../../constants/constant'
+import Mangotree from '../../models/mangotree'
+
 const jwt = require('jsonwebtoken');
 
-var {verifyToken} = require('../../services/VerifyToken')
+var { verifyToken } = require('../../services/VerifyToken')
 
 
 var rand, link
@@ -41,7 +43,9 @@ router.post('/login', function (req, res) {
 /* GET ALL users */
 router.get('/', (req, res, next) => {
   UsersController.getAll({ query: req.query })
-    .then(users => res.json({ success: true, data: users }))
+    .then(users => {
+      res.json({ success: true, data: users })
+    })
     .catch(_error => {
       let status = 500
       if (_error.status) {
@@ -80,6 +84,35 @@ router.post('/', (req, res, next) => {
 router.get('/:id', (req, res, next) => {
   UsersController.getOne(req.params.id)
     .then(user => res.json({ success: true, data: user }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+/* GET ALL BUYED MANGOTREE OF USER  BY ID  */
+router.get('/orders/:id', (req, res, next) => {
+  UsersController.getOne(req.params.id)
+    .then(user => {
+      Mangotree.find({ idBuyer: user._id })
+        .then(mangotrees => {
+          res.json({ success: true, data: mangotrees })
+        })
+        .catch(_error => {
+          let status = 500
+          if (_error.status) {
+            status = _error.status
+            delete _error.status
+          }
+          let response = { success: false, data: {} }
+          return res.json(status, _.merge(response, _error))
+        })
+    })
     .catch(_error => {
       let status = 500
       if (_error.status) {

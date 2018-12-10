@@ -215,6 +215,7 @@ class MangoTreesController {
       }
       return User.findById({ _id: _mangotree.idBuyer })
         .then(_user => {
+          console.log(_user)
           if (_user && !_.isEmpty(_user)) {
             const currentMangotree = {
               idBuyer: _mangotree.idBuyer

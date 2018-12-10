@@ -101,9 +101,9 @@ app.use(function (err, req, res, next) {
 seedData()
 async function seedData () {
   // remove data
-  await removeData()
-  await seedUser()
-  await seedCooperative()
+ // await removeData()
+  //await seedUser()
+  //await seedCooperative()
   await seedMangoTree()
 }
 
