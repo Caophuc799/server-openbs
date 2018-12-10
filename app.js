@@ -102,8 +102,8 @@ seedData()
 async function seedData () {
   // remove data
  // await removeData()
-  //await seedUser()
-  //await seedCooperative()
+  await seedUser()
+  await seedCooperative()
   await seedMangoTree()
 }
 

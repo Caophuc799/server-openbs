@@ -26,7 +26,8 @@ router.post('/login', function (req, res) {
         res.json({
           tokenID: token,
           success: true, 
-          data: user
+          //data: user, 
+          userID: result._id
         })
       })
     })
