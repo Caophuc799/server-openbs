@@ -24,7 +24,9 @@ router.post('/login', function (req, res) {
       //res.json({ success: true, data: user })
       jwt.sign(user, 'secreckey', (err, token) => {
         res.json({
-          token
+          tokenID: token,
+          success: true, 
+          data: user
         })
       })
     })
