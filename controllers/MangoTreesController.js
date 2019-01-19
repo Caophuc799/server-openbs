@@ -46,7 +46,12 @@ class MangoTreesController {
       Mangotree.findOne({ _id }, projection, options)
         .then(mangotrees => {
           if (mangotrees) {
-            return resolve(mangotrees)
+            return Cooperative.findOne({_id: mangotrees.idCooperative}).then(cooperative =>{
+              mangotrees.cooperative = cooperative
+              return resolve(mangotrees)
+            }).catch(error => {
+              resolve(mangotrees)
+            })
           } else {
             let error = ErrorCode.CAN_NOT_FIND_MANGOTREE
             error.status = 404
