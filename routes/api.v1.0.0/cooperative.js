@@ -27,7 +27,7 @@ router.post('/login', function (req, res) {
 //router.use(verifyToken)
 /* GET ALL cooperatives */
 router.get('/', (req, res, next) => {
-  CooperativesController.getAll()
+  CooperativesController.getAll({}, req.query)
     .then(cooperatives => res.json({ success: true, data: cooperatives }))
     .catch(_error => {
       let status = 500

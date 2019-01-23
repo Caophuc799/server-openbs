@@ -1,6 +1,6 @@
 import User from './models/user'
 import Cooperative from './models/cooperative'
-import Mangotree from './models/mangotree'
+import Mangotree from './models/tree'
 
 export const removeData = async () => {
   await User.deleteMany({}, function (_err, numberRemoved) {

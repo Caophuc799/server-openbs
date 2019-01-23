@@ -1,4 +1,4 @@
-import Mangotree from '../models/mangotree'
+import Mangotree from '../models/tree'
 import Cooperative from '../models/cooperative'
 import User from '../models/user'
 import _ from 'lodash'
@@ -6,28 +6,22 @@ import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
 
 class MangoTreesController {
-  getAll(query, projection, options) {
-    // const options = {
-    //   skip: 0,
-    //   limit: 20,
-    // }
-    // const projection = "";
-    let curQuery = {}
-    if (query && query.idCooperative) {
-      curQuery.idCooperative = query.idCooperative
+  getAll (query, projection) {
+    let options
+    if (query && query.offset && query.limit) {
+      options = {
+        skip: parseInt(query.offset * query.limit),
+        limit: parseInt(query.limit)
+      }
     }
-    if (query && query.idBuyer) {
-      curQuery.idBuyer = query.idBuyer === 'null' ? null : query.idBuyer
-    }
-
     return new Promise((resolve, reject) => {
-      Mangotree.find(curQuery, projection, options)
+      Mangotree.find({}, projection, options)
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
   }
 
-  getAllBuyed(query, projection, options) {
+  getAllBuyed (query, projection, options) {
     let curQuery = {}
     if (query && query.idCooperative) {
       curQuery.idCooperative = query.idCooperative
@@ -41,16 +35,16 @@ class MangoTreesController {
     })
   }
 
-  getOne(_id, projection, options) {
+  getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Mangotree.findOne({ _id }, projection, options)
         .then(mangotrees => {
           if (mangotrees) {
-            return Cooperative.findOne({_id: mangotrees.idCooperative}).then(cooperative =>{
+            return Cooperative.findOne({ _id: mangotrees.idCooperative }).then(cooperative => {
               mangotrees.cooperative = cooperative
               return resolve(mangotrees)
             }).catch(error => {
-              resolve(mangotrees)
+              reject(error)
             })
           } else {
             let error = ErrorCode.CAN_NOT_FIND_MANGOTREE
@@ -68,14 +62,14 @@ class MangoTreesController {
     })
   }
 
-  create(_mangotree) {
+  create (_mangotree) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
         response.status = 200
         return reject(response)
       }
-      if (!_mangotree.idTree) {
+      if (!_mangotree.numberId) {
         let response = ErrorCode.MISSING_IDTREE
         response.status = 200
         return reject(response)
@@ -90,11 +84,6 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (!_mangotree.description) {
-        let response = ErrorCode.MISSING_DESCRIPTION
-        response.status = 200
-        return reject(response)
-      }
       if (!_mangotree.timeStartPlant) {
         let response = ErrorCode.MISSING_TIMESTAMP
         response.status = 200
@@ -105,7 +94,7 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (!_mangotree.idCooperative) {
+      if (!_mangotree.cooperativeId) {
         let response = ErrorCode.MISSING_IDCOOPERATIVE
         response.status = 200
         return reject(response)
@@ -115,32 +104,27 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      return Cooperative.findById({ _id: _mangotree.idCooperative })
+      return Cooperative.findById({ _id: _mangotree.cooperativeId })
         .then(_cooperative => {
           if (_cooperative && !_.isEmpty(_cooperative)) {
             const currentMangotree = {
-              idTree: _mangotree.idTree,
               name: _mangotree.name,
+              numberId: _mangotree.numberId,
+              cooperativeId: _cooperative._id,
+              address: _mangotree.address,
+              location: _mangotree.location,
               category: _mangotree.category,
-              description: _mangotree.description,
-              timeStartPlant: _mangotree.timeStartPlant,
-              idCooperative: _mangotree.idCooperative,
               price: _mangotree.price,
-              image: _mangotree.image,
-              manyImages: _mangotree.manyImages || []
+              stateTree: _mangotree.stateTree,
+              purchasehistory: [],
+              timeStartPlant: _mangotree.timeStartPlant
             }
             return Mangotree.create(currentMangotree)
               .then(mangotree => {
-                // OpenBS.mintUniqueTokenTo('0xc23e221736376daf733F19bA17009F53D71e059a', 2, 'TOT 2')
-                //   .then(result => {
-                //     console.log('result 131: ', result)
-                //   })
-                //   .catch(error => {
-                //     console.log('error 134: ', error)
-                //   })
                 resolve(mangotree)
               })
               .catch(error => {
+                console.log(error)
                 if (error && error.code === 11000 && error.errmsg.includes('duplicate')) {
                   let response = ErrorCode.MANGOTREE_EXIST
                   response.status = 200
@@ -149,6 +133,8 @@ class MangoTreesController {
                 return reject(error)
               })
           } else {
+            let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
+            response.status = 200
             return reject(response)
           }
         }).catch(error => {
@@ -160,7 +146,7 @@ class MangoTreesController {
     })
   }
 
-  update(_id, _mangotree) {
+  update (_id, _mangotree) {
     return new Promise((resolve, reject) => {
       if (_mangotree.idCooperative) {
         let response = ErrorCode.CAN_NOT_UPDATE_COOPERATIVE
@@ -174,18 +160,48 @@ class MangoTreesController {
       }
       const currentMangotree = {
         name: _mangotree.name,
+        address: _mangotree.address,
+        location: _mangotree.location,
         category: _mangotree.category,
-        description: _mangotree.description,
-        timeStartPlant: _mangotree.timeStartPlant,
         price: _mangotree.price,
-        image: _mangotree.image
+        timeStartPlant: _mangotree.timeStartPlant
       }
-      if (_mangotree.idTree) {
-        currentMangotree.idTree = _mangotree.idTree
+      return Mangotree.findOneAndUpdate({ _id }, currentMangotree)
+        .then(mangotree => {
+          if (mangotree) {
+            resolve(mangotree)
+          } else {
+            let response = ErrorCode.MANGOTREE_DOES_NOT_EXIST
+            response.status = 200
+            return reject(response)
+          }
+        })
+        .catch(error => {
+          console.log(error)
+          if (error.kind === 'ObjectId') {
+            let response = ErrorCode.INVALID_ID
+            response.status = 200
+            return reject(response)
+          }
+          reject(error)
+        })
+    })
+  }
+
+  updateStateTree (_id, _mangotree) {
+    return new Promise((resolve, reject) => {
+      if (!_mangotree.image || !_mangotree.quantity || !_mangotree.description) {
+        let response = ErrorCode.MISSING_FIELD
+        response.status = 200
+        return reject(response)
       }
-      let expression = { $set: currentMangotree }
-      if (_mangotree.manyImages) {
-        expression['$push'] = { manyImages: _mangotree.manyImages }
+      let expression = {}
+      expression['$push'] = {
+        stateTree: {
+          image: _mangotree.image,
+          quantity: _mangotree.quantity,
+          description: _mangotree.description
+        }
       }
       return Mangotree.findOneAndUpdate({ _id }, expression)
         .then(mangotree => {
@@ -199,7 +215,7 @@ class MangoTreesController {
         })
         .catch(error => {
           console.log(error)
-          if (error.kind == 'ObjectId') {
+          if (error.kind === 'ObjectId') {
             let response = ErrorCode.INVALID_ID
             response.status = 200
             return reject(response)
@@ -209,13 +225,13 @@ class MangoTreesController {
     })
   }
 
-  delete(_id) {
+  delete (_id) {
     return new Promise((resolve, reject) => {
       Mangotree.deleteOne({ _id })
         .then(mangotree => {
           resolve(mangotree)
         }).catch(error => {
-          if (error.kind == 'ObjectId') {
+          if (error.kind === 'ObjectId') {
             let response = ErrorCode.INVALID_ID
             response.status = 200
             return reject(response)
@@ -225,49 +241,19 @@ class MangoTreesController {
     })
   }
 
-  buyMangoTree(_id, _mangotree) {
+  buyMangoTree (_id, data) {
     return new Promise((resolve, reject) => {
-
-      if (!_mangotree.idBuyer) {
-        let response = ErrorCode.MISSING_IDBUYER
-        response.status = 200
-        return reject(response)
-      }
-      return User.findById({ _id: _mangotree.idBuyer })
-        .then(_user => {
-          console.log(_user)
-          if (_user && !_.isEmpty(_user)) {
-            const currentMangotree = {
-              idBuyer: _mangotree.idBuyer
-            }
-            return Mangotree.findOneAndUpdate({ _id }, { $set: currentMangotree })
-              .then(mangotree => {
-                if (mangotree) {
-                  resolve(mangotree)
-                } else {
-                  let response = ErrorCode.MANGOTREE_DOES_NOT_EXIST
-                  response.status = 200
-                  return reject(response)
-                }
-              })
-              .catch(error => {
-                if (error && error.kind == 'ObjectId') {
-                  let response = ErrorCode.INVALID_ID
-                  response.status = 200
-                  return reject(response)
-                }
-              })
-          }
-          else {
-            let response = ErrorCode.CANT_NOT_FIND_BUYER
+      Mangotree.findOne({ _id })
+        .then(mangotree => {
+          if (mangotree) {
+            resolve(mangotree)
+          } else {
+            let response = ErrorCode.MANGOTREE_DOES_NOT_EXIST
             response.status = 200
             return reject(response)
           }
-        }).catch(_error => {
-
-          //let response = ErrorCode.CANT_NOT_FIND_BUYER
-          //response.status = 200
-          return reject(_error)
+        }).catch(error => {
+          reject(error)
         })
     })
   }

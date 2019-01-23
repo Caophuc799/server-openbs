@@ -2,10 +2,10 @@ import express from 'express'
 import _ from 'lodash'
 import MangoTreesController from '../../controllers/MangoTreesController'
 
-var {verifyToken} = require('../../services/VerifyToken')
+var { verifyToken } = require('../../services/VerifyToken')
 const router = express.Router()
 
-//router.use(verifyToken)
+// router.use(verifyToken)
 /* GET ALL mangos */
 router.get('/', (req, res, next) => {
   MangoTreesController.getAll(req.query || {})
@@ -35,7 +35,6 @@ router.get('/buyed', (req, res, next) => {
       return res.json(status, _.merge(response, _error))
     })
 })
-
 
 /* SAVE mango */
 router.post('/', (req, res, next) => {
@@ -84,6 +83,20 @@ router.put('/:id', (req, res, next) => {
     })
 })
 
+/* UPDATE state tree */
+router.put('/:id/stateTree', (req, res, next) => {
+  MangoTreesController.updateStateTree(req.params.id, req.body)
+    .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
 /* DELETE mango */
 router.delete('/:id', (req, res, next) => {
   MangoTreesController.delete(req.params.id, req.body)
@@ -100,7 +113,7 @@ router.delete('/:id', (req, res, next) => {
 })
 
 /* BUY mango */
-router.put('/buy/:id', (req, res, next) => {
+router.put('/:id/buy', (req, res, next) => {
   MangoTreesController.buyMangoTree(req.params.id, req.body)
     .then(mango => res.json({ success: true, data: mango }))
     .catch(_error => {

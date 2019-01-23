@@ -6,17 +6,14 @@ import bcrypt from 'bcrypt'
 import errorCode from '../constants/ErrorCode'
 
 class UsersController {
-  getAll(query = { offset: 0, limit: 0 }, projection) {
+  getAll (query = { offset: 0, limit: 0 }, projection) {
     let options
     if (query) {
-      console.log(query)
       options = {
-        skip: parseInt(query.offset * query.limit) || 0,
-        limit: parseInt(query.limit) || 0
+        skip: parseInt(query.offset * query.limit),
+        limit: parseInt(query.limit)
       }
     }
-    console.log(options)
-    // const projection = "";
     return new Promise((resolve, reject) => {
       User.find({}, projection, options)
         .then(users => resolve(users))
@@ -24,7 +21,7 @@ class UsersController {
     })
   }
 
-  getOne(_id, projection, options) {
+  getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       User.findOne({ _id }, projection, options)
         .then(users => {
@@ -37,7 +34,7 @@ class UsersController {
           }
         })
         .catch(error => {
-          if (error.kind == 'ObjectId') {
+          if (error.kind === 'ObjectId') {
             let response = errorCode.INVALID_ID
             response.status = 200
             return reject(response)
@@ -47,7 +44,7 @@ class UsersController {
     })
   }
 
-  create(_user, rand) {
+  create (_user, rand) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_user)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -110,7 +107,7 @@ class UsersController {
     })
   }
 
-  update(_id, _user) {
+  update (_id, _user) {
     return new Promise((resolve, reject) => {
       if (_user.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
@@ -151,7 +148,7 @@ class UsersController {
     })
   }
 
-  delete(_id) {
+  delete (_id) {
     return new Promise((resolve, reject) => {
       User.deleteOne({ _id })
         .then(user => {
@@ -169,7 +166,7 @@ class UsersController {
     })
   }
 
-  verifyAccount(_id, rand) {
+  verifyAccount (_id, rand) {
     return new Promise((resolve, reject) => {
       User.findById({ _id })
         .then(_user => {
@@ -190,7 +187,7 @@ class UsersController {
     })
   }
 
-  resendEmail(_id, newrand) {
+  resendEmail (_id, newrand) {
     return new Promise((resolve, reject) => {
       User.findById({ _id })
         .then(_user => {
@@ -208,7 +205,7 @@ class UsersController {
     })
   }
 
-  login({ email, password }) {
+  login ({ email, password }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL
@@ -259,7 +256,7 @@ class UsersController {
     })
   }
 
-  changePassword({ email, oldPassword, newPassword }) {
+  changePassword ({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL

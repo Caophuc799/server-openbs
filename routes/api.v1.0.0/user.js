@@ -1,13 +1,13 @@
+/* eslint-disable handle-callback-err */
 import express from 'express'
 import _ from 'lodash'
 import UsersController from '../../controllers/UsersController'
 import { transporter } from '../../constants/constant'
-import Mangotree from '../../models/mangotree'
+import Tree from '../../models/tree'
 
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 var { verifyToken } = require('../../services/VerifyToken')
-
 
 var rand, link
 var http = 'http'
@@ -21,12 +21,12 @@ router.post('/login', function (req, res) {
         email: result.email,
         pass: result.password
       }
-      //res.json({ success: true, data: user })
+      // res.json({ success: true, data: user })
       jwt.sign(user, 'secreckey', (err, token) => {
         res.json({
           tokenID: token,
-          success: true, 
-          //data: user, 
+          success: true,
+          // data: user,
           userID: result._id
         })
       })
@@ -42,10 +42,10 @@ router.post('/login', function (req, res) {
     })
 })
 
-//router.use(verifyToken)
+// router.use(verifyToken)
 /* GET ALL users */
 router.get('/', (req, res, next) => {
-  UsersController.getAll({ query: req.query })
+  UsersController.getAll(req.query)
     .then(users => {
       res.json({ success: true, data: users })
     })
@@ -102,7 +102,7 @@ router.get('/:id', (req, res, next) => {
 router.get('/orders/:id', (req, res, next) => {
   UsersController.getOne(req.params.id)
     .then(user => {
-      Mangotree.find({ idBuyer: user._id })
+      Tree.find({ idBuyer: user._id })
         .then(mangotrees => {
           res.json({ success: true, data: mangotrees })
         })
@@ -157,10 +157,8 @@ router.delete('/:id', (req, res, next) => {
     })
 })
 
-
 /* Change password by Email */
 router.post('/changepassword', function (req, res) {
-
   UsersController.changePassword(req.body)
     .then(user => res.json({ success: true, data: user }))
     .catch(_error => {
@@ -172,7 +170,6 @@ router.post('/changepassword', function (req, res) {
       let response = { success: false, data: {} }
       return res.json(status, _.merge(response, _error))
     })
-
 })
 
 /* Verify Email */
@@ -211,7 +208,7 @@ router.get('/resend/:id', (req, res, next) => {
     })
 })
 
-function sendEmail(toEmail, link) {
+function sendEmail (toEmail, link) {
   var mailOptions = {
     from: 'trieuphong799@gmail.com',
     to: toEmail,

@@ -117,6 +117,11 @@ const ErrorCode = {
     name: 'MISSING_IDBUYER',
     message: 'Thiếu ID người mua'
   },
+  MISSING_FIELD: {
+    errorCode: 216,
+    name: 'MISSING_FIELD',
+    message: 'Thiếu trường một vài trường'
+  },
   PRICE_MUST_BE_THAN_ZERO: {
     errorCode: 213,
     name: 'PRICE_MUST_BE_THAN_ZERO',
