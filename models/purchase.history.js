@@ -1,3 +1,9 @@
+/*
+Define
+status === 0 huy don hang
+status === 1 dang cho thanh toan
+status === 2 da thanh toan
+*/
 var mongoose = require('mongoose')
 mongoose.Promise = global.Promise
 
@@ -6,6 +12,10 @@ var SchemaTypes = mongoose.Schema.Types
 
 var PurchaseHistory = new Schema(
   {
+    status: {
+      type: Number,
+      default: 1
+    },
     buyerId: {
       type: SchemaTypes.ObjectId,
       ref: 'UserModel',
@@ -16,9 +26,12 @@ var PurchaseHistory = new Schema(
       required: true,
       ref: 'TreeModel'
     },
-    time: {
+    startTime: {
       type: Date,
       default: Date.now
+    },
+    endTime: {
+      type: Date
     },
     stateTree: {
       image: [{ type: String,

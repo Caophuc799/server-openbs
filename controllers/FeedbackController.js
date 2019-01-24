@@ -36,14 +36,15 @@ class FeedbackController {
 
   getFeedbackByUserId (_id, data) {
     return new Promise((resolve, reject) => {
-      Feedback.find({ _id }, (_error, _feedback) => {
-        if (_error || !_feedback) {
-          let response = ErrorCode.DB_ERROR
-          response.status = 200
-          return reject(response)
-        }
-        resolve(_feedback)
-      })
+      Feedback.find({})
+        .exec((_error, _feedback) => {
+          if (_error || !_feedback) {
+            let response = ErrorCode.DB_ERROR
+            response.status = 200
+            return reject(response)
+          }
+          resolve(_feedback)
+        })
     })
   }
 }

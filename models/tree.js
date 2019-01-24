@@ -1,10 +1,3 @@
-/*
-Define
-status === 0 chua mua
-status === 1 dang cho thanh toan
-status === 2 da mua
-*/
-
 var mongoose = require('mongoose')
 var autoIncrement = require('mongoose-auto-increment')
 autoIncrement.initialize(mongoose.connection)
@@ -48,6 +41,14 @@ var Tree = new Schema(
       type: String,
       require: true
     },
+    startTimeSelling: {
+      type: Date,
+      default: Date.now
+    },
+    endTimeSelling: {
+      type: Date,
+      default: Date.now
+    },
     stateTree: [
       {
         image: [{ type: String }],
@@ -55,12 +56,8 @@ var Tree = new Schema(
         description: { type: String }
       }
     ],
-    status: {
-      type: Number,
-      default: 0
-    },
     purchasehistory: [
-      { transactionId: { type: SchemaTypes.ObjectId, ref: 'PurchaseHistoryModel' } }
+      { type: SchemaTypes.ObjectId, ref: 'PurchaseHistoryModel' }
     ]
   },
   {

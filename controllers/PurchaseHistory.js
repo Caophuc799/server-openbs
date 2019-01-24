@@ -132,6 +132,54 @@ class PurchaseHistory {
       })
     })
   }
+
+  confirmPayment (_id, data) {
+    return new Promise((resolve, reject) => {
+      Purchase.findOne({ _id }, (_error, purchase) => {
+        if (_error || !purchase) {
+          let error = ErrorCode.DO_NOT_ORDER
+          error.status = 404
+          reject(error)
+        }
+        let newPurchase = {
+          status: 2
+        }
+        purchase.update(newPurchase, (error, result) => {
+          if (error || !result) {
+            let error = ErrorCode.FAIL
+            error.status = 404
+            reject(error)
+          }
+          purchase.status = 2
+          resolve({})
+        })
+      })
+    })
+  }
+
+  cancelPayment (_id, data) {
+    return new Promise((resolve, reject) => {
+      Purchase.findOne({ _id }, (_error, purchase) => {
+        if (_error || !purchase) {
+          let error = ErrorCode.DO_NOT_ORDER
+          error.status = 404
+          reject(error)
+        }
+        let newPurchase = {
+          status: 0
+        }
+        purchase.update(newPurchase, (error, result) => {
+          if (error || !result) {
+            let error = ErrorCode.FAIL
+            error.status = 404
+            reject(error)
+          }
+          purchase.status = 2
+          resolve({})
+        })
+      })
+    })
+  }
 }
 
 export default new PurchaseHistory()

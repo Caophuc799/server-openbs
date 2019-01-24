@@ -202,6 +202,11 @@ const ErrorCode = {
     name: 'INCORRECT_TAXCODE',
     message: 'Mã số thuế không đúng.'
   },
+  TREE_BOUGHT: {
+    errorCode: 62,
+    name: 'TREE_BOUGHT',
+    message: 'Cây đã được mua'
+  },
   // API
   INVALID_ID: {
     errorCode: 399,
