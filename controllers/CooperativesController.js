@@ -106,7 +106,8 @@ class CooperativesController {
                   password: hashPassword,
                   rand: rand,
                   logo: _cooperative.logo,
-                  description: _cooperative.description
+                  description: _cooperative.description,
+                  treeIds: []
                 }
                 return Cooperative.create(currentCooperative)
                   .then(cooperative => resolve(cooperative))

@@ -2,8 +2,8 @@
 import express from 'express'
 import _ from 'lodash'
 import UsersController from '../../controllers/UsersController'
+import PurchaseController from '../../controllers/PurchaseHistory'
 import { transporter } from '../../constants/constant'
-import Tree from '../../models/tree'
 
 const jwt = require('jsonwebtoken')
 
@@ -98,23 +98,11 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
-/* GET ALL BUYED MANGOTREE OF USER  BY ID  */
-router.get('/orders/:id', (req, res, next) => {
-  UsersController.getOne(req.params.id)
-    .then(user => {
-      Tree.find({ idBuyer: user._id })
-        .then(mangotrees => {
-          res.json({ success: true, data: mangotrees })
-        })
-        .catch(_error => {
-          let status = 500
-          if (_error.status) {
-            status = _error.status
-            delete _error.status
-          }
-          let response = { success: false, data: {} }
-          return res.json(status, _.merge(response, _error))
-        })
+/* GET ALL get Oder OF USER  BY ID  */
+router.get('/:id/orders', (req, res, next) => {
+  PurchaseController.getOrdersByUserId(req.params.id, req.query)
+    .then(order => {
+      res.json({ success: true, data: order })
     })
     .catch(_error => {
       let status = 500

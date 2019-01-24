@@ -2,6 +2,7 @@ import express from 'express'
 import _ from 'lodash'
 import CooperativesController from '../../controllers/CooperativesController'
 import { transporter } from '../../constants/constant'
+import PurchaseHistory from '../../controllers/PurchaseHistory';
 
 var {verifyToken} = require('../../services/VerifyToken')
 var rand, link
@@ -66,6 +67,21 @@ router.post('/', (req, res, next) => {
 /* GET SINGLE cooperative BY ID */
 router.get('/:id', (req, res, next) => {
   CooperativesController.getOne(req.params.id)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+/* GET orders of cooperative BY ID */
+router.get('/:id/orders', (req, res, next) => {
+  PurchaseHistory.getOrdersByCooperativeId(req.params.id, req.query)
     .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => {
       let status = 500

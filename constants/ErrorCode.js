@@ -203,6 +203,11 @@ const ErrorCode = {
     message: 'Mã số thuế không đúng.'
   },
   // API
+  INVALID_ID: {
+    errorCode: 399,
+    name: 'INVALID_ID',
+    message: 'ID không hợp lệ'
+  },
   INVALID_EMAIL: {
     errorCode: 400,
     name: 'INVALID_EMAIL',

@@ -68,7 +68,13 @@ var Cooperative = new Schema(
     rand: {
       type: Number,
       default: 0
-    }
+    },
+    treeIds: [
+      {
+        type: SchemaTypes.ObjectId,
+        ref: 'TreeModel'
+      }
+    ]
   },
   {
     timestamps: true
