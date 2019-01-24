@@ -8,6 +8,8 @@ import { blockStart, mongoLocal, mongoOnline, walletAddress, contractAddress, wa
 import { seedUser, seedCooperative, seedMangoTree, removeData } from './seedData'
 
 import OpenBS from './contracts/Contract'
+
+require('./services/auth')
 // Etherium
 var web3 = require('./services/web3')
 var TokenOpenBS = require('./services/TokenOpenBS')
@@ -45,8 +47,8 @@ const connectWithRetry = () => {
 connectWithRetry()
 
 app.use(logger('dev'))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded())
 
 app.use(passport.initialize())
 app.use(passport.session())
