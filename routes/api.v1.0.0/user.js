@@ -99,6 +99,23 @@ router.get('/:id', (req, res, next) => {
 })
 
 /* GET ALL get Oder OF USER  BY ID  */
+router.get('/:id/trees', (req, res, next) => {
+  PurchaseController.getTreeByUserId(req.params.id, req.query)
+    .then(order => {
+      res.json({ success: true, data: order })
+    })
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+/* GET ALL get Oder OF USER  BY ID  */
 router.get('/:id/orders', (req, res, next) => {
   PurchaseController.getOrdersByUserId(req.params.id, req.query)
     .then(order => {

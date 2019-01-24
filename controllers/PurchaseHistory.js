@@ -72,6 +72,66 @@ class PurchaseHistory {
       })
     })
   }
+
+  getTreeByUserId (_id, data) {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id }, (_error, user) => {
+        if (_error || !user) {
+          let error = ErrorCode.USER_DOES_NOT_EXIST
+          error.status = 404
+          reject(error)
+        }
+        let projection = {}
+        let options
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({ buyerId: _id }, projection, options)
+          .populate('treeId')
+          .exec((_error, purchase) => {
+            if (_error || !purchase) {
+              let error = ErrorCode.DO_NOT_ORDER
+              error.status = 404
+              reject(error)
+            }
+            purchase = purchase.map(item => item.treeId)
+            resolve(purchase)
+          })
+      })
+    })
+  }
+
+  getTreeByCooperativeId (_id, data) {
+    return new Promise((resolve, reject) => {
+      Cooperative.findOne({ _id }, (_error, cooperative) => {
+        if (_error || !cooperative) {
+          let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
+          error.status = 404
+          reject(error)
+        }
+        let projection = {}
+        let options
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Tree.find({ cooperativeId: _id }, projection, options)
+          .exec((_error, tree) => {
+            if (_error || !tree) {
+              let error = ErrorCode.MANGOTREE_DOES_NOT_EXIST
+              error.status = 404
+              reject(error)
+            }
+            resolve(tree)
+          })
+      })
+    })
+  }
 }
 
 export default new PurchaseHistory()
