@@ -69,7 +69,7 @@ passport.use(new JWTstrategy({
     // Pass the user details to the next middleware
     return done(null, token.user)
   } catch (error) {
-    return done({ auth: false, message: error })
+    return done(null, { auth: false, message: error })
   }
 }))
 

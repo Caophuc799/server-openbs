@@ -1,7 +1,8 @@
 import Feedback from '../models/feedback'
 import Purchase from '../models/purchase.history'
 import ErrorCode from '../constants/ErrorCode'
-
+import _ from 'lodash'
+var mongoose = require('mongoose')
 class FeedbackController {
   createFeedbackByTxId (_id, data) {
     return new Promise((resolve, reject) => {
@@ -37,12 +38,17 @@ class FeedbackController {
   getFeedbackByUserId (_id, data) {
     return new Promise((resolve, reject) => {
       Feedback.find({})
+        .populate('transactionId')
         .exec((_error, _feedback) => {
           if (_error || !_feedback) {
             let response = ErrorCode.DB_ERROR
             response.status = 200
             return reject(response)
           }
+          _feedback = _feedback.filter(item => {
+            _id = mongoose.Types.ObjectId(_id)
+            return item.transactionId && _.isEqual(item.transactionId.buyerId, _id)
+          })
           resolve(_feedback)
         })
     })
