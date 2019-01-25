@@ -5,9 +5,11 @@ import passport from 'passport'
 import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
 import { blockStart, mongoLocal, mongoOnline, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
-import { seedUser, seedCooperative, seedMangoTree, removeData } from './seedData'
+import { createData, removeData } from './seedData'
 
 import OpenBS from './contracts/Contract'
+
+require('./services/auth')
 // Etherium
 var web3 = require('./services/web3')
 var TokenOpenBS = require('./services/TokenOpenBS')
@@ -45,8 +47,8 @@ const connectWithRetry = () => {
 connectWithRetry()
 
 app.use(logger('dev'))
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded())
 
 app.use(passport.initialize())
 app.use(passport.session())
@@ -99,13 +101,11 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-//seedData()
+seedData()
 async function seedData () {
   // remove data
-  //await removeData()
-  //await seedUser()
-  //await seedCooperative()
-  await seedMangoTree()
+  await removeData()
+  await createData()
 }
 
 // setupListenEventSmartContract()

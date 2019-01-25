@@ -202,7 +202,17 @@ const ErrorCode = {
     name: 'INCORRECT_TAXCODE',
     message: 'Mã số thuế không đúng.'
   },
+  TREE_BOUGHT: {
+    errorCode: 62,
+    name: 'TREE_BOUGHT',
+    message: 'Cây đã được mua'
+  },
   // API
+  INVALID_ID: {
+    errorCode: 399,
+    name: 'INVALID_ID',
+    message: 'ID không hợp lệ'
+  },
   INVALID_EMAIL: {
     errorCode: 400,
     name: 'INVALID_EMAIL',
@@ -218,13 +228,13 @@ const ErrorCode = {
     name: 'INVALID_TIMESTAMP',
     message: 'Timestamp không hợp lệ'
   },
-  INVALID_ID: {
-    errorCode: 403,
-    name: 'INVALID_ID',
-    message: 'ID không hợp lệ'
-  },
 
   // API GET_ONE_USER
+  DO_NOT_ORDER: {
+    errorCode: 11,
+    name: 'DO_NOT_ORDER',
+    message: 'User không có giao dịch mua cây nào'
+  },
   USER_DOES_NOT_EXIST: {
     errorCode: 11,
     name: 'USER_DOES_NOT_EXIST',
@@ -240,9 +250,7 @@ const ErrorCode = {
     errorCode: 13,
     name: 'COOPERATIVE_DOES_NOT_EXIST',
     message: 'COOPERATIVE không tồn tại'
-  },
-  
+  }
 }
-
 
 export default ErrorCode

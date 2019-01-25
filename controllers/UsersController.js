@@ -205,57 +205,6 @@ class UsersController {
     })
   }
 
-  login ({ email, password }) {
-    return new Promise((resolve, reject) => {
-      if (!email) {
-        let response = errorCode.MISSING_EMAIL
-        response.status = 200
-        return reject(response)
-      }
-      if (!validateEmail(email)) {
-        let response = errorCode.INVALID_EMAIL
-        response.status = 200
-        return reject(response)
-      }
-      if (!password) {
-        let response = errorCode.MISSING_PASSWORD
-        response.status = 200
-        return reject(response)
-      }
-      User.findOne({ email })
-        .then(_user => {
-          if (!_user || _.isEmpty(_user)) {
-            let response = errorCode.USER_DOES_NOT_EXIST
-            response.status = 200
-            return reject(response)
-          }
-          if (_user && _user.verify) {
-            bcrypt.compare(password, _user.password, function (_err, res) {
-              if (res) {
-                resolve(_user)
-              } else {
-                let response = errorCode.INCORRECT_PASSWORD
-                response.status = 200
-                return reject(response)
-              }
-            })
-          } else {
-            let response = errorCode.DID_NOT_VERIFY
-            response.status = 200
-            return reject(response)
-          }
-        })
-        .catch(error => {
-          if (error.kind == 'ObjectId') {
-            let response = errorCode.INVALID_ID
-            response.status = 200
-            return reject(response)
-          }
-          reject(error)
-        })
-    })
-  }
-
   changePassword ({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {

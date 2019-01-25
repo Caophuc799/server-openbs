@@ -1,4 +1,5 @@
 var mongoose = require('mongoose')
+var bcrypt = require('bcrypt')
 var autoIncrement = require('mongoose-auto-increment')
 autoIncrement.initialize(mongoose.connection)
 mongoose.Promise = global.Promise
@@ -59,6 +60,27 @@ var User = new Schema(
     timestamps: true
   }
 )
+
+User.pre('save', async function (next) {
+  // 'this' refers to the current document about to be saved
+  const user = this
+  // Hash the password with a salt round of 10, the higher the rounds the more secure, but the slower
+  // your application becomes.
+  const hash = await bcrypt.hashSync(this.password, bcrypt.genSaltSync(8), null)
+  // Replace the plain text password with the hash and then store it
+  this.password = hash
+  // Indicates we're done and moves on to the next middleware
+  next()
+})
+
+// We'll use this later on to make sure that the user trying to log in has the correct credentials
+User.methods.isValidPassword = async function (password) {
+  const user = this
+  // Hashes the password sent by the user for login and checks if the hashed password stored in the
+  // database matches the one sent. Returns true if it does else false.
+  const compare = await bcrypt.compare(password, user.password)
+  return compare
+}
 
 User.plugin(autoIncrement.plugin, { model: 'UserModel', field: 'id' })
 
