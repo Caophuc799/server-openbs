@@ -36,7 +36,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(mongoLocal, options).then(() => {
+  mongoose.connect(mongoOnline, options).then(() => {
     console.log('MongoDB is connected')
     // mongoose.connection.db.dropDatabase()
   }).catch(_err => {
