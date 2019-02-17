@@ -22,6 +22,12 @@ node_modules/.bin/nodemon server.js hoặc npm start
 Vào thư mục client
 6. npm start
 
+7. Deploy: 
+Phải cài heroku: curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+Login vào heroku: heroku login -i
+Add git heroku: git remote add heroku https://git.heroku.com/api-server-openbs.git
+Bây giờ mỗi lần deploy sẽ dùng: git push heroku master
+
 Docker
 
 build: sudo docker-compose build
