@@ -284,7 +284,7 @@ class MangoTreesController {
           if (mangotree && !_error) {
             let purchasehistory = mangotree.purchasehistory
             let temppurchase = purchasehistory[purchasehistory.length - 1]
-            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status === 2) {
+            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
               let response = ErrorCode.TREE_BOUGHT
               response.status = 200
               return reject(response)

@@ -5,18 +5,18 @@ import Feedback from './models/feedback'
 import Purchase from './models/purchase.history'
 
 export const removeData = async () => {
-  await User.deleteMany({}, function (_err, numberRemoved) {
-    console.log(' Delete all User ' + numberRemoved)
-  })
-  await Cooperative.deleteMany({}, function (_err, numberRemoved) {
-    console.log(' Delete all Cooperative ' + numberRemoved)
-  })
-  await Mangotree.deleteMany({}, function (_err, numberRemoved) {
-    console.log(' Delete all Mangotree ' + numberRemoved)
-  })
-  await Feedback.deleteMany({}, function (_err, numberRemoved) {
-    console.log(' Delete all Feedback ' + numberRemoved)
-  })
+  // await User.deleteMany({}, function (_err, numberRemoved) {
+  //   console.log(' Delete all User ' + numberRemoved)
+  // })
+  // await Cooperative.deleteMany({}, function (_err, numberRemoved) {
+  //   console.log(' Delete all Cooperative ' + numberRemoved)
+  // })
+  // await Mangotree.deleteMany({}, function (_err, numberRemoved) {
+  //   console.log(' Delete all Mangotree ' + numberRemoved)
+  // })
+  // await Feedback.deleteMany({}, function (_err, numberRemoved) {
+  //   console.log(' Delete all Feedback ' + numberRemoved)
+  // })
   await Purchase.deleteMany({}, function (_err, numberRemoved) {
     console.log(' Delete all Purchase ' + numberRemoved)
   })
