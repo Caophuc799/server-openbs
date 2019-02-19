@@ -53,7 +53,8 @@ var Tree = new Schema(
       {
         image: [{ type: String }],
         quantity: { type: String },
-        description: { type: String }
+        description: { type: String },
+        time: { type: Date, default: Date.now }
       }
     ],
     purchasehistory: [
