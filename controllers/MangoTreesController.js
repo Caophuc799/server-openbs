@@ -18,6 +18,7 @@ class MangoTreesController {
     }
     return new Promise((resolve, reject) => {
       Mangotree.find({}, projection, options)
+        // .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
@@ -28,10 +29,10 @@ class MangoTreesController {
     if (query && query.idCooperative) {
       curQuery.idCooperative = query.idCooperative
     }
-
     curQuery.idBuyer = { $ne: null }
     return new Promise((resolve, reject) => {
       Mangotree.find(curQuery, projection, options)
+        .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
         .then(mangotrees => resolve(mangotrees))
         .catch(error => reject(error))
     })
@@ -40,6 +41,7 @@ class MangoTreesController {
   getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Mangotree.findOne({ _id }, projection, options)
+        .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
         .then(mangotrees => {
           if (mangotrees) {
             return Cooperative.findOne({ _id: mangotrees.cooperativeId }).then(cooperative => {
