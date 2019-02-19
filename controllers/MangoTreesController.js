@@ -42,9 +42,10 @@ class MangoTreesController {
       Mangotree.findOne({ _id }, projection, options)
         .then(mangotrees => {
           if (mangotrees) {
-            return Cooperative.findOne({ _id: mangotrees.idCooperative }).then(cooperative => {
-              mangotrees.cooperative = cooperative
-              return resolve(mangotrees)
+            return Cooperative.findOne({ _id: mangotrees.cooperativeId }).then(cooperative => {
+              let result = Object.assign({}, mangotrees._doc)
+              result.cooperative = cooperative
+              return resolve(result)
             }).catch(error => {
               reject(error)
             })
