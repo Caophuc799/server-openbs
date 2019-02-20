@@ -18,8 +18,18 @@ class MangoTreesController {
     }
     return new Promise((resolve, reject) => {
       Mangotree.find({}, projection, options)
-        // .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
-        .then(mangotrees => resolve(mangotrees))
+        .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
+        .then(mangotrees => {
+          mangotrees = mangotrees.filter(item => {
+            let purchasehistory = item.purchasehistory
+            let temppurchase = purchasehistory[purchasehistory.length - 1]
+            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
+              return false
+            }
+            return true
+          })
+          resolve(mangotrees)
+        })
         .catch(error => reject(error))
     })
   }
