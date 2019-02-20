@@ -22,6 +22,13 @@ class MangoTreesController {
         .then(mangotrees => {
           mangotrees = mangotrees.filter(item => {
             let purchasehistory = item.purchasehistory
+            purchasehistory = purchasehistory.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
             let temppurchase = purchasehistory[purchasehistory.length - 1]
             if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
               return false
@@ -293,6 +300,13 @@ class MangoTreesController {
         .exec((_error, mangotree) => {
           if (mangotree && !_error) {
             let purchasehistory = mangotree.purchasehistory
+            purchasehistory = purchasehistory.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
             let temppurchase = purchasehistory[purchasehistory.length - 1]
             if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
               let response = ErrorCode.TREE_BOUGHT
