@@ -30,10 +30,7 @@ class MangoTreesController {
               return 1
             })
             let temppurchase = purchasehistory[purchasehistory.length - 1]
-            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
-              return false
-            }
-            return true
+            return (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0)
           })
           resolve(mangotrees)
         })
