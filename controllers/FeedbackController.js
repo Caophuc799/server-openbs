@@ -1,8 +1,7 @@
-import Feedback from '../models/feedback'
+import Mangotree from '../models/tree'
+import User from '../models/user'
 import Purchase from '../models/purchase.history'
 import ErrorCode from '../constants/ErrorCode'
-import _ from 'lodash'
-var mongoose = require('mongoose')
 class FeedbackController {
   createFeedbackByTxId (_id, data) {
     return new Promise((resolve, reject) => {
@@ -18,38 +17,66 @@ class FeedbackController {
           return reject(response)
         }
         let feedback = {
-          transactionId: purchase._id,
           comment: data.comment,
           rating: data.rating
         }
-        Feedback.create(feedback, (_error, _feedback) => {
-          if (_error || !_feedback) {
+        let expression = {
+          '$push': { feedback: feedback }
+        }
+        purchase.update(expression, (_error, result) => {
+          if (!_error && result) {
+            resolve(result)
+          } else {
             let response = ErrorCode.DB_ERROR
             response.status = 200
             return reject(response)
           }
-          resolve(_feedback)
         })
       })
     }
     )
   }
 
-  getFeedbackByUserId (_id, data) {
+  getFeedbackByUserId (_id) {
     return new Promise((resolve, reject) => {
-      Feedback.find({})
-        .populate('transactionId')
-        .exec((_error, _feedback) => {
-          if (_error || !_feedback) {
-            let response = ErrorCode.DB_ERROR
+      User.findOne({ _id }).then(user => {
+        if (user) {
+          return Purchase.find({ buyerId: _id })
+            .exec((_error, purchase) => {
+              if (_error || !purchase) {
+                let error = ErrorCode.DO_NOT_ORDER
+                error.status = 404
+                reject(error)
+              }
+              resolve(purchase)
+            })
+        }
+        let response = ErrorCode.USER_DOES_NOT_EXIST
+        response.status = 200
+        return reject(response)
+      })
+    })
+  }
+
+  getFeedbackByTreeId (_treeId) {
+    return new Promise((resolve, reject) => {
+      Mangotree.findOne({ _id: _treeId })
+        .then(mangotree => {
+          if (!mangotree) {
+            let response = ErrorCode.MANGOTREE_DOES_NOT_EXIST
             response.status = 200
             return reject(response)
+          } else {
+            Purchase.find({ treeId: _treeId })
+              .exec((_error, purchase) => {
+                if (_error || !purchase) {
+                  let error = ErrorCode.DO_NOT_ORDER
+                  error.status = 404
+                  reject(error)
+                }
+                resolve(purchase)
+              })
           }
-          _feedback = _feedback.filter(item => {
-            _id = mongoose.Types.ObjectId(_id)
-            return item.transactionId && _.isEqual(item.transactionId.buyerId, _id)
-          })
-          resolve(_feedback)
         })
     })
   }

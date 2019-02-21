@@ -40,7 +40,20 @@ var PurchaseHistory = new Schema(
         default: '' },
       description: { type: String,
         default: '' }
-    }
+    },
+    feedback: [
+      {
+        comment: {
+          type: SchemaTypes.String,
+          default: ''
+        },
+        rating: {
+          type: SchemaTypes.String,
+          default: ''
+        },
+        time: { type: Date, default: Date.now }
+      }
+    ]
   },
   {
     timestamps: true

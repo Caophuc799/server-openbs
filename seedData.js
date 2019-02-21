@@ -1,7 +1,6 @@
 import User from './models/user'
 import Cooperative from './models/cooperative'
 import Mangotree from './models/tree'
-import Feedback from './models/feedback'
 import Purchase from './models/purchase.history'
 
 export const removeData = async () => {
@@ -13,9 +12,6 @@ export const removeData = async () => {
   })
   await Mangotree.deleteMany({}, function (_err, numberRemoved) {
     console.log(' Delete all Mangotree ' + numberRemoved)
-  })
-  await Feedback.deleteMany({}, function (_err, numberRemoved) {
-    console.log(' Delete all Feedback ' + numberRemoved)
   })
   await Purchase.deleteMany({}, function (_err, numberRemoved) {
     console.log(' Delete all Purchase ' + numberRemoved)

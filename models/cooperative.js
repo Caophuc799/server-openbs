@@ -64,7 +64,7 @@ var Cooperative = new Schema(
     },
     verify: {
       type: Boolean,
-      default: false
+      default: true
     },
     rand: {
       type: Number,

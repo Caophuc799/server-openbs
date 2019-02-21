@@ -1,6 +1,7 @@
 import express from 'express'
 import _ from 'lodash'
 import MangoTreesController from '../../controllers/MangoTreesController'
+import FeedbackController from '../../controllers/FeedbackController';
 
 var { verifyToken } = require('../../services/VerifyToken')
 const router = express.Router()
@@ -116,6 +117,20 @@ router.delete('/:id', (req, res, next) => {
 router.post('/:id/buy', (req, res, next) => {
   MangoTreesController.buyMangoTree(req.params.id, req.body)
     .then(mango => res.json({ success: true, data: mango }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+router.get('/:treeId/feedbacks', function (req, res) {
+  FeedbackController.getFeedbackByTreeId(req.params.treeId)
+    .then(feedback => res.json({ success: true, data: feedback }))
     .catch(_error => {
       let status = 500
       if (_error.status) {
