@@ -18,6 +18,7 @@ class MangoTreesController {
     }
     return new Promise((resolve, reject) => {
       Mangotree.find({}, projection, options)
+        .populate({ path: 'cooperativeId', model: ModelName.CooperativeModel })
         .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
         .then(mangotrees => {
           mangotrees = mangotrees.filter(item => {
