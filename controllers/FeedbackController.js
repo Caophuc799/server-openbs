@@ -25,7 +25,8 @@ class FeedbackController {
         }
         purchase.update(expression, (_error, result) => {
           if (!_error && result) {
-            resolve(result)
+            purchase.feedback.push(feedback)
+            resolve(purchase)
           } else {
             let response = ErrorCode.DB_ERROR
             response.status = 200
