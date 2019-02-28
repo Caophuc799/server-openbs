@@ -6,6 +6,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
+import fs from 'fs'
 
 class MangoTreesController {
   getAll (query, projection) {
@@ -72,7 +73,7 @@ class MangoTreesController {
             reject(error)
           }
         }).catch(error => {
-          if (error.kind == 'ObjectId') {
+          if (error.kind === 'ObjectId') {
             let response = ErrorCode.INVALID_ID
             response.status = 200
             return reject(response)
@@ -129,6 +130,11 @@ class MangoTreesController {
       }
       return Cooperative.findById({ _id: _mangotree.cooperativeId }, (_error, _cooperative) => {
         if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
+          let stateTree = _mangotree.stateTree || []
+          stateTree = stateTree.map( item => {
+            item.image.data = fs.readFileSync(imgPath)
+            item.image.contentType = 'image/png'
+          })
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,

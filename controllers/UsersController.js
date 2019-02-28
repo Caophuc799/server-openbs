@@ -81,7 +81,7 @@ class UsersController {
         response.status = 200
         return reject(response)
       }
-      var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
+      // var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
       const currentUser = {
         firstName: _user.firstName,
@@ -90,7 +90,7 @@ class UsersController {
         email: _user.email,
         phoneNumber: _user.phoneNumber,
         address: _user.address,
-        password: hashPassword,
+        password: _user.password,
         rand: rand,
         avatar: _user.avatar
       }
@@ -243,7 +243,7 @@ class UsersController {
           if (_user && _user.verify) {
             bcrypt.compare(oldPassword, _user.password, function (_err, res) {
               if (res) {
-                User.findOneAndUpdate({ email }, { $set: { password: hashPassword } })
+                User.findOneAndUpdate({ email }, { $set: { password: newPassword } })
                   .then(user => resolve(user))
                   .catch(error => reject(error))
               } else {

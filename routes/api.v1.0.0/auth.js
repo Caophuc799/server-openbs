@@ -41,8 +41,7 @@ router.post('/user/login', async (req, res, next) => {
   passport.authenticate('loginuser', async (err, user, info) => {
     try {
       if (err || !user) {
-        const error = new Error('An Error occured')
-        return next(error)
+        return res.json({ auth: false, message: info.message })
       }
       req.login(user, { session: false }, async (error) => {
         if (error) return next(error)
@@ -121,8 +120,7 @@ router.post('/cooperative/login', async (req, res, next) => {
   passport.authenticate('logincooperative', async (err, cooperative, info) => {
     try {
       if (err || !cooperative) {
-        const error = new Error('An Error occured')
-        return next(error)
+        return res.json({ auth: false, message: info.message })
       }
       req.login(cooperative, { session: false }, async (error) => {
         if (error) return next(error)
