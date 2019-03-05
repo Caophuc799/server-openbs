@@ -5,6 +5,7 @@ import Tree from '../models/tree'
 import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
 import _ from 'lodash'
+import moment from 'moment'
 var mongoose = require('mongoose')
 class PurchaseHistory {
   getOrdersByUserId (_id, data) {
@@ -98,6 +99,13 @@ class PurchaseHistory {
               reject(error)
             }
             purchase = purchase.map(item => item.treeId)
+            purchase = purchase.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
             resolve(purchase)
           })
       })
