@@ -7,7 +7,7 @@ import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
 import fs from 'fs'
-
+import path from 'path'
 class MangoTreesController {
   getAll (query, projection) {
     let options
@@ -83,7 +83,7 @@ class MangoTreesController {
     })
   }
 
-  create (_mangotree) {
+  create (_mangotree, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
@@ -128,13 +128,25 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      return Cooperative.findById({ _id: _mangotree.cooperativeId }, (_error, _cooperative) => {
+      return Cooperative.findById({ _id: _mangotree.cooperativeId }, async (_error, _cooperative) => {
         if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
-          let stateTree = _mangotree.stateTree || []
-          stateTree = stateTree.map( item => {
-            item.image.data = fs.readFileSync(imgPath)
-            item.image.contentType = 'image/png'
-          })
+          let stateTree = []
+          for (let state of _mangotree.stateTree || []) {
+            let newState = { quantity: state.quantity, description: state.description }
+            let images = []
+            for (let image of state.image) {
+              let data = await fs.readFileSync(path.resolve(image))
+              images.push({ data, contentType: 'image/png' })
+            }
+            newState.image = images
+            stateTree.push(newState)
+          }
+          // stateTree = stateTree.map((item, index) => {
+          //   console.log(item)
+          //   console.log(fs.readFileSync(path.resolve(item.image)))
+          //   item.image.data = fs.readFileSync(path.resolve(item.image))
+          //   item.image.contentType = 'image/png'
+          // })
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
@@ -143,7 +155,7 @@ class MangoTreesController {
             location: _mangotree.location,
             category: _mangotree.category,
             price: _mangotree.price,
-            stateTree: _mangotree.stateTree,
+            stateTree: stateTree,
             purchasehistory: [],
             timeStartPlant: _mangotree.timeStartPlant,
             startTimeSelling: _mangotree.startTimeSelling,
@@ -246,10 +258,15 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
+      let images = []
+      for (let image of _mangotree.image) {
+        let data = fs.readFileSync(path.resolve(image))
+        images.push({ data, contentType: 'image/png' })
+      }
       let expression = {}
       expression['$push'] = {
         stateTree: {
-          image: _mangotree.image,
+          image: images,
           quantity: _mangotree.quantity,
           description: _mangotree.description
         }
