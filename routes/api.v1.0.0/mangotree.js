@@ -71,7 +71,7 @@ router.get('/:id', (req, res, next) => {
 
 /* UPDATE mango */
 router.put('/:id', (req, res, next) => {
-  MangoTreesController.update(req.params.id, req.body)
+  MangoTreesController.update(req.params.id, req.body, req.files)
     .then(mango => res.json({ success: true, data: mango }))
     .catch(_error => {
       let status = 500

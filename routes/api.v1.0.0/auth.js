@@ -17,7 +17,7 @@ var http = 'http'
 /* SAVE user */
 router.post('/user/signup', (req, res, next) => {
   let rand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
-  UsersController.create(req.body, rand)
+  UsersController.create(req.body, rand, req.files)
     .then(user => {
       link = `${http}://${req.get('host')}/api/users/verify/${user._id}?rand=` + rand
       var errorSendEmail = sendEmail(req.body.email, link)

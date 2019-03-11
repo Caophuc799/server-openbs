@@ -45,7 +45,7 @@ class UsersController {
     })
   }
 
-  create (_user, rand) {
+  create (_user, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_user)) {
         let response = errorCode.DATA_DOES_NOT_NULL

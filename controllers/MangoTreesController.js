@@ -86,6 +86,10 @@ class MangoTreesController {
 
   create (_mangotree, files) {
     return new Promise((resolve, reject) => {
+      if (files.photo) {
+        let data = fs.readFileSync(files.photo)
+        resolve(data.toString('base64'))
+      }
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
         response.status = 200
@@ -139,7 +143,7 @@ class MangoTreesController {
             let images = []
             for (let image of state.image) {
               if (image) {
-                let data = await fs.readFileSync(image)
+                let data = await fs.readFileSync(files[image])
                 images.push(data.toString('base64'))
               }
             }
@@ -191,7 +195,7 @@ class MangoTreesController {
     })
   }
 
-  update (_id, _mangotree) {
+  update (_id, _mangotree, files) {
     return new Promise((resolve, reject) => {
       if (_mangotree.idCooperative) {
         let response = ErrorCode.CAN_NOT_UPDATE_COOPERATIVE
