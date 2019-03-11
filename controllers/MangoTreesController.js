@@ -110,10 +110,7 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (!moment(_mangotree.timeStartPlant, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.startTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.endTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      moment(_mangotree.startTimeSelling, 'MM/DD/YYYY').isAfter(moment(_mangotree.endTimeSelling, 'MM/DD/YYYY'))) {
+      if (!moment(_mangotree.timeStartPlant, 'MM/DD/YYYY', true).isValid()) {
         let response = ErrorCode.INVALID_TIMESTAMP
         response.status = 200
         return reject(response)
@@ -125,6 +122,11 @@ class MangoTreesController {
       }
       if (!_mangotree.price || (parseFloat(_mangotree.price) <= 0)) {
         let response = ErrorCode.PRICE_MUST_BE_THAN_ZERO
+        response.status = 200
+        return reject(response)
+      }
+      if (isNaN(_mangotree.durationSelling) || parseFloat(_mangotree.durationSelling) <= 0) {
+        let response = ErrorCode.DURATION_MUST_BE_NUMBER
         response.status = 200
         return reject(response)
       }
@@ -141,12 +143,6 @@ class MangoTreesController {
             newState.image = images
             stateTree.push(newState)
           }
-          // stateTree = stateTree.map((item, index) => {
-          //   console.log(item)
-          //   console.log(fs.readFileSync(path.resolve(item.image)))
-          //   item.image.data = fs.readFileSync(path.resolve(item.image))
-          //   item.image.contentType = 'image/png'
-          // })
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
@@ -158,8 +154,8 @@ class MangoTreesController {
             stateTree: stateTree,
             purchasehistory: [],
             timeStartPlant: _mangotree.timeStartPlant,
-            startTimeSelling: _mangotree.startTimeSelling,
-            endTimeSelling: _mangotree.endTimeSelling
+            durationSelling: _mangotree.durationSelling,
+            summary: _mangotree.summary
           }
           return Mangotree.create(currentMangotree)
             .then(mangotree => {
@@ -204,14 +200,10 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (_mangotree.startTimeSelling && _mangotree.endTimeSelling) {
-        if (!moment(_mangotree.startTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.endTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      moment(_mangotree.startTimeSelling, 'MM/DD/YYYY').isAfter(moment(_mangotree.endTimeSelling, 'MM/DD/YYYY'))) {
-          let response = ErrorCode.INVALID_TIMESTAMP
-          response.status = 200
-          return reject(response)
-        }
+      if (isNaN(_mangotree.durationSelling) || parseFloat(_mangotree.durationSelling) <= 0) {
+        let response = ErrorCode.DURATION_MUST_BE_NUMBER
+        response.status = 200
+        return reject(response)
       }
       const currentMangotree = {
         name: _mangotree.name,
@@ -220,8 +212,8 @@ class MangoTreesController {
         category: _mangotree.category,
         price: _mangotree.price,
         timeStartPlant: _mangotree.timeStartPlant,
-        startTimeSelling: _mangotree.startTimeSelling,
-        endTimeSelling: _mangotree.endTimeSelling
+        durationSelling: _mangotree.durationSelling,
+        summary: _mangotree.summary
       }
       let expression = currentMangotree
       if (_mangotree.stateTree) {
@@ -340,8 +332,8 @@ class MangoTreesController {
                   buyerId: user._id,
                   treeId: mangotree._id,
                   stateTree: mangotree.stateTree[mangotree.stateTree.length - 1],
-                  endTime: mangotree.endTimeSelling,
-                  startTime: mangotree.startTimeSelling
+                  endTime: moment().format('DD/MM/YYYY'),
+                  startTime: moment().add(mangotree.durationSelling, 'months').format('DD/MM/YYYY')
                 }
                 PurchaseHistory.create(purchase, (_error, _purchase) => {
                   if (_purchase && !_error) {

@@ -41,13 +41,9 @@ var Tree = new Schema(
       type: String,
       require: true
     },
-    startTimeSelling: {
-      type: Date,
-      default: Date.now
-    },
-    endTimeSelling: {
-      type: Date,
-      default: Date.now
+    durationSelling: {
+      type: Number,
+      default: 12
     },
     summary: { type: String, default: '' },
     stateTree: [
