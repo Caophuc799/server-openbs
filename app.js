@@ -36,7 +36,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(mongoLocal, options).then(() => {
+  mongoose.connect(mongoOnline, options).then(() => {
     console.log('MongoDB is connected')
     // mongoose.connection.db.dropDatabase()
   }).catch(_err => {
@@ -101,7 +101,7 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-seedData()
+// seedData()
 async function seedData () {
   // remove data
   await removeData()
