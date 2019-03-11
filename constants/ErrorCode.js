@@ -127,6 +127,11 @@ const ErrorCode = {
     name: 'PRICE_MUST_BE_THAN_ZERO',
     message: 'Giá sản phẩm phải lớn hơn 0'
   },
+  DURATION_MUST_BE_NUMBER: {
+    errorCode: 213,
+    name: 'DURATION_MUST_BE_NUMBER',
+    message: 'Thời gian bán phải là số  lớn hơn 0'
+  },
   OLDPASSWORD_DOES_NOT_SAME_NEWPASSWORD: {
     errorCode: 221,
     name: 'OLDPASSWORD_DOES_NOT_SAME_NEWPASSWORD',

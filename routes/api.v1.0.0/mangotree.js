@@ -39,7 +39,7 @@ router.get('/buyed', (req, res, next) => {
 
 /* SAVE mango */
 router.post('/', (req, res, next) => {
-  MangoTreesController.create(req.body)
+  MangoTreesController.create(req.body, req.files)
     .then(mango => {
       return res.json({ success: true, data: mango })
     })

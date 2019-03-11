@@ -4,7 +4,8 @@ import { validateEmail } from '../services/Utils'
 import moment from 'moment'
 import bcrypt from 'bcrypt'
 import errorCode from '../constants/ErrorCode'
-
+import fs from 'fs'
+import path from 'path'
 class UsersController {
   getAll (query = { offset: 0, limit: 0 }, projection) {
     let options
@@ -83,6 +84,8 @@ class UsersController {
       }
       // var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
+      let data = fs.readFileSync(path.resolve(_user.avatar))
+      const avatar = { data, contentType: 'image/png' }
       const currentUser = {
         firstName: _user.firstName,
         lastName: _user.lastName,
@@ -92,7 +95,7 @@ class UsersController {
         address: _user.address,
         password: _user.password,
         rand: rand,
-        avatar: _user.avatar
+        avatar: avatar || _user.avatar
       }
       User.create(currentUser)
         .then(user => resolve(user))
@@ -119,13 +122,15 @@ class UsersController {
         response.status = 200
         return reject(response)
       }
+      let data = fs.readFileSync(path.resolve(_user.avatar))
+      const avatar = { data, contentType: 'image/png' }
       let newUser = {
         firstName: _user.firstName,
         lastName: _user.lastName,
         dateOfBirth: moment(_user.dateOfBirth).format('MM/DD/YYYY'),
         phoneNumber: _user.phoneNumber,
         address: _user.address,
-        avatar: _user.avatar
+        avatar: avatar || _user.avatar
       }
       User.findOneAndUpdate({ _id }, { $set: newUser })
         .then(user => {

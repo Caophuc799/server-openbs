@@ -6,7 +6,8 @@ import _ from 'lodash'
 import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
-
+import fs from 'fs'
+import path from 'path'
 class MangoTreesController {
   getAll (query, projection) {
     let options
@@ -73,7 +74,7 @@ class MangoTreesController {
             reject(error)
           }
         }).catch(error => {
-          if (error.kind == 'ObjectId') {
+          if (error.kind === 'ObjectId') {
             let response = ErrorCode.INVALID_ID
             response.status = 200
             return reject(response)
@@ -83,7 +84,7 @@ class MangoTreesController {
     })
   }
 
-  create (_mangotree) {
+  create (_mangotree, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
@@ -110,10 +111,7 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (!moment(_mangotree.timeStartPlant, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.startTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.endTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      moment(_mangotree.startTimeSelling, 'MM/DD/YYYY').isAfter(moment(_mangotree.endTimeSelling, 'MM/DD/YYYY'))) {
+      if (!moment(_mangotree.timeStartPlant, 'MM/DD/YYYY', true).isValid()) {
         let response = ErrorCode.INVALID_TIMESTAMP
         response.status = 200
         return reject(response)
@@ -128,8 +126,24 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      return Cooperative.findById({ _id: _mangotree.cooperativeId }, (_error, _cooperative) => {
+      if (isNaN(_mangotree.durationSelling) || parseFloat(_mangotree.durationSelling) <= 0) {
+        let response = ErrorCode.DURATION_MUST_BE_NUMBER
+        response.status = 200
+        return reject(response)
+      }
+      return Cooperative.findById({ _id: _mangotree.cooperativeId }, async (_error, _cooperative) => {
         if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
+          let stateTree = []
+          for (let state of _mangotree.stateTree || []) {
+            let newState = { quantity: state.quantity, description: state.description }
+            let images = []
+            for (let image of state.image) {
+              let data = await fs.readFileSync(path.resolve(image))
+              images.push({ data, contentType: 'image/png' })
+            }
+            newState.image = images
+            stateTree.push(newState)
+          }
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
@@ -138,11 +152,11 @@ class MangoTreesController {
             location: _mangotree.location,
             category: _mangotree.category,
             price: _mangotree.price,
-            stateTree: _mangotree.stateTree,
+            stateTree: stateTree,
             purchasehistory: [],
             timeStartPlant: _mangotree.timeStartPlant,
-            startTimeSelling: _mangotree.startTimeSelling,
-            endTimeSelling: _mangotree.endTimeSelling
+            durationSelling: _mangotree.durationSelling,
+            summary: _mangotree.summary
           }
           return Mangotree.create(currentMangotree)
             .then(mangotree => {
@@ -187,14 +201,10 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (_mangotree.startTimeSelling && _mangotree.endTimeSelling) {
-        if (!moment(_mangotree.startTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      !moment(_mangotree.endTimeSelling, 'MM/DD/YYYY', true).isValid() ||
-      moment(_mangotree.startTimeSelling, 'MM/DD/YYYY').isAfter(moment(_mangotree.endTimeSelling, 'MM/DD/YYYY'))) {
-          let response = ErrorCode.INVALID_TIMESTAMP
-          response.status = 200
-          return reject(response)
-        }
+      if (isNaN(_mangotree.durationSelling) || parseFloat(_mangotree.durationSelling) <= 0) {
+        let response = ErrorCode.DURATION_MUST_BE_NUMBER
+        response.status = 200
+        return reject(response)
       }
       const currentMangotree = {
         name: _mangotree.name,
@@ -203,8 +213,8 @@ class MangoTreesController {
         category: _mangotree.category,
         price: _mangotree.price,
         timeStartPlant: _mangotree.timeStartPlant,
-        startTimeSelling: _mangotree.startTimeSelling,
-        endTimeSelling: _mangotree.endTimeSelling
+        durationSelling: _mangotree.durationSelling,
+        summary: _mangotree.summary
       }
       let expression = currentMangotree
       if (_mangotree.stateTree) {
@@ -241,10 +251,15 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
+      let images = []
+      for (let image of _mangotree.image) {
+        let data = fs.readFileSync(path.resolve(image))
+        images.push({ data, contentType: 'image/png' })
+      }
       let expression = {}
       expression['$push'] = {
         stateTree: {
-          image: _mangotree.image,
+          image: images,
           quantity: _mangotree.quantity,
           description: _mangotree.description
         }
@@ -318,8 +333,8 @@ class MangoTreesController {
                   buyerId: user._id,
                   treeId: mangotree._id,
                   stateTree: mangotree.stateTree[mangotree.stateTree.length - 1],
-                  endTime: mangotree.endTimeSelling,
-                  startTime: mangotree.startTimeSelling
+                  endTime: moment().format('DD/MM/YYYY'),
+                  startTime: moment().add(mangotree.durationSelling, 'months').format('DD/MM/YYYY')
                 }
                 PurchaseHistory.create(purchase, (_error, _purchase) => {
                   if (_purchase && !_error) {

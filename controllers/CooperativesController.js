@@ -6,7 +6,8 @@ import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import moment from 'moment'
 import bcrypt from 'bcrypt'
-
+import path from 'path'
+import fs from 'fs'
 class CooperativesController {
   getAll (projection, query = { offset: 0, limit: 0 }) {
     let options
@@ -96,6 +97,8 @@ class CooperativesController {
                   response.status = 200
                   return reject(response)
                 }
+                let data = fs.readFileSync(path.resolve(_cooperative.logo))
+                const logo = { data, contentType: 'image/png' }
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
                   taxCode: _cooperative.taxCode,
@@ -105,7 +108,7 @@ class CooperativesController {
                   address: _cooperative.address,
                   password: hashPassword,
                   rand: rand,
-                  logo: _cooperative.logo,
+                  logo: logo || _cooperative.logo,
                   description: _cooperative.description,
                   treeIds: []
                 }
@@ -160,13 +163,15 @@ class CooperativesController {
                 response.status = 200
                 return reject(response)
               }
+              let data = fs.readFileSync(path.resolve(_cooperative.logo))
+              const logo = { data, contentType: 'image/png' }
               const newCooperative = {
                 idRepresentation: _cooperative.idRepresentation,
                 taxCode: _cooperative.taxCode,
                 name: _cooperative.name,
                 phoneNumber: _cooperative.phoneNumber,
                 address: _cooperative.address,
-                logo: _cooperative.logo,
+                logo: logo || _cooperative.logo,
                 description: _cooperative.description
               }
               return Cooperative.findOneAndUpdate({ _id }, { $set: newCooperative })
