@@ -7,6 +7,7 @@ import apiRoutes from './routes/api.v1.0.0'
 import { blockStart, mongoLocal, mongoOnline, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
 import { createData, removeData } from './seedData'
 
+import fileUpload from 'express-fileupload'
 import OpenBS from './contracts/Contract'
 
 require('./services/auth')
@@ -46,6 +47,8 @@ const connectWithRetry = () => {
 }
 connectWithRetry()
 
+// upload file
+app.use(fileUpload())
 app.use(logger('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -101,7 +104,7 @@ app.use(function (err, req, res, next) {
   res.json(err.message || 'Page not found')
   res.render('error')
 })
-seedData()
+// seedData()
 async function seedData () {
   // remove data
   await removeData()
