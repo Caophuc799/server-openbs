@@ -86,12 +86,6 @@ class MangoTreesController {
 
   create (_mangotree, files) {
     return new Promise((resolve, reject) => {
-      let photo = files.photo
-      if (photo) {
-        let base64dataa = new Buffer(photo.data, 'binary').toString('base64')
-        console.log(base64dataa)
-        resolve(base64dataa)
-      }
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
         response.status = 200
@@ -145,8 +139,9 @@ class MangoTreesController {
             let images = []
             for (let image of state.image) {
               if (image) {
-                let data = await fs.readFileSync(files[image])
-                images.push(data.toString('base64'))
+                // eslint-disable-next-line node/no-deprecated-api
+                let base64dataa = new Buffer(files[image], 'binary').toString('base64')
+                images.push(base64dataa)
               }
             }
             newState.image = images
@@ -252,7 +247,7 @@ class MangoTreesController {
     })
   }
 
-  updateStateTree (_id, _mangotree) {
+  updateStateTree (_id, _mangotree, files) {
     return new Promise((resolve, reject) => {
       if (!_mangotree.image && !_mangotree.quantity && !_mangotree.description) {
         let response = ErrorCode.MISSING_FIELD
@@ -262,8 +257,9 @@ class MangoTreesController {
       let images = []
       for (let image of _mangotree.image) {
         if (image) {
-          let data = fs.readFileSync(image)
-          images.push(data.toString('base64'))
+          // eslint-disable-next-line node/no-deprecated-api
+          let base64dataa = new Buffer(files[image], 'binary').toString('base64')
+          images.push(base64dataa)
         }
       }
       let expression = {}

@@ -86,8 +86,7 @@ class UsersController {
       // console.log(moment(_user.dateOfBirth))
       let avatar
       if (_user.avatar) {
-        let data = fs.readFileSync(_user.avatar)
-        avatar = data.toString('base64')
+        avatar = new Buffer(files.avatar, 'binary').toString('base64')
       }
       const currentUser = {
         firstName: _user.firstName,
@@ -127,8 +126,7 @@ class UsersController {
       }
       let avatar
       if (_user.avatar) {
-        let data = fs.readFileSync(_user.avatar)
-        avatar = data.toString('base64')
+        avatar = new Buffer(files.avatar, 'binary').toString('base64')
       }
       let newUser = {
         firstName: _user.firstName,
