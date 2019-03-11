@@ -138,7 +138,7 @@ class MangoTreesController {
             let newState = { quantity: state.quantity, description: state.description }
             let images = []
             for (let image of state.image) {
-              let data = await fs.readFileSync(path.resolve(image))
+              let data = await fs.readFileSync(image)
               images.push({ data, contentType: 'image/png' })
             }
             newState.image = images
@@ -253,7 +253,7 @@ class MangoTreesController {
       }
       let images = []
       for (let image of _mangotree.image) {
-        let data = fs.readFileSync(path.resolve(image))
+        let data = fs.readFileSync(image)
         images.push({ data, contentType: 'image/png' })
       }
       let expression = {}

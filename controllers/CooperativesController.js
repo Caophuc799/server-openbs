@@ -97,7 +97,7 @@ class CooperativesController {
                   response.status = 200
                   return reject(response)
                 }
-                let data = fs.readFileSync(path.resolve(_cooperative.logo))
+                let data = fs.readFileSync(_cooperative.logo)
                 const logo = { data, contentType: 'image/png' }
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
@@ -163,7 +163,7 @@ class CooperativesController {
                 response.status = 200
                 return reject(response)
               }
-              let data = fs.readFileSync(path.resolve(_cooperative.logo))
+              let data = fs.readFileSync(_cooperative.logo)
               const logo = { data, contentType: 'image/png' }
               const newCooperative = {
                 idRepresentation: _cooperative.idRepresentation,
