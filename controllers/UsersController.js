@@ -84,8 +84,11 @@ class UsersController {
       }
       // var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
-      let data = fs.readFileSync(_user.avatar)
-      const avatar = { data, contentType: 'image/png' }
+      let avatar
+      if (_user.avatar) {
+        let data = fs.readFileSync(_user.avatar)
+        avatar = { data, contentType: 'image/png' }
+      }
       const currentUser = {
         firstName: _user.firstName,
         lastName: _user.lastName,
@@ -122,8 +125,11 @@ class UsersController {
         response.status = 200
         return reject(response)
       }
-      let data = fs.readFileSync(_user.avatar)
-      const avatar = { data, contentType: 'image/png' }
+      let avatar
+      if (_user.avatar) {
+        let data = fs.readFileSync(_user.avatar)
+        avatar = { data, contentType: 'image/png' }
+      }
       let newUser = {
         firstName: _user.firstName,
         lastName: _user.lastName,
