@@ -140,7 +140,7 @@ class MangoTreesController {
             for (let image of state.image) {
               if (image) {
                 let data = await fs.readFileSync(image)
-                images.push({ data, contentType: 'image/png' })
+                images.push(data.toString('base64'))
               }
             }
             newState.image = images
@@ -257,7 +257,7 @@ class MangoTreesController {
       for (let image of _mangotree.image) {
         if (image) {
           let data = fs.readFileSync(image)
-          images.push({ data, contentType: 'image/png' })
+          images.push(data.toString('base64'))
         }
       }
       let expression = {}

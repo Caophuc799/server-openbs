@@ -22,7 +22,7 @@ export const removeData = async () => {
 export const createData = async () => {
   await new Promise((resolve, reject) => {
     let data = fs.readFileSync(path.resolve(path.join(__dirname, './assets/user.jpg')))
-    const logo = { data, contentType: 'image/png' }
+    const logo = data.toString('base64')
     const currentUser = {
       avatar: logo,
       phoneNumber: '2',
@@ -37,13 +37,13 @@ export const createData = async () => {
       password: 'hello'
     }
     let data1 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/htx1.png')))
-    const logo1 = { data: data1, contentType: 'image/png' }
+    const logo1 = data1.toString('base64')
     let data2 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/htx3.jpeg')))
-    const logo2 = { data: data2, contentType: 'image/png' }
+    const logo2 = data2.toString('base64')
     let data4 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/htx4.jpg')))
-    const logo4 = { data: data4, contentType: 'image/png' }
+    const logo4 = data4.toString('base64')
     let data5 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/htx2.jpeg')))
-    const logo5 = { data: data5, contentType: 'image/png' }
+    const logo5 = data5.toString('base64')
     User.create(currentUser, (_error, _user) => {
       const currentCooperative = [{
         // logo: 'QmXZiBbFk2Xhyuzdoqvr869HkKg9JhCSpnkwqHcJj9gAfy',
@@ -129,17 +129,17 @@ export const seedMangoTree = async (cooperative) => {
   await new Promise((resolve, reject) => {
     console.log('seedMangoTree')
     let data1 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/buoi-nam-roi.jpg')))
-    const logo1 = { data: data1, contentType: 'image/png' }
+    const logo1 = data1.toString('base64')
     let data2 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/xoai.jpg')))
-    const logo2 = { data: data2, contentType: 'image/png' }
+    const logo2 = data2.toString('base64')
     let data3 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/sau_rieng.jpg')))
-    const logo3 = { data: data3, contentType: 'image/png' }
+    const logo3 = data3.toString('base64')
     let data4 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/thanh_long_1.jpg')))
-    const logo4 = { data: data4, contentType: 'image/png' }
+    const logo4 = data4.toString('base64')
     let data5 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/cay nah.jpg')))
-    const logo5 = { data: data5, contentType: 'image/png' }
+    const logo5 = data5.toString('base64')
     let data6 = fs.readFileSync(path.resolve(path.join(__dirname, './assets/cay-vu-sua-1.jpg')))
-    const logo6 = { data: data6, contentType: 'image/png' }
+    const logo6 = data6.toString('base64')
     const currentMangotree = [
       {
         'name': 'Bưởi năm roi',

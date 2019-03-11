@@ -48,7 +48,7 @@ var Tree = new Schema(
     summary: { type: String, default: '' },
     stateTree: [
       {
-        image: [{ data: Buffer, contentType: String }],
+        image: [{ type: String }],
         quantity: { type: String },
         description: { type: String },
         time: { type: Date, default: Date.now }

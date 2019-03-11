@@ -87,7 +87,7 @@ class UsersController {
       let avatar
       if (_user.avatar) {
         let data = fs.readFileSync(_user.avatar)
-        avatar = { data, contentType: 'image/png' }
+        avatar = data.toString('base64')
       }
       const currentUser = {
         firstName: _user.firstName,
@@ -128,7 +128,7 @@ class UsersController {
       let avatar
       if (_user.avatar) {
         let data = fs.readFileSync(_user.avatar)
-        avatar = { data, contentType: 'image/png' }
+        avatar = data.toString('base64')
       }
       let newUser = {
         firstName: _user.firstName,

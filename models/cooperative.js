@@ -18,7 +18,7 @@ var Cooperative = new Schema(
       required: true,
       unique: true
     },
-    logo: { data: Buffer, contentType: String },
+    logo: { type: String },
     idRepresentation: {
       type: SchemaTypes.ObjectId,
       required: true,

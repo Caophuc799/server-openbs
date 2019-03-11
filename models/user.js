@@ -21,7 +21,7 @@ var User = new Schema(
       type: String,
       required: true
     },
-    avatar: { data: Buffer, contentType: String },
+    avatar: { type: String },
     dateOfBirth: {
       type: Date,
       required: true
