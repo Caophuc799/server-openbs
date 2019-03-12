@@ -149,7 +149,7 @@ class MangoTreesController {
             numberId: _mangotree.numberId,
             cooperativeId: _cooperative._id,
             address: _mangotree.address,
-            location: _mangotree.location,
+            location: { longitude: _mangotree.longitude, latitude: _mangotree.latitude },
             category: _mangotree.category,
             price: _mangotree.price,
             stateTree: stateTree,
