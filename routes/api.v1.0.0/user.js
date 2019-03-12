@@ -55,6 +55,56 @@ router.get('/:id/trees', (req, res, next) => {
       return res.json(status, _.merge(response, _error))
     })
 })
+/* GET ALL get Oder OF USER  BY ID  */
+router.get('/:id/treespurchased', (req, res, next) => {
+  PurchaseController.getTreePurchasedByUserId(req.params.id, req.query)
+    .then(order => {
+      res.json({ success: true, data: order })
+    })
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+/* GET ALL get Oder OF USER  BY ID  */
+router.get('/:id/treespending', (req, res, next) => {
+  PurchaseController.getTreePendingByUserId(req.params.id, req.query)
+    .then(order => {
+      res.json({ success: true, data: order })
+    })
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
+/* GET ALL get Oder OF USER  BY ID  */
+router.get('/:id/treescancel', (req, res, next) => {
+  PurchaseController.getTreeCancelByUserId(req.params.id, req.query)
+    .then(order => {
+      res.json({ success: true, data: order })
+    })
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
 
 /* GET ALL get Oder OF USER  BY ID  */
 router.get('/:id/orders', (req, res, next) => {

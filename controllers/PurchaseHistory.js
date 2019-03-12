@@ -112,6 +112,120 @@ class PurchaseHistory {
     })
   }
 
+  getTreePurchasedByUserId (_id, data) {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id }, (_error, user) => {
+        if (_error || !user) {
+          let error = ErrorCode.USER_DOES_NOT_EXIST
+          error.status = 404
+          reject(error)
+        }
+        let projection = {}
+        let options
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({ buyerId: _id, status: 2 }, projection, options)
+          .populate('treeId')
+          .exec((_error, purchase) => {
+            if (_error || !purchase) {
+              let error = ErrorCode.DO_NOT_ORDER
+              error.status = 404
+              reject(error)
+            }
+            purchase = purchase.map(item => item.treeId)
+            purchase = purchase.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
+            resolve(purchase)
+          })
+      })
+    })
+  }
+
+  getTreePendingByUserId (_id, data) {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id }, (_error, user) => {
+        if (_error || !user) {
+          let error = ErrorCode.USER_DOES_NOT_EXIST
+          error.status = 404
+          reject(error)
+        }
+        let projection = {}
+        let options
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({ buyerId: _id, status: 1 }, projection, options)
+          .populate('treeId')
+          .exec((_error, purchase) => {
+            if (_error || !purchase) {
+              let error = ErrorCode.DO_NOT_ORDER
+              error.status = 404
+              reject(error)
+            }
+            purchase = purchase.map(item => item.treeId)
+            purchase = purchase.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
+            resolve(purchase)
+          })
+      })
+    })
+  }
+
+  getTreeCancelByUserId (_id, data) {
+    return new Promise((resolve, reject) => {
+      User.findOne({ _id }, (_error, user) => {
+        if (_error || !user) {
+          let error = ErrorCode.USER_DOES_NOT_EXIST
+          error.status = 404
+          reject(error)
+        }
+        let projection = {}
+        let options
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({ buyerId: _id, status: 0 }, projection, options)
+          .populate('treeId')
+          .exec((_error, purchase) => {
+            if (_error || !purchase) {
+              let error = ErrorCode.DO_NOT_ORDER
+              error.status = 404
+              reject(error)
+            }
+            purchase = purchase.map(item => item.treeId)
+            purchase = purchase.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return -1
+              }
+              return 1
+            })
+            resolve(purchase)
+          })
+      })
+    })
+  }
+
   getTreeByCooperativeId (_id, data) {
     return new Promise((resolve, reject) => {
       Cooperative.findOne({ _id }, (_error, cooperative) => {
