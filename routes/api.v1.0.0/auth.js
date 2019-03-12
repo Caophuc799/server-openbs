@@ -143,7 +143,7 @@ router.post('/cooperative/login', async (req, res, next) => {
 /* SAVE cooperative */
 router.post('/cooperative/signup', (req, res, next) => {
   let rand = Math.floor((Math.random() * 100000) + (Math.random() * 10000) + (Math.random() * 1000) + (Math.random() * 100))
-  CooperativesController.create(req.body, rand)
+  CooperativesController.create(req.body, rand, req.files)
     .then(cooperative => {
       link = `${http}://${req.get('host')}/api/cooperatives/verify/${cooperative._id}?rand=` + rand
       var errorSendEmail = sendEmail(req.body.email, link)

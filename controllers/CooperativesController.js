@@ -99,7 +99,7 @@ class CooperativesController {
                 }
                 let logo
                 if (_cooperative.logo) {
-                  logo = new Buffer(files.logo, 'binary').toString('base64')
+                  logo = new Buffer(files.logo.data, 'binary').toString('base64')
                 }
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
@@ -167,7 +167,7 @@ class CooperativesController {
               }
               let logo
               if (_cooperative.logo) {
-                logo = new Buffer(files.logo, 'binary').toString('base64')
+                logo = new Buffer(files.logo.data, 'binary').toString('base64')
               }
               const newCooperative = {
                 idRepresentation: _cooperative.idRepresentation,

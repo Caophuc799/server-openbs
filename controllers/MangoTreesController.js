@@ -133,20 +133,17 @@ class MangoTreesController {
       }
       return Cooperative.findById({ _id: _mangotree.cooperativeId }, async (_error, _cooperative) => {
         if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
-          let stateTree = []
-          for (let state of _mangotree.stateTree || []) {
-            let newState = { quantity: state.quantity, description: state.description }
-            let images = []
-            for (let image of state.image) {
-              if (image) {
-                // eslint-disable-next-line node/no-deprecated-api
-                let base64dataa = new Buffer(files[image], 'binary').toString('base64')
-                images.push(base64dataa)
-              }
-            }
-            newState.image = images
-            stateTree.push(newState)
-          }
+          let images = []
+          Object.keys(files).forEach(function (key) {
+            // eslint-disable-next-line node/no-deprecated-api
+            let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+            images.push(base64dataa)
+          })
+          let stateTree = [{
+            image: images,
+            quantity: _mangotree.quantity,
+            description: _mangotree.description
+          }]
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
@@ -249,19 +246,17 @@ class MangoTreesController {
 
   updateStateTree (_id, _mangotree, files) {
     return new Promise((resolve, reject) => {
-      if (!_mangotree.image && !_mangotree.quantity && !_mangotree.description) {
+      if (!_mangotree.quantity && !_mangotree.description) {
         let response = ErrorCode.MISSING_FIELD
         response.status = 200
         return reject(response)
       }
       let images = []
-      for (let image of _mangotree.image) {
-        if (image) {
-          // eslint-disable-next-line node/no-deprecated-api
-          let base64dataa = new Buffer(files[image], 'binary').toString('base64')
-          images.push(base64dataa)
-        }
-      }
+      Object.keys(files).forEach(function (key) {
+        // eslint-disable-next-line node/no-deprecated-api
+        let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+        images.push(base64dataa)
+      })
       let expression = {}
       expression['$push'] = {
         stateTree: {
