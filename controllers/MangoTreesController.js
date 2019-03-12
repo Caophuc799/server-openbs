@@ -134,11 +134,13 @@ class MangoTreesController {
       return Cooperative.findById({ _id: _mangotree.cooperativeId }, async (_error, _cooperative) => {
         if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
           let images = []
-          Object.keys(files).forEach(function (key) {
-            // eslint-disable-next-line node/no-deprecated-api
-            let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
-            images.push(base64dataa)
-          })
+          if (files) {
+            Object.keys(files).forEach(function (key) {
+              // eslint-disable-next-line node/no-deprecated-api
+              let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+              images.push(base64dataa)
+            })
+          }
           let stateTree = [{
             image: images,
             quantity: _mangotree.quantity,
@@ -252,11 +254,13 @@ class MangoTreesController {
         return reject(response)
       }
       let images = []
-      Object.keys(files).forEach(function (key) {
-        // eslint-disable-next-line node/no-deprecated-api
-        let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
-        images.push(base64dataa)
-      })
+      if (files) {
+        Object.keys(files).forEach(function (key) {
+          // eslint-disable-next-line node/no-deprecated-api
+          let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+          images.push(base64dataa)
+        })
+      }
       let expression = {}
       expression['$push'] = {
         stateTree: {
