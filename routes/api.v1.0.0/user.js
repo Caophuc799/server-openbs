@@ -75,7 +75,7 @@ router.get('/:id/orders', (req, res, next) => {
 
 /* UPDATE user */
 router.put('/:id', (req, res, next) => {
-  UsersController.update(req.params.id, req.body)
+  UsersController.update(req.params.id, req.body, req.files)
     .then(user => res.json({ success: true, data: user }))
     .catch(_error => {
       let status = 500

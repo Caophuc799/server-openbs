@@ -47,7 +47,7 @@ class CooperativesController {
     })
   }
 
-  create (_cooperative, rand) {
+  create (_cooperative, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -98,7 +98,8 @@ class CooperativesController {
                   return reject(response)
                 }
                 let logo
-                if (_cooperative.logo) {
+                if (files.logo && files.logo.data) {
+                  // eslint-disable-next-line node/no-deprecated-api
                   logo = new Buffer(files.logo.data, 'binary').toString('base64')
                 }
                 const currentCooperative = {
@@ -149,7 +150,7 @@ class CooperativesController {
     })
   }
 
-  update (_id, _cooperative) {
+  update (_id, _cooperative, files) {
     return new Promise((resolve, reject) => {
       if (_cooperative.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
@@ -166,7 +167,8 @@ class CooperativesController {
                 return reject(response)
               }
               let logo
-              if (_cooperative.logo) {
+              if (files.logo && files.logo.data) {
+                // eslint-disable-next-line node/no-deprecated-api
                 logo = new Buffer(files.logo.data, 'binary').toString('base64')
               }
               const newCooperative = {

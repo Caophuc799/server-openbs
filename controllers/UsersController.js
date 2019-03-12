@@ -85,7 +85,8 @@ class UsersController {
       // var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
       let avatar
-      if (_user.avatar) {
+      if (files.avatar && files.avatar.data) {
+        // eslint-disable-next-line node/no-deprecated-api
         avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
       }
       const currentUser = {
@@ -112,7 +113,7 @@ class UsersController {
     })
   }
 
-  update (_id, _user) {
+  update (_id, _user, files) {
     return new Promise((resolve, reject) => {
       if (_user.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
@@ -125,7 +126,8 @@ class UsersController {
         return reject(response)
       }
       let avatar
-      if (_user.avatar) {
+      if (files.avatar && files.avatar.data) {
+        // eslint-disable-next-line node/no-deprecated-api
         avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
       }
       let newUser = {

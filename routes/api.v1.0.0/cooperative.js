@@ -67,7 +67,7 @@ router.get('/:id/trees', (req, res, next) => {
 
 /* UPDATE cooperative */
 router.put('/:id', (req, res, next) => {
-  CooperativesController.update(req.params.id, req.body)
+  CooperativesController.update(req.params.id, req.body, req.files)
     .then(cooperative => res.json({ success: true, data: cooperative }))
     .catch(_error => {
       let status = 500
