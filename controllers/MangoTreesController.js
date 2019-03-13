@@ -8,6 +8,7 @@ import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
 import fs from 'fs'
 import path from 'path'
+var mongoose = require('mongoose')
 class MangoTreesController {
   getAll (query, projection) {
     let options
@@ -307,72 +308,86 @@ class MangoTreesController {
     })
   }
 
-  buyMangoTree (_id, data) {
+  buyMangoTrees (data) {
     return new Promise((resolve, reject) => {
       if (!data.buyerId) {
         let response = ErrorCode.MISSING_FIELD
         response.status = 200
         return reject(response)
       }
-      Mangotree.findOne({ _id })
+      let treeIds = data.treeIds.map(ele => new mongoose.Types.ObjectId(ele))
+      Mangotree.find({ _id: { $in: treeIds } })
         .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
-        .exec((_error, mangotree) => {
-          if (mangotree && !_error) {
-            let purchasehistory = mangotree.purchasehistory
-            purchasehistory = purchasehistory.sort((a, b) => {
-              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
-                moment(a.createdAt).isAfter(b.createdAt)) {
-                return -1
-              }
-              return 1
-            })
-            let temppurchase = purchasehistory[purchasehistory.length - 1]
-            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
-              let response = ErrorCode.TREE_BOUGHT
-              response.status = 200
-              return reject(response)
-            }
-            User.findOne({ _id: data.buyerId }).then(user => {
-              if (user) {
-                let purchase = {
-                  buyerId: user._id,
-                  treeId: mangotree._id,
-                  stateTree: mangotree.stateTree[mangotree.stateTree.length - 1],
-                  endTime: moment().format('DD/MM/YYYY'),
-                  startTime: moment().add(mangotree.durationSelling, 'months').format('DD/MM/YYYY')
-                }
-                PurchaseHistory.create(purchase, (_error, _purchase) => {
-                  if (_purchase && !_error) {
-                    let expression = {
-                      status: 1,
-                      '$push': { purchasehistory: _purchase }
-                    }
-                    mangotree.update(expression, (_error, result) => {
-                      if (result) {
-                        resolve(_purchase)
-                      }
-                    })
-                  } else {
-                    let response = ErrorCode.FAIL
-                    response.status = 200
-                    return reject(response)
-                  }
-                })
-              } else {
-                let response = ErrorCode.USER_DOES_NOT_EXIST
-                response.status = 200
-                return reject(response)
-              }
-            }).catch(_error => {
-              let response = ErrorCode.INVALID_ID
-              response.status = 200
-              return reject(response)
-            })
-          } else {
+        .exec((_error, mangotrees) => {
+          if (!mangotrees || _error || mangotrees.length === 0) {
             let response = ErrorCode.MANGOTREE_DOES_NOT_EXIST
             response.status = 200
             return reject(response)
           }
+          mangotrees.forEach(mangotree => {
+            let purchasehistory = mangotree.purchasehistory
+            purchasehistory = purchasehistory.sort((a, b) => {
+              if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                moment(a.createdAt).isAfter(b.createdAt)) {
+                return 1
+              }
+              return -1
+            })
+            let temppurchase = purchasehistory[purchasehistory.length - 1]
+            if (temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0) {
+              let response = {
+                errorCode: 62,
+                name: 'TREE_BOUGHT',
+                message: `Cây ${mangotree.name} đã được mua`
+              }
+              response.status = 200
+              return reject(response)
+            }
+          })
+          User.findOne({ _id: data.buyerId }).then(user => {
+            if (!user) {
+              let response = ErrorCode.USER_DOES_NOT_EXIST
+              response.status = 200
+              return reject(response)
+            }
+            Promise.all(
+              mangotrees.map(mangotree => {
+                return new Promise((resolve, reject) => {
+                  let purchase = {
+                    buyerId: user._id,
+                    treeId: mangotree._id,
+                    stateTree: mangotree.stateTree[mangotree.stateTree.length - 1],
+                    startTime: moment().format('MM/DD/YYYY'),
+                    endTime: moment().add(mangotree.durationSelling, 'months').format('MM/DD/YYYY')
+                  }
+                  return PurchaseHistory.create(purchase, (_error, _purchase) => {
+                    if (_purchase && !_error) {
+                      let expression = {
+                        status: 1,
+                        '$push': { purchasehistory: _purchase }
+                      }
+                      return mangotree.update(expression, (_error, result) => {
+                        if (result) {
+                          resolve(_purchase)
+                        }
+                      })
+                    } else {
+                      let response = ErrorCode.FAIL
+                      response.status = 200
+                      return reject(response)
+                    }
+                  })
+                })
+              }))
+              .then(result => {
+                resolve(result)
+              })
+          }).catch(_error => {
+            console.log(_error)
+            let response = ErrorCode.INVALID_ID
+            response.status = 200
+            return reject(response)
+          })
         })
     })
   }

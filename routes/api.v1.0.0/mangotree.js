@@ -113,9 +113,8 @@ router.delete('/:id', (req, res, next) => {
     })
 })
 
-/* BUY mango */
-router.post('/:id/buy', (req, res, next) => {
-  MangoTreesController.buyMangoTree(req.params.id, req.body)
+router.post('/buys', (req, res, next) => {
+  MangoTreesController.buyMangoTrees(req.body)
     .then(mango => res.json({ success: true, data: mango }))
     .catch(_error => {
       let status = 500
