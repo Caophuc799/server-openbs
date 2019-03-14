@@ -38,7 +38,9 @@ router.get('/:id', (req, res, next) => {
 /* GET orders of cooperative BY ID */
 router.get('/:id/orders', (req, res, next) => {
   PurchaseHistory.getOrdersByCooperativeId(req.params.id, req.query)
-    .then(cooperative => res.json({ success: true, data: cooperative }))
+    .then(cooperative => {
+      res.json({ success: true, data: cooperative })
+    })
     .catch(_error => {
       let status = 500
       if (_error.status) {

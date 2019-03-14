@@ -29,9 +29,9 @@ class MangoTreesController {
             purchasehistory = purchasehistory.sort((a, b) => {
               if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
                 moment(a.createdAt).isAfter(b.createdAt)) {
-                return -1
+                return 1
               }
-              return 1
+              return -1
             })
             let temppurchase = purchasehistory[purchasehistory.length - 1]
             return !(temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0)

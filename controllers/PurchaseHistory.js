@@ -42,34 +42,43 @@ class PurchaseHistory {
 
   getOrdersByCooperativeId (_id, data) {
     return new Promise((resolve, reject) => {
-      Cooperative.findOne({ _id }, (_error, cooperative) => {
-        if (cooperative) {
-          let projection = {}
-          let options = {}
-          if (data.limit && data.offset) {
-            options = {
-              skip: parseInt(data.offset * data.limit),
-              limit: parseInt(data.limit)
-            }
-          }
-          Purchase.find({}, projection, options)
-            .populate({ path: 'treeId', populate: { path: 'cooperativeId', model: ModelName.CooperativeModel } })
-            .populate('buyerId')
-            .exec((_error, purchase) => {
-              if (_error) reject(_error)
-              if (purchase) {
-                purchase = purchase.filter(item => {
-                  _id = mongoose.Types.ObjectId(_id)
-                  return _.isEqual(item.treeId.cooperativeId._id, _id)
-                })
-                resolve(purchase)
-              }
-            })
-        } else {
+      Cooperative.findOne({ _id }).then(cooperative => {
+        if (!cooperative) {
           let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
           error.status = 404
           reject(error)
         }
+        let projection = {}
+        let options = {}
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({}, projection, options)
+          .populate({ path: 'treeId', populate: { path: 'cooperativeId' } })
+          .populate('buyerId')
+          .then(purchase => {
+            if (!purchase) reject(purchase)
+            purchase = purchase.filter(item => {
+              let result = _.isEqual(_.get(item, 'treeId.cooperativeId._id'), cooperative._id)
+              if (result) {
+                item.treeId.cooperativeId = _.get(item, 'treeId.cooperativeId._id')
+                item.buyerId.avatar = ''
+                item.treeId.stateTree.forEach(element => {
+                  element.image = []
+                })
+                item.stateTree.image = []
+              }
+              return result
+            })
+            return resolve(purchase)
+          }).catch(error => reject(error))
+      }).catch(_error => {
+        let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
+        error.status = 404
+        reject(error)
       })
     })
   }
