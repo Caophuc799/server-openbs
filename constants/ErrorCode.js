@@ -147,6 +147,11 @@ const ErrorCode = {
     name: 'MANGOTREE_EXIST',
     message: 'Mangotree đã tồn tại.'
   },
+  COOPERATIVE_DUPLICATE: {
+    errorCode: 62,
+    name: 'COOPERATIVE_DUPLICATE',
+    message: 'Email hoặc mã số thuế bị trùng.'
+  },
   COOPERATIVE_EXIST: {
     errorCode: 62,
     name: 'COOPERATIVE_EXIST',
@@ -235,6 +240,16 @@ const ErrorCode = {
   },
 
   // API GET_ONE_USER
+  DO_BE_CANCEL: {
+    errorCode: 11,
+    name: 'DO_BE_CANCEL',
+    message: 'Giao dịch này đã bị hủy'
+  },
+  ORDER_BE_CONFIRMED: {
+    errorCode: 11,
+    name: 'ORDER_BE_CONFIRMED',
+    message: 'Giao dịch đã được xác nhận'
+  },
   DO_NOT_ORDER: {
     errorCode: 11,
     name: 'DO_NOT_ORDER',

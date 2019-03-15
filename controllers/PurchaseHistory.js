@@ -273,6 +273,16 @@ class PurchaseHistory {
           error.status = 404
           reject(error)
         }
+        if (purchase.status === 0) {
+          let error = ErrorCode.DO_BE_CANCEL
+          error.status = 200
+          reject(error)
+        }
+        if (purchase.status === 2) {
+          let error = ErrorCode.ORDER_BE_CONFIRMED
+          error.status = 200
+          reject(error)
+        }
         let newPurchase = {
           status: 2
         }
@@ -295,6 +305,16 @@ class PurchaseHistory {
         if (_error || !purchase) {
           let error = ErrorCode.DO_NOT_ORDER
           error.status = 404
+          reject(error)
+        }
+        if (purchase.status === 0) {
+          let error = ErrorCode.DO_BE_CANCEL
+          error.status = 200
+          reject(error)
+        }
+        if (purchase.status === 2) {
+          let error = ErrorCode.ORDER_BE_CONFIRMED
+          error.status = 200
           reject(error)
         }
         let newPurchase = {

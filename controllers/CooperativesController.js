@@ -118,7 +118,7 @@ class CooperativesController {
                   .then(cooperative => resolve(cooperative))
                   .catch(error => {
                     if (error && error.code === 11000 && error.errmsg.includes('duplicate')) {
-                      let response = errorCode.COOPERATIVE_EXIST
+                      let response = errorCode.COOPERATIVE_DUPLICATE
                       response.status = 200
                       return reject(response)
                     }
