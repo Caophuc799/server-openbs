@@ -4,7 +4,7 @@ import PurchaseHistoryController from '../../controllers/PurchaseHistory'
 import _ from 'lodash'
 var router = Express.Router()
 
-router.post('/:transactionId/confirm', function (req, res) {
+router.get('/:transactionId/confirm', function (req, res) {
   PurchaseHistoryController.confirmPayment(req.params.transactionId, req.body)
     .then(feedback => res.json({ success: true, data: feedback }))
     .catch(_error => {
@@ -18,7 +18,7 @@ router.post('/:transactionId/confirm', function (req, res) {
     })
 })
 
-router.post('/:transactionId/cancel', function (req, res) {
+router.get('/:transactionId/cancel', function (req, res) {
   PurchaseHistoryController.cancelPayment(req.params.transactionId, req.body)
     .then(feedback => res.json({ success: true, data: feedback }))
     .catch(_error => {
