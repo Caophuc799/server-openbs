@@ -29,13 +29,13 @@ class PurchaseHistory {
         } else {
           let error = ErrorCode.USER_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
       }).catch(_error => {
         console.log(_error)
         let error = ErrorCode.USER_DOES_NOT_EXIST
         error.status = 404
-        reject(error)
+        return reject(error)
       })
     })
   }
@@ -46,7 +46,7 @@ class PurchaseHistory {
         if (!cooperative) {
           let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options = {}
@@ -78,7 +78,7 @@ class PurchaseHistory {
       }).catch(_error => {
         let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
         error.status = 404
-        reject(error)
+        return reject(error)
       })
     })
   }
@@ -89,7 +89,7 @@ class PurchaseHistory {
         if (_error || !user) {
           let error = ErrorCode.USER_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options
@@ -105,7 +105,7 @@ class PurchaseHistory {
             if (_error || !purchase) {
               let error = ErrorCode.DO_NOT_ORDER
               error.status = 404
-              reject(error)
+              return reject(error)
             }
             purchase = purchase.map(item => item.treeId)
             purchase = purchase.sort((a, b) => {
@@ -115,7 +115,7 @@ class PurchaseHistory {
               }
               return 1
             })
-            resolve(purchase)
+            return resolve(purchase)
           })
       })
     })
@@ -127,7 +127,7 @@ class PurchaseHistory {
         if (_error || !user) {
           let error = ErrorCode.USER_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options
@@ -143,7 +143,7 @@ class PurchaseHistory {
             if (_error || !purchase) {
               let error = ErrorCode.DO_NOT_ORDER
               error.status = 404
-              reject(error)
+              return reject(error)
             }
             purchase = purchase.map(item => item.treeId)
             purchase = purchase.sort((a, b) => {
@@ -153,7 +153,7 @@ class PurchaseHistory {
               }
               return 1
             })
-            resolve(purchase)
+            return resolve(purchase)
           })
       })
     })
@@ -165,7 +165,7 @@ class PurchaseHistory {
         if (_error || !user) {
           let error = ErrorCode.USER_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options
@@ -181,7 +181,7 @@ class PurchaseHistory {
             if (_error || !purchase) {
               let error = ErrorCode.DO_NOT_ORDER
               error.status = 404
-              reject(error)
+              return reject(error)
             }
             purchase = purchase.map(item => item.treeId)
             purchase = purchase.sort((a, b) => {
@@ -191,7 +191,7 @@ class PurchaseHistory {
               }
               return 1
             })
-            resolve(purchase)
+            return resolve(purchase)
           })
       })
     })
@@ -203,7 +203,7 @@ class PurchaseHistory {
         if (_error || !user) {
           let error = ErrorCode.USER_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options
@@ -219,7 +219,7 @@ class PurchaseHistory {
             if (_error || !purchase) {
               let error = ErrorCode.DO_NOT_ORDER
               error.status = 404
-              reject(error)
+              return reject(error)
             }
             purchase = purchase.map(item => item.treeId)
             purchase = purchase.sort((a, b) => {
@@ -229,7 +229,7 @@ class PurchaseHistory {
               }
               return 1
             })
-            resolve(purchase)
+            return resolve(purchase)
           })
       })
     })
@@ -241,7 +241,7 @@ class PurchaseHistory {
         if (_error || !cooperative) {
           let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         let projection = {}
         let options
@@ -257,9 +257,9 @@ class PurchaseHistory {
             if (_error || !tree) {
               let error = ErrorCode.MANGOTREE_DOES_NOT_EXIST
               error.status = 404
-              reject(error)
+              return reject(error)
             }
-            resolve(tree)
+            return resolve(tree)
           })
       })
     })
@@ -271,17 +271,17 @@ class PurchaseHistory {
         if (_error || !purchase) {
           let error = ErrorCode.DO_NOT_ORDER
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         if (purchase.status === 0) {
           let error = ErrorCode.DO_BE_CANCEL
           error.status = 200
-          reject(error)
+          return reject(error)
         }
         if (purchase.status === 2) {
           let error = ErrorCode.ORDER_BE_CONFIRMED
           error.status = 200
-          reject(error)
+          return reject(error)
         }
         let newPurchase = {
           status: 2
@@ -290,10 +290,10 @@ class PurchaseHistory {
           if (error || !result) {
             let error = ErrorCode.FAIL
             error.status = 404
-            reject(error)
+            return reject(error)
           }
           purchase.status = 2
-          resolve({})
+          return resolve({})
         })
       })
     })
@@ -305,17 +305,17 @@ class PurchaseHistory {
         if (_error || !purchase) {
           let error = ErrorCode.DO_NOT_ORDER
           error.status = 404
-          reject(error)
+          return reject(error)
         }
         if (purchase.status === 0) {
           let error = ErrorCode.DO_BE_CANCEL
           error.status = 200
-          reject(error)
+          return reject(error)
         }
         if (purchase.status === 2) {
           let error = ErrorCode.ORDER_BE_CONFIRMED
           error.status = 200
-          reject(error)
+          return reject(error)
         }
         let newPurchase = {
           status: 0
@@ -324,10 +324,10 @@ class PurchaseHistory {
           if (error || !result) {
             let error = ErrorCode.FAIL
             error.status = 404
-            reject(error)
+            return reject(error)
           }
           purchase.status = 2
-          resolve({})
+          return resolve({})
         })
       })
     })
