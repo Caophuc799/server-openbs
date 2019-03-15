@@ -84,7 +84,6 @@ class CooperativesController {
         response.status = 200
         return reject(response)
       }
-      var hashPassword = bcrypt.hashSync(_cooperative.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_cooperative.dateOfBirth))
       axios.get('https://thongtindoanhnghiep.co/api/company/' + _cooperative.taxCode)
         .then(res => {
@@ -98,7 +97,7 @@ class CooperativesController {
                   return reject(response)
                 }
                 let logo
-                if (files.logo && files.logo.data) {
+                if (files && files.logo && files.logo.data) {
                   // eslint-disable-next-line node/no-deprecated-api
                   logo = new Buffer(files.logo.data, 'binary').toString('base64')
                 }
@@ -109,7 +108,7 @@ class CooperativesController {
                   email: _cooperative.email,
                   phoneNumber: _cooperative.phoneNumber,
                   address: _cooperative.address,
-                  password: hashPassword,
+                  password: _cooperative.password,
                   rand: rand,
                   logo: logo || _cooperative.logo,
                   description: _cooperative.description,
@@ -167,7 +166,7 @@ class CooperativesController {
                 return reject(response)
               }
               let logo
-              if (files.logo && files.logo.data) {
+              if (files && files.logo && files.logo.data) {
                 // eslint-disable-next-line node/no-deprecated-api
                 logo = new Buffer(files.logo.data, 'binary').toString('base64')
               }

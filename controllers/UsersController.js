@@ -85,7 +85,7 @@ class UsersController {
       // var hashPassword = bcrypt.hashSync(_user.password, bcrypt.genSaltSync(8), null)
       // console.log(moment(_user.dateOfBirth))
       let avatar
-      if (files.avatar && files.avatar.data) {
+      if (files && files.avatar && files.avatar.data) {
         // eslint-disable-next-line node/no-deprecated-api
         avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
       }
@@ -126,7 +126,7 @@ class UsersController {
         return reject(response)
       }
       let avatar
-      if (files.avatar && files.avatar.data) {
+      if (files && files.avatar && files.avatar.data) {
         // eslint-disable-next-line node/no-deprecated-api
         avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
       }
@@ -243,7 +243,7 @@ class UsersController {
         response.status = 200
         return reject(response)
       }
-      // var hashPassword = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(8), null)
+      var hashPassword = bcrypt.hashSync(newPassword, bcrypt.genSaltSync(8), null)
       User.findOne({ email })
         .then(_user => {
           if (!_user || _.isEmpty(_user)) {
@@ -254,7 +254,7 @@ class UsersController {
           if (_user && _user.verify) {
             bcrypt.compare(oldPassword, _user.password, function (_err, res) {
               if (res) {
-                User.findOneAndUpdate({ email }, { $set: { password: newPassword } })
+                User.findOneAndUpdate({ email }, { $set: { password: hashPassword } })
                   .then(user => resolve(user))
                   .catch(error => reject(error))
               } else {

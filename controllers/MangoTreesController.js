@@ -36,6 +36,9 @@ class MangoTreesController {
             let temppurchase = purchasehistory[purchasehistory.length - 1]
             return !(temppurchase && moment().isBefore(temppurchase.endTime) && temppurchase.status !== 0)
           })
+          mangotrees.forEach(tree => {
+            delete tree.purchasehistory
+          })
           resolve(mangotrees)
         })
         .catch(error => reject(error))
