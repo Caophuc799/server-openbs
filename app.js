@@ -10,6 +10,8 @@ import { createData, removeData } from './seedData'
 import fileUpload from 'express-fileupload'
 import OpenBS from './contracts/Contract'
 
+const cors = require('cors')
+
 require('./services/auth')
 // Etherium
 var web3 = require('./services/web3')
@@ -47,6 +49,7 @@ const connectWithRetry = () => {
 }
 connectWithRetry()
 
+app.use(cors())
 // upload file
 app.use(fileUpload())
 app.use(logger('dev'))
