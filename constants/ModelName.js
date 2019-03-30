@@ -3,5 +3,6 @@ export default {
   UserModel: 'UserModel',
   PurchaseHistoryModel: 'PurchaseHistoryModel',
   CooperativeModel: 'CooperativeModel',
-  FeedbackModel: 'FeedbackModel'
+  FeedbackModel: 'FeedbackModel',
+  FarmerModel: 'FarmerModel'
 }

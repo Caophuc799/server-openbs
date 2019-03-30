@@ -34,7 +34,6 @@ var Farmer = new Schema(
   })
 
 Farmer.plugin(autoIncrement.plugin, { model: 'FarmerModel', field: 'id' })
-Farmer.index({ email: 1, taxCode: 1 }, { unique: true })
 
 var FarmerModel = mongoose.model('FarmerModel', Farmer)
 FarmerModel.createIndexes()

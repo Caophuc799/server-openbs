@@ -253,6 +253,7 @@ class PurchaseHistory {
         }
         Tree.find({ cooperativeId: _id }, projection, options)
           .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
+          .populate({ path: 'farmer', model: ModelName.FarmerModel })
           .exec((_error, tree) => {
             if (_error || !tree) {
               let error = ErrorCode.MANGOTREE_DOES_NOT_EXIST

@@ -148,7 +148,7 @@ class MangoTreesController {
             response.status = 200
             return reject(response)
           }
-          if (_farmer.cooperativeId !== _cooperative._id) {
+          if (_farmer.cooperativeId.toString() !== _cooperative._id.toString()) {
             let response = ErrorCode.FARMER_NOT_BELONG_COOPERATIVE
             response.status = 200
             return reject(response)
