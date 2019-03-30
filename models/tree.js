@@ -17,6 +17,11 @@ var Tree = new Schema(
       ref: 'CooperativeModel',
       require: true
     },
+    farmerId: {
+      type: SchemaTypes.ObjectId,
+      ref: 'FarmerModel',
+      require: true
+    },
     name: {
       type: String,
       default: ''

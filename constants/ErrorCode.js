@@ -217,6 +217,16 @@ const ErrorCode = {
     name: 'TREE_BOUGHT',
     message: 'Cây đã được mua'
   },
+  CANT_NOT_FIND_FARMER: {
+    errorCode: 56,
+    name: 'CANT_NOT_FIND_FARMER',
+    message: 'Không tìm thấy nông hộ'
+  },
+  FARMER_NOT_BELONG_COOPERATIVE: {
+    errorCode: 63,
+    name: 'FARMER_NOT_BELONG_COOPERATIVE',
+    message: 'Nông hộ không thuộc hợp tác xã'
+  },
   // API
   INVALID_ID: {
     errorCode: 399,
@@ -270,6 +280,11 @@ const ErrorCode = {
     errorCode: 13,
     name: 'COOPERATIVE_DOES_NOT_EXIST',
     message: 'COOPERATIVE không tồn tại'
+  },
+  FARMER_DOES_NOT_EXIST: {
+    errorCode: 13,
+    name: 'FARMER_DOES_NOT_EXIST',
+    message: 'Farmer không tồn tại'
   }
 }
 

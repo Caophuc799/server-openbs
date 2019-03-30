@@ -1,5 +1,6 @@
 import Mangotree from '../models/tree'
 import Cooperative from '../models/cooperative'
+import Farmer from '../models/farmer'
 import PurchaseHistory from '../models/purchase.history'
 import User from '../models/user'
 import _ from 'lodash'
@@ -136,7 +137,22 @@ class MangoTreesController {
         return reject(response)
       }
       return Cooperative.findById({ _id: _mangotree.cooperativeId }, async (_error, _cooperative) => {
-        if (_cooperative && !_.isEmpty(_cooperative) && !_error) {
+        if (!_cooperative || _.isEmpty(_cooperative) || _error) {
+          let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
+          response.status = 200
+          return reject(response)
+        }
+        return Farmer.findById({ _id: _mangotree.farmerId }, async (_error, _farmer) => {
+          if (!_farmer || _.isEmpty(_farmer) || _error) {
+            let response = ErrorCode.CANT_NOT_FIND_FARMER
+            response.status = 200
+            return reject(response)
+          }
+          if (_farmer.cooperativeId !== _cooperative._id) {
+            let response = ErrorCode.FARMER_NOT_BELONG_COOPERATIVE
+            response.status = 200
+            return reject(response)
+          }
           let images = []
           if (files) {
             Object.keys(files).forEach(function (key) {
@@ -154,6 +170,7 @@ class MangoTreesController {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
             cooperativeId: _cooperative._id,
+            farmerId: _farmer._id,
             address: _mangotree.address,
             location: { longitude: _mangotree.longitude, latitude: _mangotree.latitude },
             category: _mangotree.category,
@@ -170,6 +187,11 @@ class MangoTreesController {
                 let expression = {
                   '$push': { treeIds: mangotree }
                 }
+                _farmer.update(expression, (_error, result) => {
+                  if (result) {
+                    resolve(mangotree)
+                  }
+                })
                 _cooperative.update(expression, (_error, result) => {
                   if (result) {
                     resolve(mangotree)
@@ -186,11 +208,7 @@ class MangoTreesController {
               }
               return reject(error)
             })
-        } else {
-          let response = ErrorCode.CANT_NOT_FIND_COOPERATIVE
-          response.status = 200
-          return reject(response)
-        }
+        })
       })
     })
   }
