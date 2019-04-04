@@ -96,11 +96,6 @@ class MangoTreesController {
         response.status = 200
         return reject(response)
       }
-      if (!_mangotree.numberId) {
-        let response = ErrorCode.MISSING_IDTREE
-        response.status = 200
-        return reject(response)
-      }
       if (!_mangotree.name) {
         let response = ErrorCode.MISSING_NAME
         response.status = 200
