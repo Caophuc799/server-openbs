@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import apiRoutes from './routes/api.v1.0.0'
 import { blockStart, mongoLocal, mongoOnline, walletAddress, contractAddress, walletPrivateKey } from './constants/constant'
 import { createData, removeData } from './seedData'
-
+import Firebase from './services/Firebase'
 import fileUpload from 'express-fileupload'
 import OpenBS from './contracts/Contract'
 
@@ -16,7 +16,7 @@ require('./services/auth')
 // Etherium
 var web3 = require('./services/web3')
 var TokenOpenBS = require('./services/TokenOpenBS')
-
+Firebase.init()
 const app = express()
 mongoose.Promise = require('bluebird')
 mongoose.set('useCreateIndex', true)
@@ -39,7 +39,7 @@ const options = {
 }
 const connectWithRetry = () => {
   console.log('MongoDB connection with retry')
-  mongoose.connect(mongoOnline, options).then(() => {
+  mongoose.connect(mongoLocal, options).then(() => {
     console.log('MongoDB is connected')
     // mongoose.connection.db.dropDatabase()
   }).catch(_err => {

@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import errorCode from '../constants/ErrorCode'
 import fs from 'fs'
 import path from 'path'
+import FirebaseService from '../services/Firebase';
 class UsersController {
   getAll (query = { offset: 0, limit: 0 }, projection) {
     let options
@@ -87,7 +88,11 @@ class UsersController {
       let avatar
       if (files && files.avatar && files.avatar.data) {
         // eslint-disable-next-line node/no-deprecated-api
+
         avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
+        const a = FirebaseService.storage(avatar.toString(), `user_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
+        console.log(a)
+        return a
       }
       const currentUser = {
         firstName: _user.firstName,
