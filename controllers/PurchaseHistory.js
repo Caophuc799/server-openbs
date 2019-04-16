@@ -260,6 +260,7 @@ class PurchaseHistory {
               error.status = 404
               return reject(error)
             }
+            console.log("tree", tree)
             return resolve(tree)
           })
       })

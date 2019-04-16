@@ -4,7 +4,9 @@ import FarmerController from '../../controllers/FarmersController'
 
 const router = express.Router()
 
+
 /* GET ALL cooperatives */
+
 router.get('/', (req, res, next) => {
   FarmerController.getAll({}, req.query)
     .then(farmers => res.json({ success: true, data: farmers }))
@@ -33,6 +35,21 @@ router.get('/:id', (req, res, next) => {
       return res.json(status, _.merge(response, _error))
     })
 })
+
+router.post('/login', (req, res, next) => {
+  FarmerController.login(req.body)
+    .then(farmers => res.json({ success: true, data: farmers }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
 /* Create cooperative */
 router.post('/', (req, res, next) => {
   FarmerController.create(req.body)

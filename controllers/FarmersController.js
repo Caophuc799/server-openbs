@@ -5,8 +5,11 @@ import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import bcrypt from 'bcrypt'
+const jwt = require('jsonwebtoken')
+import cfg from '../config'
+
 class FarmerController {
-  getAll (projection, query = { offset: 0, limit: 0 }) {
+  getAll(projection, query = { offset: 0, limit: 0 }) {
     let options
     if (query) {
       options = {
@@ -28,7 +31,7 @@ class FarmerController {
     })
   }
 
-  getOne (_id, projection, options) {
+  getOne(_id, projection, options) {
     return new Promise((resolve, reject) => {
       Farmer.findOne({ _id }, projection, options)
         .then(farmers => {
@@ -51,7 +54,39 @@ class FarmerController {
     })
   }
 
-  create (_farmer, rand, files) {
+  login(data) {
+    return new Promise((resolve, reject) => {
+      console.log("into _farmer", data )
+      Farmer.findOne({ username: data.username, password: data.password }).then(_farmer => {
+        if (_farmer) {
+          console.log("into _farmer",_farmer.name )
+          const body = { _id: _farmer._id, email: _farmer.username }
+          const token = jwt.sign({ _farmer: body, }, cfg.jwtSecret )
+          let res = {
+            token: token,
+            role: 2,
+            username: data.username,
+            id: _farmer._id,
+            name: _farmer.name,
+            info: _farmer
+          }
+          return resolve(res)
+        } else {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        }
+      })
+        .catch(_error => {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        })
+
+    })
+  }
+
+  create(_farmer, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_farmer)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -73,7 +108,10 @@ class FarmerController {
           if (_cooperative) {
             const newFarmer = {
               name: _farmer.name,
+              username: _farmer.username,
+              password: _farmer.password,
               address: _farmer.address,
+              role: 1,
               cooperativeId: _farmer.cooperativeId
             }
             return Farmer.create(newFarmer)
@@ -100,7 +138,7 @@ class FarmerController {
     })
   }
 
-  update (_id, _farmer) {
+  update(_id, _farmer) {
     return new Promise((resolve, reject) => {
       if (_farmer.cooperativeId) {
         let response = errorCode.CAN_NOT_UPDATE_COOPERATIVE
@@ -109,12 +147,14 @@ class FarmerController {
       }
       const newFarmer = {
         name: _farmer.name,
+        password: _farmer.password,
         address: _farmer.address
       }
       return Farmer.findOneAndUpdate({ _id }, { $set: newFarmer })
         .then(farmer => {
           if (farmer) {
             farmer._doc.name = _farmer.name || farmer.name
+            farmer._doc.password = _farmer.password || farmer.password
             farmer._doc.address = _farmer.address || farmer.address
             resolve(farmer)
           } else {
@@ -133,7 +173,7 @@ class FarmerController {
     })
   }
 
-  delete (_id) {
+  delete(_id) {
     return new Promise((resolve, reject) => {
       return Farmer.remove({ _id })
         .then(farmer => {
