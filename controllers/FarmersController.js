@@ -147,14 +147,12 @@ class FarmerController {
       }
       const newFarmer = {
         name: _farmer.name,
-        password: _farmer.password,
         address: _farmer.address
       }
       return Farmer.findOneAndUpdate({ _id }, { $set: newFarmer })
         .then(farmer => {
           if (farmer) {
             farmer._doc.name = _farmer.name || farmer.name
-            farmer._doc.password = _farmer.password || farmer.password
             farmer._doc.address = _farmer.address || farmer.address
             resolve(farmer)
           } else {
