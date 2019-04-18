@@ -1,15 +1,16 @@
 import Farmer from '../models/farmer'
 import User from '../models/user'
 import Cooperative from '../models/cooperative'
+import Tree from '../models/tree'
 import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import bcrypt from 'bcrypt'
-const jwt = require('jsonwebtoken')
 import cfg from '../config'
+const jwt = require('jsonwebtoken')
 
 class FarmerController {
-  getAll(projection, query = { offset: 0, limit: 0 }) {
+  getAll (projection, query = { offset: 0, limit: 0 }) {
     let options
     if (query) {
       options = {
@@ -31,7 +32,41 @@ class FarmerController {
     })
   }
 
-  getOne(_id, projection, options) {
+  getTreeById (id, query = { offset: 0, limit: 0 }) {
+    return new Promise((resolve, reject) => {
+      let options
+      if (query) {
+        options = {
+          skip: parseInt(query.offset * query.limit),
+          limit: parseInt(query.limit)
+        }
+      }
+      Farmer.findOne({ _id: id })
+        .then(farm => {
+          if (!farm) {
+            let response = errorCode.CANT_NOT_FIND_FARMER
+            response.status = 200
+            return reject(response)
+          }
+          return Tree.find({ farmerId: id })
+            .then(trees => {
+              return resolve(trees)
+            })
+            .catch(_error => {
+              let response = errorCode.CAN_NOT_FIND_MANGOTREE
+              response.status = 200
+              return reject(response)
+            })
+        })
+        .catch(_error => {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        })
+    })
+  }
+
+  getOne (_id, projection, options) {
     return new Promise((resolve, reject) => {
       Farmer.findOne({ _id }, projection, options)
         .then(farmers => {
@@ -54,14 +89,14 @@ class FarmerController {
     })
   }
 
-  login(data) {
+  login (data) {
     return new Promise((resolve, reject) => {
-      console.log("into _farmer", data )
+      console.log('into _farmer', data)
       Farmer.findOne({ username: data.username, password: data.password }).then(_farmer => {
         if (_farmer) {
-          console.log("into _farmer",_farmer.name )
+          console.log('into _farmer', _farmer.name)
           const body = { _id: _farmer._id, email: _farmer.username }
-          const token = jwt.sign({ _farmer: body, }, cfg.jwtSecret )
+          const token = jwt.sign({ _farmer: body }, cfg.jwtSecret)
           let res = {
             token: token,
             role: 2,
@@ -82,11 +117,10 @@ class FarmerController {
           response.status = 200
           return reject(response)
         })
-
     })
   }
 
-  create(_farmer, rand, files) {
+  create (_farmer, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_farmer)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -138,7 +172,7 @@ class FarmerController {
     })
   }
 
-  update(_id, _farmer) {
+  update (_id, _farmer) {
     return new Promise((resolve, reject) => {
       if (_farmer.cooperativeId) {
         let response = errorCode.CAN_NOT_UPDATE_COOPERATIVE
@@ -171,7 +205,7 @@ class FarmerController {
     })
   }
 
-  delete(_id) {
+  delete (_id) {
     return new Promise((resolve, reject) => {
       return Farmer.remove({ _id })
         .then(farmer => {
