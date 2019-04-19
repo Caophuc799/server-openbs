@@ -67,6 +67,21 @@ router.get('/:id/trees', (req, res, next) => {
     })
 })
 
+/* GET tree of cooperative BY ID */
+router.get('/:id/buyers', (req, res, next) => {
+  PurchaseHistory.getBuyerOfCooperative(req.params.id, req.query)
+    .then(cooperative => res.json({ success: true, data: cooperative }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
+
 /* UPDATE cooperative */
 router.put('/:id', (req, res, next) => {
   CooperativesController.update(req.params.id, req.body, req.files)
