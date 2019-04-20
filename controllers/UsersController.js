@@ -46,8 +46,10 @@ class UsersController {
     })
   }
 
-  create (_user, rand, files) {
-    return new Promise((resolve, reject) => {
+ create (_user, rand, files) {
+
+   
+    return new Promise(async (resolve, reject) => {
       if (_.isEmpty(_user)) {
         let response = errorCode.DATA_DOES_NOT_NULL
         response.status = 200
@@ -87,12 +89,13 @@ class UsersController {
       // console.log(moment(_user.dateOfBirth))
       let avatar
       if (files && files.avatar && files.avatar.data) {
-        // eslint-disable-next-line node/no-deprecated-api
-
-        avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
-        const a = FirebaseService.storage(avatar.toString(), `user_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
-        console.log(a)
-        return a
+        avatar = (Buffer.from(files.avatar.data, 'binary')).toString('base64')
+        try {
+          await FirebaseService.storage(files.avatar.data, `user_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
+        } catch (error) {
+          console.log('Error upload image', error)
+          //need handle this case
+        }
       }
       const currentUser = {
         firstName: _user.firstName,
