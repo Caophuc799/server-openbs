@@ -1,6 +1,7 @@
 var mongoose = require('mongoose')
 var autoIncrement = require('mongoose-auto-increment')
 autoIncrement.initialize(mongoose.connection)
+const constants = require('../constants/constant')
 mongoose.Promise = global.Promise
 
 var Schema = mongoose.Schema
@@ -61,7 +62,9 @@ var Tree = new Schema(
     ],
     purchasehistory: [
       { type: SchemaTypes.ObjectId, ref: 'PurchaseHistoryModel' }
-    ]
+    ],
+    expired: { type: String },
+    status: { type: String, default: constants.STATUS_TREE.AVAILABLE }
   },
   {
     timestamps: true

@@ -1,12 +1,15 @@
 import Farmer from '../models/farmer'
 import User from '../models/user'
 import Cooperative from '../models/cooperative'
+import Purchase from '../models/purchase.historys'
 import Tree from '../models/tree'
 import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import bcrypt from 'bcrypt'
 import cfg from '../config'
+import moment from 'moment'
+import ErrorCode from '../constants/ErrorCode'
 const jwt = require('jsonwebtoken')
 
 class FarmerController {
@@ -50,6 +53,29 @@ class FarmerController {
           }
           return Tree.find({ farmerId: id })
             .then(trees => {
+              let treeIds = []
+              trees.forEach(item => {
+                treeIds.push(item._id)
+              })
+              const projection = {}
+              Purchase.find({ treeId: { $in: treeIds } }, projection, options)
+                .populate('treeId')
+                .exec((_error, purchase) => {
+                  if (_error || !purchase) {
+                    let error = ErrorCode.DO_NOT_ORDER
+                    error.status = 404
+                    return reject(error)
+                  }
+                  purchase = purchase.map(item => item.treeId)
+                  purchase = purchase.sort((a, b) => {
+                    if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
+                    moment(a.createdAt).isAfter(b.createdAt)) {
+                      return -1
+                    }
+                    return 1
+                  })
+                  return resolve(purchase)
+                })
               return resolve(trees)
             })
             .catch(_error => {
