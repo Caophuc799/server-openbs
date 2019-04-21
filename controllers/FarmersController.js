@@ -1,7 +1,7 @@
 import Farmer from '../models/farmer'
 import User from '../models/user'
 import Cooperative from '../models/cooperative'
-import Purchase from '../models/purchase.historys'
+import Purchase from '../models/purchase.history'
 import Tree from '../models/tree'
 import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
@@ -44,6 +44,7 @@ class FarmerController {
           limit: parseInt(query.limit)
         }
       }
+      console.log('hello')
       Farmer.findOne({ _id: id })
         .then(farm => {
           if (!farm) {
