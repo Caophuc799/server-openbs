@@ -25,8 +25,8 @@ const FirebaseService = {
   storage: async (image, name) => {
     const storageRef = firebase.storage().ref()
     const ref = storageRef.child(`images/${name}`)
-
-    return ref.put(image)
+    await ref.put(image)
+    return ref.getDownloadURL()
   }
 }
 export default FirebaseService

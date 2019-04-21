@@ -9,6 +9,7 @@ import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
 import fs from 'fs'
 import path from 'path'
+import FirebaseService from '../services/Firebase';
 var mongoose = require('mongoose')
 class MangoTreesController {
   getAll (query, projection) {
@@ -90,7 +91,7 @@ class MangoTreesController {
   }
 
   create (_mangotree, files) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (_.isEmpty(_mangotree)) {
         let response = ErrorCode.DATA_DOES_NOT_NULL
         response.status = 200
@@ -150,11 +151,18 @@ class MangoTreesController {
           }
           let images = []
           if (files) {
-            Object.keys(files).forEach(function (key) {
+            for (let key of Object.keys(files)) {
               // eslint-disable-next-line node/no-deprecated-api
-              let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+              // let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+              let base64dataa = ''
+              try {
+                base64dataa = await FirebaseService.storage(files[key].data, `tree_${Date.now()}.png`)
+              } catch (error) {
+                console.log('Error upload image', error)
+                //need handle this case
+              }
               images.push(base64dataa)
-            })
+            }
           }
           let stateTree = [{
             image: images,
@@ -264,7 +272,7 @@ class MangoTreesController {
   }
 
   updateStateTree (_id, _mangotree, files) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (!_mangotree.quantity && !_mangotree.description) {
         let response = ErrorCode.MISSING_FIELD
         response.status = 200
@@ -272,11 +280,18 @@ class MangoTreesController {
       }
       let images = []
       if (files) {
-        Object.keys(files).forEach(function (key) {
+        for (let key of Object.keys(files)) {
           // eslint-disable-next-line node/no-deprecated-api
-          let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+          // let base64dataa = new Buffer(files[key].data, 'binary').toString('base64')
+          let base64dataa = ''
+          try {
+            base64dataa = await FirebaseService.storage(files[key].data, `tree_${Date.now()}.png`)
+          } catch (error) {
+            console.log('Error upload image', error)
+            //need handle this case
+          }
           images.push(base64dataa)
-        })
+        }
       }
       let expression = {}
       expression['$push'] = {
