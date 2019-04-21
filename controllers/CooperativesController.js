@@ -8,6 +8,7 @@ import moment from 'moment'
 import bcrypt from 'bcrypt'
 import path from 'path'
 import fs from 'fs'
+import FirebaseService from '../services/Firebase';
 class CooperativesController {
   getAll (projection, query = { offset: 0, limit: 0 }) {
     let options
@@ -89,7 +90,7 @@ class CooperativesController {
         .then(res => {
           // if (_.get(res, 'data.ID') && _.get(res, 'data.ID') !== 0) {
           User.findById({ _id: _cooperative.idRepresentation })
-            .then(_user => {
+            .then(async (_user) => {
               if (_user) {
                 if (!_user.verify) {
                   let response = errorCode.REPRESENTATION_DID_NOT_VERIFY
@@ -99,7 +100,13 @@ class CooperativesController {
                 let logo
                 if (files && files.logo && files.logo.data) {
                   // eslint-disable-next-line node/no-deprecated-api
-                  logo = new Buffer(files.logo.data, 'binary').toString('base64')
+                  // logo = new Buffer(files.logo.data, 'binary').toString('base64')
+                  try {
+                    logo = await FirebaseService.storage(files.avatar.data, `cooperative_${_cooperative.name}_${Date.now()}.png`)
+                  } catch (error) {
+                    console.log('Error upload image', error)
+                    //need handle this case
+                  }
                 }
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
@@ -158,7 +165,7 @@ class CooperativesController {
       }
       if (_cooperative.idRepresentation) {
         return User.findById({ _id: _cooperative.idRepresentation })
-          .then(_user => {
+          .then(async (_user) => {
             if (_user) {
               if (!_user.verify) {
                 let response = errorCode.REPRESENTATION_DID_NOT_VERIFY
@@ -168,7 +175,13 @@ class CooperativesController {
               let logo
               if (files && files.logo && files.logo.data) {
                 // eslint-disable-next-line node/no-deprecated-api
-                logo = new Buffer(files.logo.data, 'binary').toString('base64')
+                // logo = new Buffer(files.logo.data, 'binary').toString('base64')
+                try {
+                  logo = await FirebaseService.storage(files.avatar.data, `cooperative_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
+                } catch (error) {
+                  console.log('Error upload image', error)
+                  //need handle this case
+                }
               }
               const newCooperative = {
                 idRepresentation: _cooperative.idRepresentation,
