@@ -27,7 +27,20 @@ var Farmer = new Schema(
         type: SchemaTypes.ObjectId,
         ref: 'TreeModel'
       }
-    ]
+    ],
+    username: {
+      type: String,
+      unique: true,
+      required: true
+    },
+    password: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      required: true
+    },
   },
   {
     timestamps: true

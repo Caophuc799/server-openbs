@@ -1,10 +1,14 @@
 import Farmer from '../models/farmer'
 import User from '../models/user'
 import Cooperative from '../models/cooperative'
+import Tree from '../models/tree'
 import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
 import { validateEmail } from '../services/Utils'
 import bcrypt from 'bcrypt'
+import cfg from '../config'
+const jwt = require('jsonwebtoken')
+
 class FarmerController {
   getAll (projection, query = { offset: 0, limit: 0 }) {
     let options
@@ -25,6 +29,40 @@ class FarmerController {
       Farmer.find({}, projection, options)
         .then(farmers => resolve(farmers))
         .catch(error => reject(error))
+    })
+  }
+
+  getTreeById (id, query = { offset: 0, limit: 0 }) {
+    return new Promise((resolve, reject) => {
+      let options
+      if (query) {
+        options = {
+          skip: parseInt(query.offset * query.limit),
+          limit: parseInt(query.limit)
+        }
+      }
+      Farmer.findOne({ _id: id })
+        .then(farm => {
+          if (!farm) {
+            let response = errorCode.CANT_NOT_FIND_FARMER
+            response.status = 200
+            return reject(response)
+          }
+          return Tree.find({ farmerId: id })
+            .then(trees => {
+              return resolve(trees)
+            })
+            .catch(_error => {
+              let response = errorCode.CAN_NOT_FIND_MANGOTREE
+              response.status = 200
+              return reject(response)
+            })
+        })
+        .catch(_error => {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        })
     })
   }
 
@@ -51,6 +89,37 @@ class FarmerController {
     })
   }
 
+  login (data) {
+    return new Promise((resolve, reject) => {
+      console.log('into _farmer', data)
+      Farmer.findOne({ username: data.username, password: data.password }).then(_farmer => {
+        if (_farmer) {
+          console.log('into _farmer', _farmer.name)
+          const body = { _id: _farmer._id, email: _farmer.username }
+          const token = jwt.sign({ _farmer: body }, cfg.jwtSecret)
+          let res = {
+            token: token,
+            role: 2,
+            username: data.username,
+            id: _farmer._id,
+            name: _farmer.name,
+            info: _farmer
+          }
+          return resolve(res)
+        } else {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        }
+      })
+        .catch(_error => {
+          let response = errorCode.CANT_NOT_FIND_FARMER
+          response.status = 200
+          return reject(response)
+        })
+    })
+  }
+
   create (_farmer, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_farmer)) {
@@ -73,7 +142,10 @@ class FarmerController {
           if (_cooperative) {
             const newFarmer = {
               name: _farmer.name,
+              username: _farmer.username,
+              password: _farmer.password,
               address: _farmer.address,
+              role: 1,
               cooperativeId: _farmer.cooperativeId
             }
             return Farmer.create(newFarmer)

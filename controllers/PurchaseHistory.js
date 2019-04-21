@@ -260,6 +260,7 @@ class PurchaseHistory {
               error.status = 404
               return reject(error)
             }
+            console.log("tree", tree)
             return resolve(tree)
           })
       })
@@ -330,6 +331,52 @@ class PurchaseHistory {
           purchase.status = 2
           return resolve({})
         })
+      })
+    })
+  }
+  getBuyerOfCooperative (_id, data) {
+    return new Promise((resolve, reject) => {
+      Cooperative.findOne({ _id }).then(cooperative => {
+        if (!cooperative) {
+          let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
+          error.status = 404
+          return reject(error)
+        }
+        let projection = {}
+        let options = {}
+        if (data.limit && data.offset) {
+          options = {
+            skip: parseInt(data.offset * data.limit),
+            limit: parseInt(data.limit)
+          }
+        }
+        Purchase.find({}, projection, options)
+          .populate({ path: 'treeId', populate: { path: 'cooperativeId' } })
+          .populate('buyerId')
+          .then(purchase => {
+            if (!purchase) reject(purchase)
+            purchase = purchase.filter(item => {
+              let result = _.isEqual(_.get(item, 'treeId.cooperativeId._id'), cooperative._id)
+              if (result) {
+                item.treeId.cooperativeId = _.get(item, 'treeId.cooperativeId._id')
+                item.buyerId.avatar = ''
+                item.treeId.stateTree.forEach(element => {
+                  element.image = []
+                })
+                item.stateTree.image = []
+              }
+              return result
+            })
+            const arrayUser = []
+            purchase.forEach(item => {
+              arrayUser.push(item.buyerId)
+            })
+            return resolve(arrayUser)
+          }).catch(error => reject(error))
+      }).catch(_error => {
+        let error = ErrorCode.COOPERATIVE_DOES_NOT_EXIST
+        error.status = 404
+        return reject(error)
       })
     })
   }
