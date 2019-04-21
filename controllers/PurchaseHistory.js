@@ -65,11 +65,6 @@ class PurchaseHistory {
               let result = _.isEqual(_.get(item, 'treeId.cooperativeId._id'), cooperative._id)
               if (result) {
                 item.treeId.cooperativeId = _.get(item, 'treeId.cooperativeId._id')
-                item.buyerId.avatar = ''
-                item.treeId.stateTree.forEach(element => {
-                  element.image = []
-                })
-                item.stateTree.image = []
               }
               return result
             })
@@ -359,11 +354,6 @@ class PurchaseHistory {
               let result = _.isEqual(_.get(item, 'treeId.cooperativeId._id'), cooperative._id)
               if (result) {
                 item.treeId.cooperativeId = _.get(item, 'treeId.cooperativeId._id')
-                item.buyerId.avatar = ''
-                item.treeId.stateTree.forEach(element => {
-                  element.image = []
-                })
-                item.stateTree.image = []
               }
               return result
             })
