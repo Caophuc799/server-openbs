@@ -10,6 +10,7 @@ import bcrypt from 'bcrypt'
 import cfg from '../config'
 import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
+import ModelName from '../constants/ModelName';
 const jwt = require('jsonwebtoken')
 
 class FarmerController {
@@ -53,30 +54,8 @@ class FarmerController {
             return reject(response)
           }
           return Tree.find({ farmerId: id })
+            .populate({ path: 'purchasehistory', model: ModelName.PurchaseHistoryModel })
             .then(trees => {
-              let treeIds = []
-              trees.forEach(item => {
-                treeIds.push(item._id)
-              })
-              const projection = {}
-              Purchase.find({ treeId: { $in: treeIds } }, projection, options)
-                .populate('treeId')
-                .exec((_error, purchase) => {
-                  if (_error || !purchase) {
-                    let error = ErrorCode.DO_NOT_ORDER
-                    error.status = 404
-                    return reject(error)
-                  }
-                  purchase = purchase.map(item => item.treeId)
-                  purchase = purchase.sort((a, b) => {
-                    if (a && moment(a.createdAt).isValid() && b && moment(b.createdAt).isValid() &&
-                    moment(a.createdAt).isAfter(b.createdAt)) {
-                      return -1
-                    }
-                    return 1
-                  })
-                  return resolve(purchase)
-                })
               return resolve(trees)
             })
             .catch(_error => {
