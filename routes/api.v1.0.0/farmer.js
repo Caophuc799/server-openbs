@@ -125,5 +125,19 @@ router.get('/:id/trees', (req, res, next) => {
     })
 })
 
+/* GET ALL cooperatives */
+router.get('/:id/statistics', (req, res, next) => {
+  FarmerController.getStatistics(req.params.id, req.query)
+    .then(cooperatives => res.json({ success: true, data: cooperatives }))
+    .catch(_error => {
+      let status = 500
+      if (_error.status) {
+        status = _error.status
+        delete _error.status
+      }
+      let response = { success: false, data: {} }
+      return res.json(status, _.merge(response, _error))
+    })
+})
 
 export default router

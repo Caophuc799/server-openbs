@@ -1,5 +1,7 @@
 import Cooperative from '../models/cooperative'
 import User from '../models/user'
+import Tree from '../models/tree'
+import Farmer from '../models/farmer'
 import axios from 'axios'
 import _ from 'lodash'
 import errorCode from '../constants/ErrorCode'
@@ -8,7 +10,7 @@ import moment from 'moment'
 import bcrypt from 'bcrypt'
 import path from 'path'
 import fs from 'fs'
-import FirebaseService from '../services/Firebase';
+import FirebaseService from '../services/Firebase'
 class CooperativesController {
   getAll (projection, query = { offset: 0, limit: 0 }) {
     let options
@@ -105,7 +107,7 @@ class CooperativesController {
                     logo = await FirebaseService.storage(files.avatar.data, `cooperative_${_cooperative.name}_${Date.now()}.png`)
                   } catch (error) {
                     console.log('Error upload image', error)
-                    //need handle this case
+                    // need handle this case
                   }
                 }
                 const currentCooperative = {
@@ -180,7 +182,7 @@ class CooperativesController {
                   logo = await FirebaseService.storage(files.avatar.data, `cooperative_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
                 } catch (error) {
                   console.log('Error upload image', error)
-                  //need handle this case
+                  // need handle this case
                 }
               }
               const newCooperative = {
@@ -412,6 +414,28 @@ class CooperativesController {
           }
         })
         .catch(error => reject(error))
+    })
+  }
+  getStatistics (_id) {
+    return new Promise((resolve, reject) => {
+      Cooperative.findOne({ _id }).then(async (cooperative) => {
+        if (!cooperative) {
+          let error = errorCode.COOPERATIVE_DOES_NOT_EXIST
+          error.status = 404
+          return reject(error)
+        }
+        let projection = {}
+        let options = {}
+        try {
+          const treeCount = await Tree.find({ cooperativeId: _id }).count()
+          const farmerCount = await Farmer.find({ cooperativeId: _id }).count()
+          return resolve({ treeCount, farmerCount })
+        } catch (err) {
+          let error = errorCode.COOPERATIVE_DOES_NOT_EXIST
+          error.status = 404
+          return reject(error)
+        }
+      })
     })
   }
 }

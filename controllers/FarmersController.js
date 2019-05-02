@@ -10,7 +10,7 @@ import bcrypt from 'bcrypt'
 import cfg from '../config'
 import moment from 'moment'
 import ErrorCode from '../constants/ErrorCode'
-import ModelName from '../constants/ModelName';
+import ModelName from '../constants/ModelName'
 const jwt = require('jsonwebtoken')
 
 class FarmerController {
@@ -225,6 +225,27 @@ class FarmerController {
           }
           reject(error)
         })
+    })
+  }
+  getStatistics (_id) {
+    return new Promise((resolve, reject) => {
+      Farmer.findOne({ _id }).then(async (farmer) => {
+        if (!farmer) {
+          let error = errorCode.FARMER_DOES_NOT_EXIST
+          error.status = 404
+          return reject(error)
+        }
+        let projection = {}
+        let options = {}
+        try {
+          const treeCount = await Tree.find({ farmerId: _id }).count()
+          return resolve({ treeCount })
+        } catch (err) {
+          let error = errorCode.FARMER_DOES_NOT_EXIST
+          error.status = 404
+          return reject(error)
+        }
+      })
     })
   }
 }
