@@ -10,7 +10,7 @@ var SchemaTypes = mongoose.Schema.Types
 var Tree = new Schema(
   {
     numberId: {
-      type: Number,
+      type: String,
       required: true
     },
     cooperativeId: {
