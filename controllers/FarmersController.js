@@ -140,7 +140,7 @@ class FarmerController {
       Cooperative.findById({ _id: _farmer.cooperativeId })
         .then(_cooperative => {
           if (_cooperative) {
-            let codeId = _farmer.cooperativeId.substring(14, _farmer.cooperativeId.length)
+            let codeId = _farmer.cooperativeId.substring(15, _farmer.cooperativeId.length)
             //            console.log("codeID", codeId)
             const newFarmer = {
               name: _farmer.name,
