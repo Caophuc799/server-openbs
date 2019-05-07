@@ -56,12 +56,12 @@ class FarmerController {
 
   login(data) {
     return new Promise((resolve, reject) => {
-      console.log("into _farmer", data )
+      console.log("into _farmer", data)
       Farmer.findOne({ username: data.username, password: data.password }).then(_farmer => {
         if (_farmer) {
-          console.log("into _farmer",_farmer.name )
+          console.log("into _farmer", _farmer.name)
           const body = { _id: _farmer._id, email: _farmer.username }
-          const token = jwt.sign({ _farmer: body, }, cfg.jwtSecret )
+          const token = jwt.sign({ _farmer: body, }, cfg.jwtSecret)
           let res = {
             token: token,
             role: 2,
@@ -106,12 +106,15 @@ class FarmerController {
       Cooperative.findById({ _id: _farmer.cooperativeId })
         .then(_cooperative => {
           if (_cooperative) {
+            let codeId = _farmer.cooperativeId.substring(14, _farmer.cooperativeId.length)
+            //            console.log("codeID", codeId)
             const newFarmer = {
               name: _farmer.name,
               username: _farmer.username,
               password: _farmer.password,
               address: _farmer.address,
               role: 1,
+              codeId: codeId + _farmer.codeFrm,
               cooperativeId: _farmer.cooperativeId
             }
             return Farmer.create(newFarmer)
