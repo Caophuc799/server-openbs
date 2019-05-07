@@ -43,7 +43,8 @@ var Farmer = new Schema(
     },
     codeId:{
       type: String,
-      required: true
+      required: true,
+      unique: true,
     }
   },
   {
