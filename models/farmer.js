@@ -41,6 +41,10 @@ var Farmer = new Schema(
       type: String,
       required: true
     },
+    codeId:{
+      type: String,
+      required: true
+    }
   },
   {
     timestamps: true
