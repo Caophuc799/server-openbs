@@ -6,6 +6,7 @@ import bcrypt from 'bcrypt'
 import errorCode from '../constants/ErrorCode'
 import fs from 'fs'
 import path from 'path'
+import FirebaseService from '../services/Firebase';
 class UsersController {
   getAll (query = { offset: 0, limit: 0 }, projection) {
     let options
@@ -45,8 +46,10 @@ class UsersController {
     })
   }
 
-  create (_user, rand, files) {
-    return new Promise((resolve, reject) => {
+ create (_user, rand, files) {
+
+   
+    return new Promise(async (resolve, reject) => {
       if (_.isEmpty(_user)) {
         let response = errorCode.DATA_DOES_NOT_NULL
         response.status = 200
@@ -86,8 +89,13 @@ class UsersController {
       // console.log(moment(_user.dateOfBirth))
       let avatar
       if (files && files.avatar && files.avatar.data) {
-        // eslint-disable-next-line node/no-deprecated-api
-        avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
+        // avatar = (Buffer.from(files.avatar.data, 'binary')).toString('base64')
+        try {
+          avatar = await FirebaseService.storage(files.avatar.data, `user_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
+        } catch (error) {
+          console.log('Error upload image', error)
+          //need handle this case
+        }
       }
       const currentUser = {
         firstName: _user.firstName,
@@ -114,7 +122,7 @@ class UsersController {
   }
 
   update (_id, _user, files) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (_user.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
         response.status = 200
@@ -128,7 +136,13 @@ class UsersController {
       let avatar
       if (files && files.avatar && files.avatar.data) {
         // eslint-disable-next-line node/no-deprecated-api
-        avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
+        // avatar = new Buffer(files.avatar.data, 'binary').toString('base64')
+        try {
+          avatar = await FirebaseService.storage(files.avatar.data, `user_${_user.firstName}_${_user.lastName}_${Date.now()}.png`)
+        } catch (error) {
+          console.log('Error upload image', error)
+          //need handle this case
+        }
       }
       let newUser = {
         firstName: _user.firstName,

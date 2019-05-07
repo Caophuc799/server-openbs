@@ -1,7 +1,11 @@
 
 import nodemailer from 'nodemailer'
 require('dotenv').config()
-
+export const STATUS_TREE = {
+  AVAILABLE: 'AVAILABLE', // chua co ai mua
+  PENDING: 'PENDING', // đã mua, đang chơ thanh toán
+  PURCHASED: 'PURCHASED' // đã được mua(đã confirm)
+}
 export var smtpTransport = nodemailer.createTransport({
   service: 'Gmail',
   auth: {

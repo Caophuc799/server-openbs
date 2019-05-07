@@ -27,6 +27,7 @@ router.post('/user/signup', (req, res, next) => {
       return res.json({ success: true, data: user })
     })
     .catch(_error => {
+      console.log(_error)
       let status = 500
       if (_error.status) {
         status = _error.status
