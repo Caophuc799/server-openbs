@@ -8,7 +8,7 @@ import Tree from '../models/tree';
 const jwt = require('jsonwebtoken')
 
 class FarmerController {
-  getAll (projection, query = { offset: 0, limit: 0 }) {
+  getAll(projection, query = { offset: 0, limit: 0 }) {
     let options
     if (query) {
       options = {
@@ -30,7 +30,7 @@ class FarmerController {
     })
   }
 
-  getTreeById (id, query = { offset: 0, limit: 0 }) {
+  getTreeById(id, query = { offset: 0, limit: 0 }) {
     return new Promise((resolve, reject) => {
       let options
       if (query) {
@@ -66,7 +66,7 @@ class FarmerController {
     })
   }
 
-  getOne (_id, projection, options) {
+  getOne(_id, projection, options) {
     return new Promise((resolve, reject) => {
       Farmer.findOne({ _id }, projection, options)
         .then(farmers => {
@@ -89,7 +89,7 @@ class FarmerController {
     })
   }
 
-  login (data) {
+  login(data) {
     return new Promise((resolve, reject) => {
       console.log('into _farmer', data)
       Farmer.findOne({ username: data.username, password: data.password }).then(_farmer => {
@@ -120,7 +120,7 @@ class FarmerController {
     })
   }
 
-  create (_farmer, rand, files) {
+  create(_farmer, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_farmer)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -140,8 +140,7 @@ class FarmerController {
       Cooperative.findById({ _id: _farmer.cooperativeId })
         .then(_cooperative => {
           if (_cooperative) {
-            let codeId = _farmer.cooperativeId.substring(15, _farmer.cooperativeId.length)
-            //            console.log("codeID", codeId)
+            let codeId = _farmer.taxCode
             const newFarmer = {
               name: _farmer.name,
               username: _farmer.username,
@@ -175,7 +174,7 @@ class FarmerController {
     })
   }
 
-  update (_id, _farmer) {
+  update(_id, _farmer) {
     return new Promise((resolve, reject) => {
       if (_farmer.cooperativeId) {
         let response = errorCode.CAN_NOT_UPDATE_COOPERATIVE
@@ -208,7 +207,7 @@ class FarmerController {
     })
   }
 
-  delete (_id) {
+  delete(_id) {
     return new Promise((resolve, reject) => {
       return Farmer.remove({ _id })
         .then(farmer => {
@@ -224,7 +223,7 @@ class FarmerController {
         })
     })
   }
-  getStatistics (_id) {
+  getStatistics(_id) {
     return new Promise((resolve, reject) => {
       Farmer.findOne({ _id }).then(async (farmer) => {
         if (!farmer) {
