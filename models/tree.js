@@ -11,6 +11,7 @@ var Tree = new Schema(
   {
     numberId: {
       type: String,
+      unique: true,
       required: true
     },
     cooperativeId: {
