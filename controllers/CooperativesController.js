@@ -12,7 +12,7 @@ import path from 'path'
 import fs from 'fs'
 import FirebaseService from '../services/Firebase'
 class CooperativesController {
-  getAll (projection, query = { offset: 0, limit: 0 }) {
+  getAll(projection, query = { offset: 0, limit: 0 }) {
     let options
     if (query) {
       options = {
@@ -27,7 +27,7 @@ class CooperativesController {
     })
   }
 
-  getOne (_id, projection, options) {
+  getOne(_id, projection, options) {
     return new Promise((resolve, reject) => {
       Cooperative.findOne({ _id }, projection, options)
         .then(cooperatives => {
@@ -50,7 +50,7 @@ class CooperativesController {
     })
   }
 
-  create (_cooperative, rand, files) {
+  create(_cooperative, rand, files) {
     return new Promise((resolve, reject) => {
       if (_.isEmpty(_cooperative)) {
         let response = errorCode.DATA_DOES_NOT_NULL
@@ -99,12 +99,25 @@ class CooperativesController {
                   response.status = 200
                   return reject(response)
                 }
-                let logo
+                let logo, certificateImg
+                //console.log("files.logo", files.logo.data)
                 if (files && files.logo && files.logo.data) {
                   // eslint-disable-next-line node/no-deprecated-api
                   // logo = new Buffer(files.logo.data, 'binary').toString('base64')
                   try {
-                    logo = await FirebaseService.storage(files.avatar.data, `cooperative_${_cooperative.name}_${Date.now()}.png`)
+                    logo = await FirebaseService.storage(files.logo.data, `cooperative_${_cooperative.name}_${Date.now()}.png`)
+                    // console.log("logo", logo)
+                  } catch (error) {
+                    console.log('Error upload image', error)
+                    // need handle this case
+                  }
+                }
+                if (files && files.certificateImg && files.certificateImg.data) {
+                  // eslint-disable-next-line node/no-deprecated-api
+                  // logo = new Buffer(files.logo.data, 'binary').toString('base64')
+                  try {
+                    certificateImg = await FirebaseService.storage(files.certificateImg.data, `cooperative_${_cooperative.name}_${Date.now()}.png`)
+                    // console.log("logo", certificateImg)
                   } catch (error) {
                     console.log('Error upload image', error)
                     // need handle this case
@@ -112,6 +125,7 @@ class CooperativesController {
                 }
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
+                  certificateImg: certificateImg || _cooperative.certificateImg,
                   taxCode: _cooperative.taxCode,
                   name: _cooperative.name,
                   email: _cooperative.email,
@@ -158,7 +172,7 @@ class CooperativesController {
     })
   }
 
-  update (_id, _cooperative, files) {
+  update(_id, _cooperative, files) {
     return new Promise((resolve, reject) => {
       if (_cooperative.email) {
         let response = errorCode.CAN_NOT_UPDATE_EMAIL
@@ -252,7 +266,7 @@ class CooperativesController {
     })
   }
 
-  delete (_id) {
+  delete(_id) {
     return new Promise((resolve, reject) => {
       return Cooperative.remove({ _id })
         .then(cooperative => {
@@ -269,7 +283,7 @@ class CooperativesController {
     })
   }
 
-  verifyAccount (_id, rand) {
+  verifyAccount(_id, rand) {
     return new Promise((resolve, reject) => {
       return Cooperative.findById({ _id })
         .then(_cooperative => {
@@ -298,7 +312,7 @@ class CooperativesController {
     })
   }
 
-  resendEmail (_id, newrand) {
+  resendEmail(_id, newrand) {
     return new Promise((resolve, reject) => {
       Cooperative.findById({ _id })
         .then(_cooperative => {
@@ -316,7 +330,7 @@ class CooperativesController {
     })
   }
 
-  login ({ email, password }) {
+  login({ email, password }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL
@@ -360,7 +374,7 @@ class CooperativesController {
     })
   }
 
-  changePassword ({ email, oldPassword, newPassword }) {
+  changePassword({ email, oldPassword, newPassword }) {
     return new Promise((resolve, reject) => {
       if (!email) {
         let response = errorCode.MISSING_EMAIL
@@ -416,7 +430,7 @@ class CooperativesController {
         .catch(error => reject(error))
     })
   }
-  getStatistics (_id) {
+  getStatistics(_id) {
     return new Promise((resolve, reject) => {
       Cooperative.findOne({ _id }).then(async (cooperative) => {
         if (!cooperative) {

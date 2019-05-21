@@ -67,6 +67,7 @@ var Cooperative = new Schema(
       type: Number,
       default: 0
     },
+    certificateImg: { type: String },
     treeIds: [
       {
         type: SchemaTypes.ObjectId,
