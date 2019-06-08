@@ -32,7 +32,7 @@ export const mongoOnline = 'mongodb://openbsTest:openbsTest1@ds249233.mlab.com:4
 export const mongoLocal = 'mongodb://localhost:27017/openbs'
 // mongodb://localhost:27017/openbs
 
-export const blockStart = 4382430
+export const BlockStart = 5453669
 
 export const walletPrivateKey = '0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034'
 
@@ -40,3 +40,8 @@ export const walletAddress = '0xc23e221736376daf733F19bA17009F53D71e059a'
 
 export const contractAddress = '0x63f3ae3f3158e03409827b2c754078a68eedc5bf'
 
+export const ACTION = {
+  CREATE_TREE: 'CREATE_TREE',
+  ADD_STATE_TREE: 'ADD_STATE_TREE',
+  BUY_TREE: 'BUY_TREE'
+}

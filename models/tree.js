@@ -58,6 +58,10 @@ var Tree = new Schema(
         image: [{ type: String }],
         quantity: { type: String },
         description: { type: String },
+        tx: {
+          type: String,
+          default: ''
+        },
         time: { type: Date, default: Date.now }
       }
     ],
@@ -65,7 +69,11 @@ var Tree = new Schema(
       { type: SchemaTypes.ObjectId, ref: 'PurchaseHistoryModel' }
     ],
     expired: { type: String },
-    status: { type: String, default: constants.STATUS_TREE.AVAILABLE }
+    status: { type: String, default: constants.STATUS_TREE.AVAILABLE },
+    tx: {
+      type: String,
+      default: ''
+    }
   },
   {
     timestamps: true

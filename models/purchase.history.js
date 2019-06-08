@@ -33,6 +33,10 @@ var PurchaseHistory = new Schema(
     endTime: {
       type: Date
     },
+    tx: {
+      type: String,
+      default: ''
+    },
     stateTree: {
       image: [{ type: String,
         default: '' }],
@@ -49,6 +53,10 @@ var PurchaseHistory = new Schema(
         },
         rating: {
           type: SchemaTypes.String,
+          default: ''
+        },
+        tx: {
+          type: String,
           default: ''
         },
         time: { type: Date, default: Date.now }
