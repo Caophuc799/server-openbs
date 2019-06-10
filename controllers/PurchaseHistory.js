@@ -303,7 +303,7 @@ class PurchaseHistory {
             return reject(error)
           }
           purchase.status = 2
-          return resolve({})
+          return resolve({ tx })
         })
       })
     })
