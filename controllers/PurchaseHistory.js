@@ -286,9 +286,9 @@ class PurchaseHistory {
         const cooperative = await Tree.findOne({ _id: tree.cooperativeId })
         
         const tx = await interactBlockchain.addNewAction({
-          address: user.address,
-          from: `User: ${user.address}`,
-          to: `Cooperative: ${cooperative.address}`,
+          address: user.addressBC,
+          from: `User: ${user.addressBC}`,
+          to: `Cooperative: ${cooperative.addressBC}`,
           priKey: user.privateKey,
           action: 'Buy Tree',
           description: 'Id tree: ' + purchase.treeId

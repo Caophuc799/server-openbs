@@ -171,9 +171,9 @@ class MangoTreesController {
             description: _mangotree.description
           }]
           const tx = await interactBlockchain.addNewAction({
-            address: _cooperative.address,
-            from: `Cooperative: ${_cooperative.address}`,
-            to: `Farmer: ${_cooperative.address}`,
+            address: _cooperative.addressBC,
+            from: `Cooperative: ${_cooperative.addressBC}`,
+            to: `Farmer: ${_farmer._id}`,
             priKey: _cooperative.privateKey,
             action: 'Register tree',
             description: ''
