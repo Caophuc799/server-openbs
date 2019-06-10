@@ -283,8 +283,7 @@ class PurchaseHistory {
         }
         const user = await User.findOne({ _id: purchase.buyerId })
         const tree = await Tree.findOne({ _id: purchase.treeId })
-        const cooperative = await Tree.findOne({ _id: tree.cooperativeId })
-        
+        const cooperative = await Cooperative.findOne({ _id: tree.cooperativeId })
         const tx = await interactBlockchain.addNewAction({
           address: user.addressBC,
           from: `User: ${user.addressBC}`,
