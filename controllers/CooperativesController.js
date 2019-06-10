@@ -11,6 +11,7 @@ import bcrypt from 'bcrypt'
 import path from 'path'
 import fs from 'fs'
 import FirebaseService from '../services/Firebase'
+import interactBlockchain from '../services/interact.blockchain';
 class CooperativesController {
   getAll(projection, query = { offset: 0, limit: 0 }) {
     let options
@@ -123,6 +124,7 @@ class CooperativesController {
                     // need handle this case
                   }
                 }
+                const account = await interactBlockchain.createAccount()
                 const currentCooperative = {
                   idRepresentation: _cooperative.idRepresentation,
                   certificateImg: certificateImg || _cooperative.certificateImg,
@@ -135,7 +137,9 @@ class CooperativesController {
                   rand: rand,
                   logo: logo || _cooperative.logo,
                   description: _cooperative.description,
-                  treeIds: []
+                  treeIds: [],
+                  addressBC: account.address,
+                  privateKey: account.privateKey
                 }
                 return Cooperative.create(currentCooperative)
                   .then(cooperative => resolve(cooperative))

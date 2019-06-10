@@ -10,6 +10,7 @@ import ModelName from '../constants/ModelName'
 import fs from 'fs'
 import path from 'path'
 import FirebaseService from '../services/Firebase';
+import interactBlockchain from '../services/interact.blockchain';
 var mongoose = require('mongoose')
 class MangoTreesController {
   getAll (query, projection) {
@@ -169,6 +170,14 @@ class MangoTreesController {
             quantity: _mangotree.quantity,
             description: _mangotree.description
           }]
+          const tx = await interactBlockchain.addNewAction({
+            address: _cooperative.address,
+            from: `Cooperative: ${_cooperative.address}`,
+            to: `Farmer: ${_cooperative.address}`,
+            priKey: _cooperative.privateKey,
+            action: 'Register tree',
+            description: ''
+          })
           const currentMangotree = {
             name: _mangotree.name,
             numberId: _mangotree.numberId,
@@ -182,7 +191,8 @@ class MangoTreesController {
             purchasehistory: [],
             timeStartPlant: _mangotree.timeStartPlant,
             durationSelling: _mangotree.durationSelling,
-            summary: _mangotree.summary
+            summary: _mangotree.summary,
+            tx: tx
           }
           return Mangotree.create(currentMangotree)
             .then(mangotree => {

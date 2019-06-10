@@ -10,6 +10,8 @@ import Firebase from './services/Firebase'
 import fileUpload from 'express-fileupload'
 import OpenBS from './contracts/Contract'
 import EcommerceStore from './services/OpenBS.blockchain.js'
+import interactBlockchain from './services/interact.blockchain';
+// import InteractBlockchain from './services/interact.blockchain'
 
 const cors = require('cors')
 
@@ -137,10 +139,27 @@ function setupListenEventSmartContract () {
     }
     console.log('resutl 138:  \n \n \n', result.returnValues)
   })
+  interactBlockchain.initBC()
 }
 
 const updateAction = (data) => {
   console.log(data)
+  addNewAction()
+}
+const addNewAction = async (data) => {
+  // let accountEther = await web3.eth.accounts.privateKeyToAccount(walletPrivateKey)
+  // console.log(accountEther)
+  interactBlockchain.addNewAction()
+  // EcommerceStore.methods.addNewAction(accountEther.address, accountEther.address, 'CREATE NEW TREE', 'CREATE NEW TREE')
+  //   .send({
+  //     from: accountEther, gas: 5000000
+  //   }, (error, transactionHash) => {
+  //     if (error) {
+  //       console.log('error', error)
+  //     }
+  //     console.log(transactionHash)
+  //     return transactionHash
+  //   })
 }
 
 // async function tempat () {

@@ -6,6 +6,7 @@ import ErrorCode from '../constants/ErrorCode'
 import ModelName from '../constants/ModelName'
 import _ from 'lodash'
 import moment from 'moment'
+import interactBlockchain from '../services/interact.blockchain';
 var mongoose = require('mongoose')
 class PurchaseHistory {
   getOrdersByUserId (_id, data) {
@@ -264,7 +265,7 @@ class PurchaseHistory {
 
   confirmPayment (_id, data) {
     return new Promise((resolve, reject) => {
-      Purchase.findOne({ _id }, (_error, purchase) => {
+      Purchase.findOne({ _id }, async (_error, purchase) => {
         if (_error || !purchase) {
           let error = ErrorCode.DO_NOT_ORDER
           error.status = 404
@@ -280,8 +281,21 @@ class PurchaseHistory {
           error.status = 200
           return reject(error)
         }
+        const user = await User.findOne({ _id: purchase.buyerId })
+        const tree = await Tree.findOne({ _id: purchase.treeId })
+        const cooperative = await Tree.findOne({ _id: tree.cooperativeId })
+        
+        const tx = await interactBlockchain.addNewAction({
+          address: user.address,
+          from: `User: ${user.address}`,
+          to: `Cooperative: ${cooperative.address}`,
+          priKey: user.privateKey,
+          action: 'Buy Tree',
+          description: 'Id tree: ' + purchase.treeId
+        })
         let newPurchase = {
-          status: 2
+          status: 2,
+          tx
         }
         purchase.update(newPurchase, (error, result) => {
           if (error || !result) {

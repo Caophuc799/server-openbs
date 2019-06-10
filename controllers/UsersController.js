@@ -7,6 +7,7 @@ import errorCode from '../constants/ErrorCode'
 import fs from 'fs'
 import path from 'path'
 import FirebaseService from '../services/Firebase';
+import interactBlockchain from '../services/interact.blockchain';
 class UsersController {
   getAll (query = { offset: 0, limit: 0 }, projection) {
     let options
@@ -97,6 +98,7 @@ class UsersController {
           //need handle this case
         }
       }
+      const account = await interactBlockchain.createAccount()
       const currentUser = {
         firstName: _user.firstName,
         lastName: _user.lastName,
@@ -106,7 +108,9 @@ class UsersController {
         address: _user.address,
         password: _user.password,
         rand: rand,
-        avatar: avatar || _user.avatar
+        avatar: avatar || _user.avatar,
+        addressBC: account.address,
+        privateKey: account.privateKey
       }
       User.create(currentUser)
         .then(user => resolve(user))

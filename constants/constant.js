@@ -34,9 +34,11 @@ export const mongoLocal = 'mongodb://localhost:27017/openbs'
 
 export const BlockStart = 5453669
 
-export const walletPrivateKey = '0x2732a6fd23cb8477933d37e818a493b4b87e5ead0f5a578f63b14c573c1f9034'
+export const walletPrivateKey = '0x9E37704161B5A72CFA3BC376104E772EC4C1350C44B5E2445A7F30E629A97F16'
 
-export const walletAddress = '0xc23e221736376daf733F19bA17009F53D71e059a'
+export const walletAddress = '0x72D0D2A415ee838aDFda3FD0aD34AF06cCbb4C44'
+
+export const addressSC = '0x0458860c5e95a11e9996f250b382c74a7d0a13bf' // '0x447170c0964c938a3a595cf8bfaf08221405d580'
 
 export const contractAddress = '0x63f3ae3f3158e03409827b2c754078a68eedc5bf'
 

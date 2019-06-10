@@ -9,6 +9,14 @@ var SchemaTypes = mongoose.Schema.Types
 
 var User = new Schema(
   {
+    addressBC: {
+      type: String,
+      default: ''
+    },
+    privateKey: {
+      type: String,
+      default: ''
+    },
     firstName: {
       type: SchemaTypes.String,
       required: true
